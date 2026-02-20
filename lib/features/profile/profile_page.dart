@@ -22,12 +22,6 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _resumeAlerts = true;
   bool _jobAlerts = false;
 
-  // Settings prefs
-  bool _autoSave = true;
-  bool _showTips = true;
-  bool _compactMode = false;
-  String _fontSize = 'Medium';
-
   void _openNotifications(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -211,150 +205,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 );
               }),
               const SizedBox(height: 16),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _openSettings(BuildContext context) {
-    const fontSizes = ['Small', 'Medium', 'Large'];
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => StatefulBuilder(
-        builder: (ctx, setSheet) => Container(
-          decoration: BoxDecoration(
-            color: Theme.of(ctx).scaffoldBackgroundColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _sheetHandle(ctx, 'Settings', Icons.settings_outlined),
-              _switchTile(
-                ctx,
-                setSheet,
-                icon: Icons.save_outlined,
-                title: 'Auto Save',
-                subtitle: 'Automatically save resume edits',
-                value: _autoSave,
-                onChanged: (v) {
-                  setState(() => _autoSave = v);
-                  setSheet(() {});
-                },
-              ),
-              const Divider(height: 1, indent: 16),
-              _switchTile(
-                ctx,
-                setSheet,
-                icon: Icons.lightbulb_outline,
-                title: 'Show Tips',
-                subtitle: 'Display helpful hints while editing',
-                value: _showTips,
-                onChanged: (v) {
-                  setState(() => _showTips = v);
-                  setSheet(() {});
-                },
-              ),
-              const Divider(height: 1, indent: 16),
-              _switchTile(
-                ctx,
-                setSheet,
-                icon: Icons.view_compact_outlined,
-                title: 'Compact Mode',
-                subtitle: 'Reduce spacing for more content',
-                value: _compactMode,
-                onChanged: (v) {
-                  setState(() => _compactMode = v);
-                  setSheet(() {});
-                },
-              ),
-              const Divider(height: 1, indent: 16),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Icon(
-                        Icons.text_fields_outlined,
-                        color: AppColors.primary,
-                        size: 20,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Font Size',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 15,
-                            ),
-                          ),
-                          Text(
-                            'Adjust text size in resume',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: AppColors.textSecondaryLight,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Row(
-                      children: fontSizes.map((size) {
-                        final sel = _fontSize == size;
-                        return Padding(
-                          padding: const EdgeInsets.only(left: 6),
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() => _fontSize = size);
-                              setSheet(() {});
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 5,
-                              ),
-                              decoration: BoxDecoration(
-                                color: sel
-                                    ? AppColors.primary
-                                    : Colors.grey.withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                size,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: sel
-                                      ? Colors.white
-                                      : AppColors.textSecondaryLight,
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
             ],
           ),
         ),
@@ -547,8 +397,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                 filled: true,
                               ),
                               validator: (v) {
-                                if (v == null || v.trim().isEmpty)
+                                if (v == null || v.trim().isEmpty) {
                                   return 'Email cannot be empty';
+                                }
                                 if (!RegExp(
                                   r'^[\w.-]+@[\w.-]+\.[a-z]{2,}$',
                                 ).hasMatch(v.trim())) {
@@ -665,8 +516,9 @@ class _ProfilePageState extends State<ProfilePage> {
                               onPressed: isSaving
                                   ? null
                                   : () async {
-                                      if (!formKey.currentState!.validate())
+                                      if (!formKey.currentState!.validate()) {
                                         return;
+                                      }
                                       setSheet(() => isSaving = true);
                                       // Simulate save delay
                                       await Future.delayed(
@@ -865,53 +717,15 @@ class _ProfilePageState extends State<ProfilePage> {
                         trailing: const Icon(Icons.chevron_right),
                         onTap: () => _openLanguage(context),
                       ),
-                      const Divider(height: 1),
-                      ListTile(
-                        leading: const Icon(Icons.settings_outlined),
-                        title: const Text(AppStrings.settings),
-                        subtitle: Text(
-                          'Font: $_fontSize  •  Auto-save: ${_autoSave ? "On" : "Off"}',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: AppColors.textSecondaryLight,
-                          ),
-                        ),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: () => _openSettings(context),
-                      ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 24),
 
-                // Danger Zone
+                // Logout
                 Card(
                   child: Column(
                     children: [
-                      ListTile(
-                        leading: const Icon(
-                          Icons.help_outline,
-                          color: AppColors.info,
-                        ),
-                        title: const Text('Help & Support'),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: () {
-                          // Handle help
-                        },
-                      ),
-                      const Divider(height: 1),
-                      ListTile(
-                        leading: const Icon(
-                          Icons.info_outline,
-                          color: AppColors.info,
-                        ),
-                        title: const Text('About'),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: () {
-                          // Handle about
-                        },
-                      ),
-                      const Divider(height: 1),
                       ListTile(
                         leading: const Icon(
                           Icons.logout,

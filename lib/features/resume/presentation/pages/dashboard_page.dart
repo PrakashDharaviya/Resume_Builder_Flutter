@@ -49,20 +49,23 @@ class _DashboardPageState extends State<DashboardPage> {
             onRefresh: () async {
               context.read<ResumeBloc>().add(const LoadAllResumesEvent());
             },
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Welcome Section
-                  _buildWelcomeSection(userName),
-                  const SizedBox(height: 32),
-
-                  // Resumes Section
-                  _buildResumesSection(),
-                ],
-              ),
+            child: LayoutBuilder(
+              builder: (ctx, constraints) {
+                final isTablet = constraints.maxWidth >= 600;
+                final hPad = isTablet ? 24.0 : 16.0;
+                return SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.symmetric(horizontal: hPad, vertical: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildWelcomeSection(userName, constraints.maxWidth),
+                      const SizedBox(height: 24),
+                      _buildResumesSection(isTablet),
+                    ],
+                  ),
+                );
+              },
             ),
           );
         },
@@ -77,9 +80,13 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildWelcomeSection(String userName) {
+  Widget _buildWelcomeSection(String userName, double width) {
+    final titleSize = width < 360 ? 18.0 : 22.0;
+    final subSize = width < 360 ? 13.0 : 15.0;
+    final vPad = width < 360 ? 16.0 : 24.0;
     return Container(
-      padding: const EdgeInsets.all(24),
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: vPad),
       decoration: BoxDecoration(
         gradient: AppColors.primaryGradient,
         borderRadius: BorderRadius.circular(16),
@@ -88,24 +95,24 @@ class _DashboardPageState extends State<DashboardPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '${AppStrings.welcome}, $userName!',
-            style: const TextStyle(
-              fontSize: 24,
+            '${AppStrings.welcome}, $userName! 👋',
+            style: TextStyle(
+              fontSize: titleSize,
               fontWeight: FontWeight.bold,
               color: AppColors.white,
             ),
           ),
-          const SizedBox(height: 8),
-          const Text(
+          const SizedBox(height: 6),
+          Text(
             'Let\'s build your perfect resume',
-            style: TextStyle(fontSize: 16, color: AppColors.white),
+            style: TextStyle(fontSize: subSize, color: AppColors.white),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildResumesSection() {
+  Widget _buildResumesSection([bool isTablet = false]) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -168,7 +175,22 @@ class _DashboardPageState extends State<DashboardPage> {
               if (state.resumes.isEmpty) {
                 return _buildEmptyState();
               }
-
+              if (isTablet) {
+                // 2-column grid on tablets/landscape
+                return GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 0,
+                    childAspectRatio: 1.55,
+                  ),
+                  itemCount: state.resumes.length,
+                  itemBuilder: (context, index) =>
+                      _buildResumeCard(state.resumes[index]),
+                );
+              }
               return ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -208,7 +230,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
+                      color: AppColors.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(
@@ -259,45 +281,108 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
               const SizedBox(height: 16),
 
-              // Action Buttons
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () {
-                        Navigator.of(
-                          context,
-                        ).pushNamed(AppRoutes.resumeEditor, arguments: resume);
-                      },
-                      icon: const Icon(Icons.edit_outlined, size: 18),
-                      label: const Text(AppStrings.edit),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () {
-                        Navigator.of(
-                          context,
-                        ).pushNamed(AppRoutes.resumePreview, arguments: resume);
-                      },
-                      icon: const Icon(Icons.visibility, size: 18),
-                      label: const Text('Preview'),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.of(
-                          context,
-                        ).pushNamed(AppRoutes.atsAnalysis, arguments: resume);
-                      },
-                      icon: const Icon(Icons.analytics_outlined, size: 18),
-                      label: const Text('Analyze'),
-                    ),
-                  ),
-                ],
+              // Action Buttons — responsive
+              LayoutBuilder(
+                builder: (ctx, constraints) {
+                  final w = constraints.maxWidth;
+                  // Compact style for narrow screens (< 320px)
+                  if (w < 320) {
+                    return Row(
+                      children: [
+                        _compactBtn(
+                          icon: Icons.edit_outlined,
+                          label: 'Edit',
+                          filled: false,
+                          onTap: () => Navigator.of(context).pushNamed(
+                            AppRoutes.resumeEditor,
+                            arguments: resume,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        _compactBtn(
+                          icon: Icons.visibility_outlined,
+                          label: 'Preview',
+                          filled: false,
+                          onTap: () => Navigator.of(context).pushNamed(
+                            AppRoutes.resumePreview,
+                            arguments: resume,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        _compactBtn(
+                          icon: Icons.analytics_outlined,
+                          label: 'Analyze',
+                          filled: true,
+                          onTap: () => Navigator.of(
+                            context,
+                          ).pushNamed(AppRoutes.atsAnalysis, arguments: resume),
+                        ),
+                      ],
+                    );
+                  }
+                  // Normal responsive row (≥ 320px)
+                  final buttonPadding = w < 380
+                      ? const EdgeInsets.symmetric(horizontal: 4, vertical: 10)
+                      : const EdgeInsets.symmetric(horizontal: 8, vertical: 11);
+                  final fontSize = w < 380 ? 12.0 : 13.0;
+                  final iconSize = w < 380 ? 15.0 : 17.0;
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: () => Navigator.of(context).pushNamed(
+                            AppRoutes.resumeEditor,
+                            arguments: resume,
+                          ),
+                          icon: Icon(Icons.edit_outlined, size: iconSize),
+                          label: Text(
+                            'Edit',
+                            style: TextStyle(fontSize: fontSize),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            padding: buttonPadding,
+                            minimumSize: const Size(0, 38),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: () => Navigator.of(context).pushNamed(
+                            AppRoutes.resumePreview,
+                            arguments: resume,
+                          ),
+                          icon: Icon(Icons.visibility_outlined, size: iconSize),
+                          label: Text(
+                            'Preview',
+                            style: TextStyle(fontSize: fontSize),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            padding: buttonPadding,
+                            minimumSize: const Size(0, 38),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () => Navigator.of(
+                            context,
+                          ).pushNamed(AppRoutes.atsAnalysis, arguments: resume),
+                          icon: Icon(Icons.analytics_outlined, size: iconSize),
+                          label: Text(
+                            'Analyze',
+                            style: TextStyle(fontSize: fontSize),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            padding: buttonPadding,
+                            minimumSize: const Size(0, 38),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ],
           ),
@@ -342,5 +427,59 @@ class _DashboardPageState extends State<DashboardPage> {
     if (score >= 60) return AppColors.scoreGood;
     if (score >= 40) return AppColors.scoreAverage;
     return AppColors.scorePoor;
+  }
+
+  // Compact icon+label button for very small screens
+  Widget _compactBtn({
+    required IconData icon,
+    required String label,
+    required bool filled,
+    required VoidCallback onTap,
+  }) {
+    return Expanded(
+      child: filled
+          ? ElevatedButton(
+              onPressed: onTap,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                minimumSize: const Size(0, 36),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(icon, size: 16),
+                  const SizedBox(height: 2),
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : OutlinedButton(
+              onPressed: onTap,
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                minimumSize: const Size(0, 36),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(icon, size: 16),
+                  const SizedBox(height: 2),
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+    );
   }
 }

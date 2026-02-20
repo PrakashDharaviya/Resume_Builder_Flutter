@@ -275,8 +275,9 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
                 ),
                 const SizedBox(height: 16),
                 _saveBtn(() {
-                  if (degreeCtrl.text.isEmpty || institutionCtrl.text.isEmpty)
+                  if (degreeCtrl.text.isEmpty || institutionCtrl.text.isEmpty) {
                     return;
+                  }
                   final item = {
                     'degree': degreeCtrl.text,
                     'institution': institutionCtrl.text,
@@ -287,10 +288,11 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
                     'current': current,
                   };
                   setState(() {
-                    if (index == null)
+                    if (index == null) {
                       _educations.add(item);
-                    else
+                    } else {
                       _educations[index] = item;
+                    }
                   });
                   Navigator.pop(ctx);
                 }),
@@ -364,8 +366,9 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
                 ),
                 const SizedBox(height: 16),
                 _saveBtn(() {
-                  if (titleCtrl.text.isEmpty || companyCtrl.text.isEmpty)
+                  if (titleCtrl.text.isEmpty || companyCtrl.text.isEmpty) {
                     return;
+                  }
                   final item = {
                     'title': titleCtrl.text,
                     'company': companyCtrl.text,
@@ -376,10 +379,11 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
                     'desc': descCtrl.text,
                   };
                   setState(() {
-                    if (index == null)
+                    if (index == null) {
                       _experiences.add(item);
-                    else
+                    } else {
                       _experiences[index] = item;
+                    }
                   });
                   Navigator.pop(ctx);
                 }),
@@ -446,10 +450,11 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
                     'level': level,
                   };
                   setState(() {
-                    if (index == null)
+                    if (index == null) {
                       _skills.add(item);
-                    else
+                    } else {
                       _skills[index] = item;
+                    }
                   });
                   Navigator.pop(ctx);
                 }),
@@ -506,10 +511,11 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
                     'link': linkCtrl.text,
                   };
                   setState(() {
-                    if (index == null)
+                    if (index == null) {
                       _projects.add(item);
-                    else
+                    } else {
                       _projects[index] = item;
+                    }
                   });
                   Navigator.pop(ctx);
                 }),
@@ -567,10 +573,11 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
                     'id': idCtrl.text,
                   };
                   setState(() {
-                    if (index == null)
+                    if (index == null) {
                       _certifications.add(item);
-                    else
+                    } else {
                       _certifications[index] = item;
+                    }
                   });
                   Navigator.pop(ctx);
                 }),
@@ -618,10 +625,11 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
                     'date': dateCtrl.text,
                   };
                   setState(() {
-                    if (index == null)
+                    if (index == null) {
                       _achievements.add(item);
-                    else
+                    } else {
                       _achievements[index] = item;
+                    }
                   });
                   Navigator.pop(ctx);
                 }),
