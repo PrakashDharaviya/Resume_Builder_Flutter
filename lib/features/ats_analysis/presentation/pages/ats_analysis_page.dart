@@ -111,10 +111,6 @@ class _ATSAnalysisPageState extends State<ATSAnalysisPage>
           _buildMissingKeywords(analysis.missingKeywords),
           const SizedBox(height: 24),
 
-          // Suggestions
-          _buildSuggestions(analysis.suggestions),
-          const SizedBox(height: 24),
-
           // Action Button
           ElevatedButton.icon(
             onPressed: () {
@@ -283,62 +279,6 @@ class _ATSAnalysisPageState extends State<ATSAnalysisPage>
                   backgroundColor: _getImportanceColor(
                     keyword.importance,
                   ).withOpacity(0.1),
-                ),
-              );
-            }),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSuggestions(List<Suggestion> suggestions) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              AppStrings.suggestions,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 16),
-            ...suggestions.map((suggestion) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(
-                        Icons.lightbulb_outline,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            suggestion.title,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            suggestion.description,
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
                 ),
               );
             }),

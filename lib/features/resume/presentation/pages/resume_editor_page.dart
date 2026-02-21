@@ -23,6 +23,7 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
   final List<Map<String, dynamic>> _educations = [];
   final List<Map<String, dynamic>> _experiences = [];
   final List<Map<String, dynamic>> _skills = [];
+  final List<Map<String, dynamic>> _languages = [];
   final List<Map<String, dynamic>> _projects = [];
   final List<Map<String, dynamic>> _certifications = [];
   final List<Map<String, dynamic>> _achievements = [];
@@ -467,6 +468,66 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
+  // LANGUAGES
+  // ═══════════════════════════════════════════════════════════════════════════
+  void _addOrEditLanguage({Map<String, dynamic>? existing, int? index}) {
+    final nameCtrl = TextEditingController(text: existing?['name'] ?? '');
+    String level = existing?['level'] ?? 'Fluent';
+
+    _showSheet(
+      StatefulBuilder(
+        builder: (ctx, setS) {
+          return SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _sheetHandle(index == null ? 'Add Language' : 'Edit Language'),
+                _field('Language', nameCtrl, hint: 'e.g. English'),
+                const SizedBox(height: 8),
+                const Text(
+                  'Proficiency Level',
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: ['Basic', 'Intermediate', 'Fluent', 'Native']
+                      .map(
+                        (l) => ChoiceChip(
+                          label: Text(l),
+                          selected: level == l,
+                          onSelected: (_) => setS(() => level = l),
+                          selectedColor: AppColors.primary.withValues(
+                            alpha: 0.2,
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+                const SizedBox(height: 24),
+                _saveBtn(() {
+                  if (nameCtrl.text.isEmpty) return;
+                  final item = {'name': nameCtrl.text, 'level': level};
+                  setState(() {
+                    if (index == null) {
+                      _languages.add(item);
+                    } else {
+                      _languages[index] = item;
+                    }
+                  });
+                  Navigator.pop(ctx);
+                }),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
   // PROJECTS
   // ═══════════════════════════════════════════════════════════════════════════
   void _addOrEditProject({Map<String, dynamic>? existing, int? index}) {
@@ -719,9 +780,18 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
                 ),
               );
             },
-            icon: const Icon(Icons.save_outlined, color: Colors.white),
-            label: const Text('Save', style: TextStyle(color: Colors.white)),
+            style: TextButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            icon: const Icon(Icons.save_outlined),
+            label: const Text('Save'),
           ),
+          const SizedBox(width: 12),
         ],
       ),
       body: SingleChildScrollView(
@@ -924,6 +994,26 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
                 onEdit: () =>
                     _addOrEditAchievement(existing: e.value, index: e.key),
                 onDelete: () => _confirmDelete(_achievements, e.key),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // ── Languages ───────────────────────────────────────────────
+            _sectionHeader(
+              icon: Icons.language_outlined,
+              title: 'Languages',
+              subtitle: _languages.isEmpty
+                  ? 'Add your languages'
+                  : '${_languages.length} language${_languages.length == 1 ? '' : 's'}',
+              onAdd: () => _addOrEditLanguage(),
+            ),
+            ..._languages.asMap().entries.map(
+              (e) => _itemCard(
+                title: e.value['name'],
+                subtitle: 'Proficiency: ${e.value['level']}',
+                onEdit: () =>
+                    _addOrEditLanguage(existing: e.value, index: e.key),
+                onDelete: () => _confirmDelete(_languages, e.key),
               ),
             ),
 
