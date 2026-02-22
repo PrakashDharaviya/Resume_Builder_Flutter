@@ -10,8 +10,39 @@ class FirebaseService {
     // Simulate network delay
     await Future.delayed(const Duration(seconds: 1));
 
-    // Mock successful login
-    return {'uid': 'mock_uid_123', 'email': email, 'displayName': 'John Doe'};
+    // Admin login
+    if (email == 'admin@resumeiq.com') {
+      return {
+        'uid': 'admin_001',
+        'email': email,
+        'displayName': 'Admin User',
+        'role': 'admin',
+        'isBlocked': false,
+        'isPremium': true,
+      };
+    }
+
+    // Blocked user demo
+    if (email == 'blocked@test.com') {
+      return {
+        'uid': 'blocked_001',
+        'email': email,
+        'displayName': 'Blocked User',
+        'role': 'user',
+        'isBlocked': true,
+        'isPremium': false,
+      };
+    }
+
+    // Regular user login
+    return {
+      'uid': 'mock_uid_123',
+      'email': email,
+      'displayName': 'John Doe',
+      'role': 'user',
+      'isBlocked': false,
+      'isPremium': false,
+    };
   }
 
   // Mock sign up with email
@@ -28,6 +59,9 @@ class FirebaseService {
       'uid': 'mock_uid_${DateTime.now().millisecondsSinceEpoch}',
       'email': email,
       'displayName': displayName,
+      'role': 'user',
+      'isBlocked': false,
+      'isPremium': false,
     };
   }
 
@@ -42,6 +76,9 @@ class FirebaseService {
       'email': 'user@gmail.com',
       'displayName': 'Google User',
       'photoURL': 'https://via.placeholder.com/150',
+      'role': 'user',
+      'isBlocked': false,
+      'isPremium': false,
     };
   }
 
@@ -57,6 +94,9 @@ class FirebaseService {
       'uid': 'mock_uid_123',
       'email': 'user@example.com',
       'displayName': 'John Doe',
+      'role': 'user',
+      'isBlocked': false,
+      'isPremium': false,
     };
   }
 

@@ -6,6 +6,9 @@ class UserModel extends User {
     required super.email,
     required super.displayName,
     super.photoURL,
+    super.role,
+    super.isBlocked,
+    super.isPremium,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -14,6 +17,9 @@ class UserModel extends User {
       email: json['email'] as String,
       displayName: json['displayName'] as String,
       photoURL: json['photoURL'] as String?,
+      role: (json['role'] as String?) ?? 'user',
+      isBlocked: (json['isBlocked'] as bool?) ?? false,
+      isPremium: (json['isPremium'] as bool?) ?? false,
     );
   }
 
@@ -23,6 +29,9 @@ class UserModel extends User {
       'email': email,
       'displayName': displayName,
       'photoURL': photoURL,
+      'role': role,
+      'isBlocked': isBlocked,
+      'isPremium': isPremium,
     };
   }
 
@@ -32,6 +41,9 @@ class UserModel extends User {
       email: email,
       displayName: displayName,
       photoURL: photoURL,
+      role: role,
+      isBlocked: isBlocked,
+      isPremium: isPremium,
     );
   }
 
@@ -41,6 +53,9 @@ class UserModel extends User {
       email: user.email,
       displayName: user.displayName,
       photoURL: user.photoURL,
+      role: user.role,
+      isBlocked: user.isBlocked,
+      isPremium: user.isPremium,
     );
   }
 }

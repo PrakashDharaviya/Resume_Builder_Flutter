@@ -32,6 +32,12 @@ import 'features/ats_analysis/domain/repositories/ats_repository.dart';
 import 'features/ats_analysis/domain/usecases/analyze_resume.dart';
 import 'features/ats_analysis/presentation/bloc/ats_bloc.dart';
 
+// Admin
+import 'features/admin/data/datasources/admin_mock_data_source.dart';
+import 'features/admin/data/repositories/admin_repository_impl.dart';
+import 'features/admin/domain/repositories/admin_repository.dart';
+import 'features/admin/presentation/bloc/admin_bloc.dart';
+
 final sl = GetIt.instance;
 
 Future<void> init() async {
@@ -116,4 +122,16 @@ Future<void> init() async {
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl());
   sl.registerLazySingleton(() => FirebaseService());
   sl.registerLazySingleton(() => AIService());
+
+  // ============ Admin ============
+  // Bloc
+  sl.registerFactory(() => AdminBloc(repository: sl()));
+
+  // Repository
+  sl.registerLazySingleton<AdminRepository>(
+    () => AdminRepositoryImpl(dataSource: sl()),
+  );
+
+  // Data sources
+  sl.registerLazySingleton(() => AdminMockDataSource());
 }

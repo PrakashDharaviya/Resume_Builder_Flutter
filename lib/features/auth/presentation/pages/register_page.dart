@@ -56,7 +56,9 @@ class _RegisterPageState extends State<RegisterPage> {
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthAuthenticated) {
-            Navigator.of(context).pushReplacementNamed(AppRoutes.dashboard);
+            Navigator.of(
+              context,
+            ).pushReplacementNamed(AppRoutes.authCheck, arguments: state.user);
           } else if (state is AuthError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
