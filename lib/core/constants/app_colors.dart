@@ -71,6 +71,6 @@ class AppColors {
   );
 
   // Shadow Colors
-  static Color shadowLight = Colors.black.withOpacity(0.08);
-  static Color shadowDark = Colors.black.withOpacity(0.3);
+  static Color shadowLight = Colors.black.withValues(alpha: 0.08);
+  static Color shadowDark = Colors.black.withValues(alpha: 0.3);
 }

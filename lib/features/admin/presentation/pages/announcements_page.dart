@@ -159,13 +159,15 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
                 final maxWidth = constraints.maxWidth >= 1024
                     ? 900.0
                     : (constraints.maxWidth >= 640 ? 680.0 : double.infinity);
+                final isNarrow = constraints.maxWidth < 400;
+                final hPad = isNarrow ? 12.0 : 20.0;
 
                 return Align(
                   alignment: Alignment.topCenter,
                   child: ConstrainedBox(
                     constraints: BoxConstraints(maxWidth: maxWidth),
                     child: ListView.builder(
-                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 80),
+                      padding: EdgeInsets.fromLTRB(hPad, 16, hPad, 80),
                       itemCount: state.announcements.length,
                       itemBuilder: (context, index) {
                         final item = state.announcements[index];
@@ -326,13 +328,13 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
                           Navigator.pop(ctx);
                           final newAnnouncement = Announcement(
                             id: isEdit
-                                ? announcement!.id
+                                ? announcement.id
                                 : DateTime.now().millisecondsSinceEpoch
                                       .toString(),
                             title: title,
                             message: message,
                             createdAt: isEdit
-                                ? announcement!.createdAt
+                                ? announcement.createdAt
                                 : DateTime.now(),
                             isActive: isActive,
                           );
@@ -425,132 +427,145 @@ class _AnnouncementCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final date = DateFormat('MMM dd, yyyy').format(announcement.createdAt);
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1F2937) : Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
-        ),
-        boxShadow: isDark
-            ? []
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    return LayoutBuilder(
+      builder: (context, cardConstraints) {
+        final isCompact = cardConstraints.maxWidth < 320;
+        final cardPad = isCompact ? 12.0 : 16.0;
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: EdgeInsets.all(cardPad),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF1F2937) : Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+            ),
+            boxShadow: isDark
+                ? []
+                : [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: announcement.isActive
-                      ? const Color(0xFF10B981).withValues(alpha: 0.12)
-                      : const Color(0xFFEF4444).withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  announcement.isActive ? 'Active' : 'Inactive',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: announcement.isActive
-                        ? const Color(0xFF10B981)
-                        : const Color(0xFFEF4444),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: announcement.isActive
+                          ? const Color(0xFF10B981).withValues(alpha: 0.12)
+                          : const Color(0xFFEF4444).withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      announcement.isActive ? 'Active' : 'Inactive',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: announcement.isActive
+                            ? const Color(0xFF10B981)
+                            : const Color(0xFFEF4444),
+                      ),
+                    ),
                   ),
+                  const Spacer(),
+                  Text(
+                    date,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: isDark
+                          ? const Color(0xFF9CA3AF)
+                          : const Color(0xFF6B7280),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Text(
+                announcement.title,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: isDark ? Colors.white : const Color(0xFF111827),
                 ),
               ),
-              const Spacer(),
+              const SizedBox(height: 6),
               Text(
-                date,
+                announcement.message,
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 13,
                   color: isDark
                       ? const Color(0xFF9CA3AF)
                       : const Color(0xFF6B7280),
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Text(
-            announcement.title,
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
-              color: isDark ? Colors.white : const Color(0xFF111827),
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            announcement.message,
-            style: TextStyle(
-              fontSize: 13,
-              color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              SizedBox(
-                height: 32,
-                child: OutlinedButton.icon(
-                  onPressed: onEdit,
-                  icon: const Icon(Icons.edit_outlined, size: 14),
-                  label: const Text('Edit', style: TextStyle(fontSize: 12)),
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 32,
+                    child: OutlinedButton.icon(
+                      onPressed: onEdit,
+                      icon: const Icon(Icons.edit_outlined, size: 14),
+                      label: const Text('Edit', style: TextStyle(fontSize: 12)),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              SizedBox(
-                height: 32,
-                child: OutlinedButton.icon(
-                  onPressed: onDelete,
-                  icon: const Icon(
-                    Icons.delete_outline_rounded,
-                    size: 14,
-                    color: Colors.red,
-                  ),
-                  label: const Text(
-                    'Delete',
-                    style: TextStyle(fontSize: 12, color: Colors.red),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                  SizedBox(
+                    height: 32,
+                    child: OutlinedButton.icon(
+                      onPressed: onDelete,
+                      icon: const Icon(
+                        Icons.delete_outline_rounded,
+                        size: 14,
+                        color: Colors.red,
+                      ),
+                      label: const Text(
+                        'Delete',
+                        style: TextStyle(fontSize: 12, color: Colors.red),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        side: const BorderSide(color: Colors.red),
+                      ),
                     ),
-                    side: const BorderSide(color: Colors.red),
                   ),
-                ),
-              ),
-              const Spacer(),
-              Transform.scale(
-                scale: 0.85,
-                child: Switch(
-                  value: announcement.isActive,
-                  onChanged: (_) => onToggle(),
-                  activeThumbColor: Colors.white,
-                  activeTrackColor: AppColors.primary,
-                ),
+                  Transform.scale(
+                    scale: 0.85,
+                    child: Switch(
+                      value: announcement.isActive,
+                      onChanged: (_) => onToggle(),
+                      activeThumbColor: Colors.white,
+                      activeTrackColor: AppColors.primary,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

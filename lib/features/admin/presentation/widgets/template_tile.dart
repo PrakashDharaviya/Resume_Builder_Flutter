@@ -95,7 +95,13 @@ class TemplateTile extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      const SizedBox(width: 8),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Wrap(
+                    spacing: 4,
+                    runSpacing: 4,
+                    children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 7,
@@ -118,8 +124,7 @@ class TemplateTile extends StatelessWidget {
                           ),
                         ),
                       ),
-                      if (template.isPremium) ...[
-                        const SizedBox(width: 4),
+                      if (template.isPremium)
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 7,
@@ -140,7 +145,6 @@ class TemplateTile extends StatelessWidget {
                             ),
                           ),
                         ),
-                      ],
                     ],
                   ),
                   const SizedBox(height: 4),
@@ -158,10 +162,13 @@ class TemplateTile extends StatelessWidget {
             ),
 
             // Toggle + Actions
-            Switch.adaptive(
-              value: template.isActive,
-              onChanged: onToggleActive,
-              activeColor: const Color(0xFF10B981),
+            Transform.scale(
+              scale: 0.8,
+              child: Switch.adaptive(
+                value: template.isActive,
+                onChanged: onToggleActive,
+                activeTrackColor: const Color(0xFF10B981),
+              ),
             ),
             PopupMenuButton<String>(
               icon: Icon(

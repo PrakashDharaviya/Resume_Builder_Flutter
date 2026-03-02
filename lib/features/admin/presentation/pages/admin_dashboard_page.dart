@@ -132,212 +132,229 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                     alignment: Alignment.topCenter,
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 1100),
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Welcome section
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    Color(0xFF1E3A8A),
-                                    Color(0xFF3B82F6),
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                borderRadius: BorderRadius.circular(18),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color(
-                                      0xFF1E3A8A,
-                                    ).withValues(alpha: 0.3),
-                                    blurRadius: 16,
-                                    offset: const Offset(0, 6),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Row(
-                                    children: [
-                                      Icon(
-                                        Icons.admin_panel_settings_rounded,
-                                        color: Colors.white,
-                                        size: 28,
+                      child: LayoutBuilder(
+                        builder: (context, outerConstraints) {
+                          final isNarrow = outerConstraints.maxWidth < 400;
+                          final hPad = isNarrow ? 14.0 : 20.0;
+                          return Padding(
+                            padding: EdgeInsets.all(hPad),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Welcome section
+                                Container(
+                                  width: double.infinity,
+                                  padding: EdgeInsets.all(isNarrow ? 16 : 20),
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      colors: [
+                                        Color(0xFF1E3A8A),
+                                        Color(0xFF3B82F6),
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                    borderRadius: BorderRadius.circular(18),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color(
+                                          0xFF1E3A8A,
+                                        ).withValues(alpha: 0.3),
+                                        blurRadius: 16,
+                                        offset: const Offset(0, 6),
                                       ),
-                                      SizedBox(width: 10),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Row(
+                                        children: [
+                                          Icon(
+                                            Icons.admin_panel_settings_rounded,
+                                            color: Colors.white,
+                                            size: 28,
+                                          ),
+                                          SizedBox(width: 10),
+                                          Text(
+                                            'Admin Panel',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 8),
                                       Text(
-                                        'Admin Panel',
+                                        'Manage your ResumeIQ platform',
                                         style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.w800,
+                                          color: Colors.white.withValues(
+                                            alpha: 0.8,
+                                          ),
+                                          fontSize: 14,
                                         ),
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'Manage your ResumeIQ platform',
-                                    style: TextStyle(
-                                      color: Colors.white.withValues(
-                                        alpha: 0.8,
-                                      ),
-                                      fontSize: 14,
-                                    ),
+                                ),
+                                const SizedBox(height: 24),
+
+                                // Stats Grid
+                                Text(
+                                  'Overview',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    color: isDark
+                                        ? Colors.white
+                                        : const Color(0xFF111827),
                                   ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 24),
+                                ),
+                                const SizedBox(height: 14),
+                                LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    final w = constraints.maxWidth;
+                                    final crossAxisCount = w >= 980
+                                        ? 3
+                                        : (w >= 620 ? 2 : 1);
+                                    const spacing = 12.0;
+                                    final cardWidth = crossAxisCount == 1
+                                        ? w
+                                        : (w - spacing * (crossAxisCount - 1)) /
+                                              crossAxisCount;
 
-                            // Stats Grid
-                            Text(
-                              'Overview',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                                color: isDark
-                                    ? Colors.white
-                                    : const Color(0xFF111827),
-                              ),
-                            ),
-                            const SizedBox(height: 14),
-                            LayoutBuilder(
-                              builder: (context, constraints) {
-                                final crossAxisCount =
-                                    constraints.maxWidth >= 980
-                                    ? 3
-                                    : (constraints.maxWidth >= 620 ? 2 : 1);
+                                    final cards = <Widget>[
+                                      StatCard(
+                                        title: 'Total Users',
+                                        value: '${state.stats.totalUsers}',
+                                        icon: Icons.people_rounded,
+                                        color: const Color(0xFF3B82F6),
+                                        subtitle:
+                                            '+${state.stats.todaySignups} today',
+                                      ),
+                                      StatCard(
+                                        title: 'Total Resumes',
+                                        value: '${state.stats.totalResumes}',
+                                        icon: Icons.description_rounded,
+                                        color: const Color(0xFF10B981),
+                                      ),
+                                      StatCard(
+                                        title: 'Premium Users',
+                                        value: '${state.stats.premiumUsers}',
+                                        icon: Icons.star_rounded,
+                                        color: const Color(0xFFF59E0B),
+                                      ),
+                                      StatCard(
+                                        title: 'Avg. ATS Score',
+                                        value:
+                                            '${state.stats.avgAtsScore.toStringAsFixed(1)}%',
+                                        icon: Icons.analytics_rounded,
+                                        color: const Color(0xFF8B5CF6),
+                                      ),
+                                      StatCard(
+                                        title: 'Active Templates',
+                                        value: '${state.stats.activeTemplates}',
+                                        icon: Icons.style_rounded,
+                                        color: const Color(0xFFEC4899),
+                                      ),
+                                      StatCard(
+                                        title: 'Blocked Users',
+                                        value: '${state.stats.blockedUsers}',
+                                        icon: Icons.block_rounded,
+                                        color: const Color(0xFFEF4444),
+                                      ),
+                                    ];
 
-                                return GridView.count(
-                                  crossAxisCount: crossAxisCount,
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  crossAxisSpacing: 12,
-                                  mainAxisSpacing: 12,
-                                  childAspectRatio: crossAxisCount == 1
-                                      ? 2.9
-                                      : 1.35,
-                                  children: [
-                                    StatCard(
-                                      title: 'Total Users',
-                                      value: '${state.stats.totalUsers}',
-                                      icon: Icons.people_rounded,
-                                      color: const Color(0xFF3B82F6),
-                                      subtitle:
-                                          '+${state.stats.todaySignups} today',
-                                    ),
-                                    StatCard(
-                                      title: 'Total Resumes',
-                                      value: '${state.stats.totalResumes}',
-                                      icon: Icons.description_rounded,
-                                      color: const Color(0xFF10B981),
-                                    ),
-                                    StatCard(
-                                      title: 'Premium Users',
-                                      value: '${state.stats.premiumUsers}',
-                                      icon: Icons.star_rounded,
-                                      color: const Color(0xFFF59E0B),
-                                    ),
-                                    StatCard(
-                                      title: 'Avg. ATS Score',
-                                      value:
-                                          '${state.stats.avgAtsScore.toStringAsFixed(1)}%',
-                                      icon: Icons.analytics_rounded,
-                                      color: const Color(0xFF8B5CF6),
-                                    ),
-                                    StatCard(
-                                      title: 'Active Templates',
-                                      value: '${state.stats.activeTemplates}',
-                                      icon: Icons.style_rounded,
-                                      color: const Color(0xFFEC4899),
-                                    ),
-                                    StatCard(
-                                      title: 'Blocked Users',
-                                      value: '${state.stats.blockedUsers}',
-                                      icon: Icons.block_rounded,
-                                      color: const Color(0xFFEF4444),
-                                    ),
-                                  ],
-                                );
-                              },
-                            ),
-                            const SizedBox(height: 28),
+                                    return Wrap(
+                                      spacing: spacing,
+                                      runSpacing: spacing,
+                                      children: cards
+                                          .map(
+                                            (card) => SizedBox(
+                                              width: cardWidth,
+                                              child: card,
+                                            ),
+                                          )
+                                          .toList(),
+                                    );
+                                  },
+                                ),
+                                const SizedBox(height: 28),
 
-                            // Quick Actions
-                            Text(
-                              'Quick Actions',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                                color: isDark
-                                    ? Colors.white
-                                    : const Color(0xFF111827),
-                              ),
+                                // Quick Actions
+                                Text(
+                                  'Quick Actions',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    color: isDark
+                                        ? Colors.white
+                                        : const Color(0xFF111827),
+                                  ),
+                                ),
+                                const SizedBox(height: 14),
+                                _quickActionTile(
+                                  context,
+                                  icon: Icons.people_outlined,
+                                  title: 'Manage Users',
+                                  subtitle:
+                                      '${state.stats.totalUsers} registered users',
+                                  color: const Color(0xFF3B82F6),
+                                  onTap: () =>
+                                      _navigateAndReload(AppRoutes.manageUsers),
+                                  isDark: isDark,
+                                ),
+                                _quickActionTile(
+                                  context,
+                                  icon: Icons.style_outlined,
+                                  title: 'Manage Templates',
+                                  subtitle:
+                                      '${state.stats.activeTemplates} active templates',
+                                  color: const Color(0xFF10B981),
+                                  onTap: () => _navigateAndReload(
+                                    AppRoutes.manageTemplates,
+                                  ),
+                                  isDark: isDark,
+                                ),
+                                _quickActionTile(
+                                  context,
+                                  icon: Icons.tune_rounded,
+                                  title: 'ATS Settings',
+                                  subtitle: 'Configure scoring weights',
+                                  color: const Color(0xFF8B5CF6),
+                                  onTap: () =>
+                                      _navigateAndReload(AppRoutes.atsSettings),
+                                  isDark: isDark,
+                                ),
+                                _quickActionTile(
+                                  context,
+                                  icon: Icons.bar_chart_rounded,
+                                  title: 'Analytics',
+                                  subtitle: 'Template usage and growth trends',
+                                  color: const Color(0xFF06B6D4),
+                                  onTap: () =>
+                                      _navigateAndReload(AppRoutes.analytics),
+                                  isDark: isDark,
+                                ),
+                                _quickActionTile(
+                                  context,
+                                  icon: Icons.campaign_outlined,
+                                  title: 'Announcements',
+                                  subtitle: 'Manage platform announcements',
+                                  color: const Color(0xFFF59E0B),
+                                  onTap: () => _navigateAndReload(
+                                    AppRoutes.announcements,
+                                  ),
+                                  isDark: isDark,
+                                ),
+                                const SizedBox(height: 20),
+                              ],
                             ),
-                            const SizedBox(height: 14),
-                            _quickActionTile(
-                              context,
-                              icon: Icons.people_outlined,
-                              title: 'Manage Users',
-                              subtitle:
-                                  '${state.stats.totalUsers} registered users',
-                              color: const Color(0xFF3B82F6),
-                              onTap: () =>
-                                  _navigateAndReload(AppRoutes.manageUsers),
-                              isDark: isDark,
-                            ),
-                            _quickActionTile(
-                              context,
-                              icon: Icons.style_outlined,
-                              title: 'Manage Templates',
-                              subtitle:
-                                  '${state.stats.activeTemplates} active templates',
-                              color: const Color(0xFF10B981),
-                              onTap: () =>
-                                  _navigateAndReload(AppRoutes.manageTemplates),
-                              isDark: isDark,
-                            ),
-                            _quickActionTile(
-                              context,
-                              icon: Icons.tune_rounded,
-                              title: 'ATS Settings',
-                              subtitle: 'Configure scoring weights',
-                              color: const Color(0xFF8B5CF6),
-                              onTap: () =>
-                                  _navigateAndReload(AppRoutes.atsSettings),
-                              isDark: isDark,
-                            ),
-                            _quickActionTile(
-                              context,
-                              icon: Icons.bar_chart_rounded,
-                              title: 'Analytics',
-                              subtitle: 'Template usage and growth trends',
-                              color: const Color(0xFF06B6D4),
-                              onTap: () =>
-                                  _navigateAndReload(AppRoutes.analytics),
-                              isDark: isDark,
-                            ),
-                            _quickActionTile(
-                              context,
-                              icon: Icons.campaign_outlined,
-                              title: 'Announcements',
-                              subtitle: 'Manage platform announcements',
-                              color: const Color(0xFFF59E0B),
-                              onTap: () =>
-                                  _navigateAndReload(AppRoutes.announcements),
-                              isDark: isDark,
-                            ),
-                            const SizedBox(height: 20),
-                          ],
-                        ),
+                          );
+                        },
                       ),
                     ),
                   ),

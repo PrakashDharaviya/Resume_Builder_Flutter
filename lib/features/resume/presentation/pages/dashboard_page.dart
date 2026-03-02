@@ -313,9 +313,10 @@ class _DashboardPageState extends State<DashboardPage> {
                           icon: Icons.analytics_outlined,
                           label: 'Analyze',
                           filled: true,
-                          onTap: () => Navigator.of(
-                            context,
-                          ).pushNamed(AppRoutes.atsAnalysis, arguments: resume),
+                          onTap: () => Navigator.of(context).pushNamed(
+                            AppRoutes.atsAnalysis,
+                            arguments: _resumeToMap(resume),
+                          ),
                         ),
                       ],
                     );
@@ -366,9 +367,10 @@ class _DashboardPageState extends State<DashboardPage> {
                       const SizedBox(width: 6),
                       Expanded(
                         child: ElevatedButton.icon(
-                          onPressed: () => Navigator.of(
-                            context,
-                          ).pushNamed(AppRoutes.atsAnalysis, arguments: resume),
+                          onPressed: () => Navigator.of(context).pushNamed(
+                            AppRoutes.atsAnalysis,
+                            arguments: _resumeToMap(resume),
+                          ),
                           icon: Icon(Icons.analytics_outlined, size: iconSize),
                           label: Text(
                             'Analyze',
@@ -427,6 +429,19 @@ class _DashboardPageState extends State<DashboardPage> {
     if (score >= 60) return AppColors.scoreGood;
     if (score >= 40) return AppColors.scoreAverage;
     return AppColors.scorePoor;
+  }
+
+  /// Convert a [Resume] entity into the `Map<String,dynamic>` expected by [ATSAnalysisPage].
+  Map<String, dynamic> _resumeToMap(Resume resume) {
+    return {
+      'firstName': resume.personalInfo?.firstName ?? '',
+      'lastName': resume.personalInfo?.lastName ?? '',
+      'email': resume.personalInfo?.email ?? '',
+      'skills': resume.skills.map((s) => s.name).toList(),
+      'experience': resume.experience.length,
+      'education': resume.education.length,
+      'title': resume.title,
+    };
   }
 
   // Compact icon+label button for very small screens

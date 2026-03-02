@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_routes.dart';
+import '../../domain/entities/resume.dart';
 
 class ResumeEditorPage extends StatefulWidget {
-  const ResumeEditorPage({super.key});
+  final Resume? resume;
+
+  const ResumeEditorPage({super.key, this.resume});
 
   @override
   State<ResumeEditorPage> createState() => _ResumeEditorPageState();
@@ -27,6 +31,104 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
   final List<Map<String, dynamic>> _projects = [];
   final List<Map<String, dynamic>> _certifications = [];
   final List<Map<String, dynamic>> _achievements = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _populateFromResume(widget.resume);
+  }
+
+  void _populateFromResume(Resume? resume) {
+    if (resume == null) return;
+
+    // Personal info
+    final pi = resume.personalInfo;
+    if (pi != null) {
+      _firstNameCtrl.text = pi.firstName;
+      _lastNameCtrl.text = pi.lastName;
+      _emailCtrl.text = pi.email;
+      _phoneCtrl.text = pi.phone ?? '';
+      _locationCtrl.text = pi.location ?? '';
+      _websiteCtrl.text = pi.website ?? '';
+      _summaryCtrl.text = pi.summary ?? '';
+    }
+
+    final dateFmt = DateFormat('MMM yyyy');
+
+    // Education
+    for (final edu in resume.education) {
+      _educations.add({
+        'degree': edu.degree,
+        'institution': edu.institution,
+        'field': edu.fieldOfStudy ?? '',
+        'start': dateFmt.format(edu.startDate),
+        'end': edu.currentlyStudying
+            ? 'Present'
+            : (edu.endDate != null ? dateFmt.format(edu.endDate!) : ''),
+        'grade': edu.grade ?? '',
+        'desc': edu.description ?? '',
+      });
+    }
+
+    // Experience
+    for (final exp in resume.experience) {
+      _experiences.add({
+        'title': exp.jobTitle,
+        'company': exp.company,
+        'type': exp.employmentType ?? '',
+        'start': dateFmt.format(exp.startDate),
+        'end': exp.currentlyWorking
+            ? 'Present'
+            : (exp.endDate != null ? dateFmt.format(exp.endDate!) : ''),
+        'location': exp.location ?? '',
+        'desc': exp.description ?? '',
+      });
+    }
+
+    // Skills
+    for (final skill in resume.skills) {
+      _skills.add({
+        'name': skill.name,
+        'category': skill.category ?? '',
+        'level': skill.proficiency ?? 'Intermediate',
+      });
+    }
+
+    // Languages
+    for (final lang in resume.languages) {
+      _languages.add({'name': lang.name, 'level': lang.proficiency});
+    }
+
+    // Projects
+    for (final proj in resume.projects) {
+      _projects.add({
+        'name': proj.name,
+        'desc': proj.description,
+        'tech': proj.technologies.join(', '),
+        'link': proj.projectLink ?? '',
+      });
+    }
+
+    // Certifications
+    for (final cert in resume.certifications) {
+      _certifications.add({
+        'name': cert.name,
+        'org': cert.issuingOrganization,
+        'date': dateFmt.format(cert.issueDate),
+        'id': cert.credentialId ?? '',
+        'url': cert.credentialUrl ?? '',
+      });
+    }
+
+    // Achievements
+    for (final ach in resume.achievements) {
+      _achievements.add({
+        'title': ach.title,
+        'desc': ach.description,
+        'date': ach.date != null ? dateFmt.format(ach.date!) : '',
+      });
+    }
+  }
 
   @override
   void dispose() {

@@ -147,26 +147,32 @@ class _ManageTemplatesPageState extends State<ManageTemplatesPage> {
               alignment: Alignment.topCenter,
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 900),
-                child: ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 80),
-                  itemCount: state.templates.length,
-                  itemBuilder: (context, index) {
-                    final template = state.templates[index];
-                    return TemplateTile(
-                      template: template,
-                      onEdit: () =>
-                          _showTemplateForm(context, template: template),
-                      onDelete: () {
-                        _showDeleteConfirm(context, template);
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isNarrow = constraints.maxWidth < 400;
+                    final hPad = isNarrow ? 12.0 : 20.0;
+                    return ListView.builder(
+                      padding: EdgeInsets.fromLTRB(hPad, 16, hPad, 80),
+                      itemCount: state.templates.length,
+                      itemBuilder: (context, index) {
+                        final template = state.templates[index];
+                        return TemplateTile(
+                          template: template,
+                          onEdit: () =>
+                              _showTemplateForm(context, template: template),
+                          onDelete: () {
+                            _showDeleteConfirm(context, template);
+                          },
+                          onToggleActive: (active) {
+                            context.read<AdminBloc>().add(
+                              UpdateTemplate(
+                                template: template.copyWith(isActive: active),
+                              ),
+                            );
+                          },
+                        ); // closes TemplateTile
                       },
-                      onToggleActive: (active) {
-                        context.read<AdminBloc>().add(
-                          UpdateTemplate(
-                            template: template.copyWith(isActive: active),
-                          ),
-                        );
-                      },
-                    ); // closes TemplateTile
+                    );
                   },
                 ),
               ),
@@ -251,7 +257,7 @@ class _ManageTemplatesPageState extends State<ManageTemplatesPage> {
                       subtitle: const Text('Only available to premium users'),
                       value: isPremium,
                       onChanged: (v) => setModalState(() => isPremium = v),
-                      activeColor: const Color(0xFFF59E0B),
+                      activeTrackColor: const Color(0xFFF59E0B),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -261,7 +267,7 @@ class _ManageTemplatesPageState extends State<ManageTemplatesPage> {
                       subtitle: const Text('Visible to users'),
                       value: isActive,
                       onChanged: (v) => setModalState(() => isActive = v),
-                      activeColor: AppColors.accent,
+                      activeTrackColor: AppColors.accent,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

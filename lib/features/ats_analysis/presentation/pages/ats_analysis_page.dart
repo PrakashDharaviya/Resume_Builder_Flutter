@@ -243,7 +243,7 @@ class _ATSAnalysisPageState extends State<ATSAnalysisPage>
               children: keywords.map((keyword) {
                 return Chip(
                   label: Text('${keyword.keyword} (${keyword.count})'),
-                  backgroundColor: AppColors.success.withOpacity(0.1),
+                  backgroundColor: AppColors.success.withValues(alpha: 0.1),
                   side: const BorderSide(color: AppColors.success),
                 );
               }).toList(),
@@ -278,7 +278,7 @@ class _ATSAnalysisPageState extends State<ATSAnalysisPage>
                   label: Text(keyword.importance),
                   backgroundColor: _getImportanceColor(
                     keyword.importance,
-                  ).withOpacity(0.1),
+                  ).withValues(alpha: 0.1),
                 ),
               );
             }),

@@ -71,191 +71,199 @@ class _ManageUsersPageState extends State<ManageUsersPage> {
         ],
       ),
       body: LayoutBuilder(
-        builder: (ctx, lc) => Align(
-          alignment: Alignment.topCenter,
-          child: SizedBox(
-            width: lc.maxWidth >= 1024
-                ? 1000
-                : (lc.maxWidth >= 640 ? 780 : double.infinity),
-            height: lc.maxHeight,
-            child: Column(
-              children: [
-                // Search Bar
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
-                  child: TextField(
-                    controller: _searchController,
-                    onChanged: (query) {
-                      context.read<AdminBloc>().add(SearchUsers(query: query));
-                    },
-                    decoration: InputDecoration(
-                      hintText: 'Search users by name or email...',
-                      hintStyle: TextStyle(
-                        color: isDark
-                            ? const Color(0xFF6B7280)
-                            : const Color(0xFF9CA3AF),
-                        fontSize: 14,
-                      ),
-                      prefixIcon: Icon(
-                        Icons.search_rounded,
-                        color: isDark
-                            ? const Color(0xFF6B7280)
-                            : const Color(0xFF9CA3AF),
-                      ),
-                      suffixIcon: _searchController.text.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(Icons.clear_rounded, size: 20),
-                              onPressed: () {
-                                _searchController.clear();
-                                context.read<AdminBloc>().add(
-                                  const SearchUsers(query: ''),
-                                );
-                              },
-                            )
-                          : null,
-                      filled: true,
-                      fillColor: isDark
-                          ? const Color(0xFF1F2937)
-                          : const Color(0xFFF3F4F6),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
+        builder: (ctx, lc) {
+          final isNarrow = lc.maxWidth < 400;
+          final hPad = isNarrow ? 12.0 : 20.0;
+          return Align(
+            alignment: Alignment.topCenter,
+            child: SizedBox(
+              width: lc.maxWidth >= 1024
+                  ? 1000
+                  : (lc.maxWidth >= 640 ? 780 : double.infinity),
+              height: lc.maxHeight,
+              child: Column(
+                children: [
+                  // Search Bar
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(hPad, 16, hPad, 10),
+                    child: TextField(
+                      controller: _searchController,
+                      onChanged: (query) {
+                        context.read<AdminBloc>().add(
+                          SearchUsers(query: query),
+                        );
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Search users by name or email...',
+                        hintStyle: TextStyle(
+                          color: isDark
+                              ? const Color(0xFF6B7280)
+                              : const Color(0xFF9CA3AF),
+                          fontSize: 14,
+                        ),
+                        prefixIcon: Icon(
+                          Icons.search_rounded,
+                          color: isDark
+                              ? const Color(0xFF6B7280)
+                              : const Color(0xFF9CA3AF),
+                        ),
+                        suffixIcon: _searchController.text.isNotEmpty
+                            ? IconButton(
+                                icon: const Icon(Icons.clear_rounded, size: 20),
+                                onPressed: () {
+                                  _searchController.clear();
+                                  context.read<AdminBloc>().add(
+                                    const SearchUsers(query: ''),
+                                  );
+                                },
+                              )
+                            : null,
+                        filled: true,
+                        fillColor: isDark
+                            ? const Color(0xFF1F2937)
+                            : const Color(0xFFF3F4F6),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                       ),
                     ),
                   ),
-                ),
 
-                // User List
-                Expanded(
-                  child: BlocConsumer<AdminBloc, AdminState>(
-                    listener: (context, state) {
-                      if (state is AdminActionSuccess) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(state.message),
-                            backgroundColor: AppColors.accent,
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                  // User List
+                  Expanded(
+                    child: BlocConsumer<AdminBloc, AdminState>(
+                      listener: (context, state) {
+                        if (state is AdminActionSuccess) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.message),
+                              backgroundColor: AppColors.accent,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
-                          ),
-                        );
-                      }
-                    },
-                    buildWhen: (_, current) =>
-                        current is UsersLoaded ||
-                        current is AdminLoading ||
-                        current is AdminError,
-                    builder: (context, state) {
-                      if (state is AdminLoading) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
+                          );
+                        }
+                      },
+                      buildWhen: (_, current) =>
+                          current is UsersLoaded ||
+                          current is AdminLoading ||
+                          current is AdminError,
+                      builder: (context, state) {
+                        if (state is AdminLoading) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
 
-                      if (state is AdminError) {
-                        return Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.error_outline,
-                                size: 48,
-                                color: AppColors.error,
-                              ),
-                              const SizedBox(height: 16),
-                              Text(state.message),
-                              const SizedBox(height: 16),
-                              ElevatedButton(
-                                onPressed: () => context.read<AdminBloc>().add(
-                                  const LoadUsers(),
-                                ),
-                                child: const Text('Retry'),
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-
-                      if (state is UsersLoaded) {
-                        final users = state.displayUsers;
-
-                        if (users.isEmpty) {
+                        if (state is AdminError) {
                           return Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(
-                                  Icons.person_off_rounded,
-                                  size: 56,
-                                  color: isDark
-                                      ? const Color(0xFF4B5563)
-                                      : const Color(0xFFD1D5DB),
+                                  Icons.error_outline,
+                                  size: 48,
+                                  color: AppColors.error,
                                 ),
                                 const SizedBox(height: 16),
-                                Text(
-                                  'No users found',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: isDark
-                                        ? const Color(0xFF9CA3AF)
-                                        : const Color(0xFF6B7280),
-                                  ),
+                                Text(state.message),
+                                const SizedBox(height: 16),
+                                ElevatedButton(
+                                  onPressed: () => context
+                                      .read<AdminBloc>()
+                                      .add(const LoadUsers()),
+                                  child: const Text('Retry'),
                                 ),
                               ],
                             ),
                           );
                         }
 
-                        return ListView.builder(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          itemCount: users.length,
-                          itemBuilder: (context, index) {
-                            final user = users[index];
-                            return UserTile(
-                              user: user,
-                              onToggleBlock: () {
-                                _showConfirmDialog(
-                                  context,
-                                  title: user.isBlocked
-                                      ? 'Unblock User'
-                                      : 'Block User',
-                                  message: user.isBlocked
-                                      ? 'Are you sure you want to unblock ${user.displayName}?'
-                                      : 'Are you sure you want to block ${user.displayName}? They will not be able to access the app.',
-                                  confirmLabel: user.isBlocked
-                                      ? 'Unblock'
-                                      : 'Block',
-                                  confirmColor: user.isBlocked
-                                      ? AppColors.accent
-                                      : Colors.red,
-                                  onConfirm: () {
-                                    context.read<AdminBloc>().add(
-                                      ToggleBlockUser(uid: user.uid),
-                                    );
-                                  },
-                                );
-                              },
-                              onTogglePremium: () {
-                                context.read<AdminBloc>().add(
-                                  TogglePremiumUser(uid: user.uid),
-                                );
-                              },
-                            );
-                          },
-                        );
-                      }
+                        if (state is UsersLoaded) {
+                          final users = state.displayUsers;
 
-                      return const SizedBox.shrink();
-                    },
+                          if (users.isEmpty) {
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.person_off_rounded,
+                                    size: 56,
+                                    color: isDark
+                                        ? const Color(0xFF4B5563)
+                                        : const Color(0xFFD1D5DB),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'No users found',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: isDark
+                                          ? const Color(0xFF9CA3AF)
+                                          : const Color(0xFF6B7280),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+
+                          return ListView.builder(
+                            padding: EdgeInsets.symmetric(horizontal: hPad),
+                            itemCount: users.length,
+                            itemBuilder: (context, index) {
+                              final user = users[index];
+                              return UserTile(
+                                user: user,
+                                onToggleBlock: () {
+                                  _showConfirmDialog(
+                                    context,
+                                    title: user.isBlocked
+                                        ? 'Unblock User'
+                                        : 'Block User',
+                                    message: user.isBlocked
+                                        ? 'Are you sure you want to unblock ${user.displayName}?'
+                                        : 'Are you sure you want to block ${user.displayName}? They will not be able to access the app.',
+                                    confirmLabel: user.isBlocked
+                                        ? 'Unblock'
+                                        : 'Block',
+                                    confirmColor: user.isBlocked
+                                        ? AppColors.accent
+                                        : Colors.red,
+                                    onConfirm: () {
+                                      context.read<AdminBloc>().add(
+                                        ToggleBlockUser(uid: user.uid),
+                                      );
+                                    },
+                                  );
+                                },
+                                onTogglePremium: () {
+                                  context.read<AdminBloc>().add(
+                                    TogglePremiumUser(uid: user.uid),
+                                  );
+                                },
+                              );
+                            },
+                          );
+                        }
+
+                        return const SizedBox.shrink();
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

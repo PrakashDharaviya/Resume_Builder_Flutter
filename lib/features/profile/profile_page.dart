@@ -281,7 +281,7 @@ class _ProfilePageState extends State<ProfilePage> {
       trailing: Switch.adaptive(
         value: value,
         onChanged: onChanged,
-        activeColor: AppColors.primary,
+        activeTrackColor: AppColors.primary,
       ),
     );
   }
@@ -673,14 +673,14 @@ class _ProfilePageState extends State<ProfilePage> {
                         title: const Text(AppStrings.darkMode),
                         trailing: ValueListenableBuilder<ThemeMode>(
                           valueListenable: themeNotifier,
-                          builder: (_, mode, __) => Switch.adaptive(
+                          builder: (_, mode, _) => Switch.adaptive(
                             value: mode == ThemeMode.dark,
                             onChanged: (value) {
                               themeNotifier.value = value
                                   ? ThemeMode.dark
                                   : ThemeMode.light;
                             },
-                            activeColor: AppColors.primary,
+                            activeTrackColor: AppColors.primary,
                           ),
                         ),
                       ),
@@ -706,7 +706,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         title: const Text(AppStrings.language),
                         subtitle: ValueListenableBuilder<String>(
                           valueListenable: languageNotifier,
-                          builder: (_, lang, __) => Text(
+                          builder: (_, lang, _) => Text(
                             lang,
                             style: const TextStyle(
                               fontSize: 12,
