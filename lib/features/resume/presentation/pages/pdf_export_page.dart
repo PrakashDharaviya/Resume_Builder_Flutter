@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/utils/pdf_helper.dart';
@@ -16,6 +18,7 @@ class _PDFExportPageState extends State<PDFExportPage> {
   bool _isGenerating = false;
   double _progress = 0.0;
   String _selectedTemplate = 'professional';
+  Uint8List? _pdfBytes;
 
   final List<Map<String, dynamic>> _templates = [
     {
@@ -60,7 +63,6 @@ class _PDFExportPageState extends State<PDFExportPage> {
       }
     }
 
-    // Mock PDF generation
     final pdfBytes = await PDFHelper.generateResumePDF(
       widget.resume,
       template: _selectedTemplate,
@@ -70,46 +72,49 @@ class _PDFExportPageState extends State<PDFExportPage> {
       setState(() {
         _isGenerating = false;
         _progress = 1.0;
+        _pdfBytes = pdfBytes;
       });
 
-      // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
             children: [
               const Icon(Icons.check_circle, color: Colors.white),
               const SizedBox(width: 12),
-              Text('PDF generated successfully (${pdfBytes.length} bytes)'),
+              Text(
+                'PDF generated (${(pdfBytes.length / 1024).toStringAsFixed(1)} KB)',
+              ),
             ],
           ),
           backgroundColor: AppColors.accent,
-          duration: const Duration(seconds: 3),
-          action: SnackBarAction(
-            label: 'Share',
-            textColor: Colors.white,
-            onPressed: _sharePDF,
-          ),
+          duration: const Duration(seconds: 2),
         ),
       );
     }
   }
 
-  void _sharePDF() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('PDF sharing - UI only (no actual file sharing)'),
-        duration: Duration(seconds: 2),
-      ),
-    );
+  Future<void> _downloadPDF() async {
+    final bytes = _pdfBytes;
+    if (bytes == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Generate the PDF first')));
+      return;
+    }
+    final fileName =
+        '${widget.resume.title.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_')}.pdf';
+    await PDFHelper.sharePDF(bytes, fileName);
   }
 
-  void _downloadPDF() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('PDF download - UI only (no actual file download)'),
-        duration: Duration(seconds: 2),
-      ),
-    );
+  Future<void> _printPDF() async {
+    final bytes = _pdfBytes;
+    if (bytes == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Generate the PDF first')));
+      return;
+    }
+    await PDFHelper.printPDF(bytes);
   }
 
   @override
@@ -395,43 +400,15 @@ class _PDFExportPageState extends State<PDFExportPage> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: _isGenerating ? null : _sharePDF,
-                    icon: const Icon(Icons.share),
-                    label: const Text('Share'),
+                    onPressed: _isGenerating ? null : _printPDF,
+                    icon: const Icon(Icons.print),
+                    label: const Text('Print'),
                   ),
                 ),
               ],
             ),
 
             const SizedBox(height: 24),
-
-            // Info Card
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.05),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: AppColors.primary.withValues(alpha: 0.2),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.info_outline, color: AppColors.primary, size: 24),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      'This is a UI demo. In production, actual PDF generation and file operations would be implemented.',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: AppColors.primary,
-                        height: 1.4,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
       ),

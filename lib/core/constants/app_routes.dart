@@ -25,6 +25,7 @@ class AppRoutes {
 
   // Settings Routes
   static const String settings = '/settings';
+  static const String privacy = '/privacy';
 
   // Admin Routes
   static const String authCheck = '/auth-check';

@@ -121,6 +121,9 @@ class AppRouter {
       case AppRoutes.settings:
         return MaterialPageRoute(builder: (_) => const _SettingsPage());
 
+      case AppRoutes.privacy:
+        return MaterialPageRoute(builder: (_) => const _PrivacyPage());
+
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
@@ -216,7 +219,7 @@ class _SettingsPage extends StatelessWidget {
             title: const Text('Privacy'),
             subtitle: const Text('Privacy and security settings'),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () {},
+            onTap: () => Navigator.pushNamed(context, AppRoutes.privacy),
           ),
           const Divider(),
           ListTile(
@@ -230,6 +233,72 @@ class _SettingsPage extends StatelessWidget {
                 applicationName: 'ResumeIQ',
                 applicationVersion: '1.0.0',
                 applicationLegalese: '© 2026 ResumeIQ',
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PrivacyPage extends StatelessWidget {
+  const _PrivacyPage();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Privacy & Security')),
+      body: ListView(
+        children: [
+          const SizedBox(height: 8),
+          SwitchListTile(
+            secondary: const Icon(Icons.analytics_outlined),
+            title: const Text('Usage Analytics'),
+            subtitle: const Text(
+              'Help improve the app by sharing anonymous usage data',
+            ),
+            value: false,
+            onChanged: (value) {},
+          ),
+          const Divider(),
+          SwitchListTile(
+            secondary: const Icon(Icons.backup_outlined),
+            title: const Text('Cloud Backup'),
+            subtitle: const Text(
+              'Automatically backup your resumes to the cloud',
+            ),
+            value: true,
+            onChanged: (value) {},
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.delete_outline, color: Colors.red),
+            title: const Text('Delete Account'),
+            subtitle: const Text(
+              'Permanently delete your account and all data',
+            ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: const Text('Delete Account?'),
+                  content: const Text(
+                    'This action is permanent and cannot be undone. All your resumes and data will be deleted.',
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx),
+                      style: TextButton.styleFrom(foregroundColor: Colors.red),
+                      child: const Text('Delete'),
+                    ),
+                  ],
+                ),
               );
             },
           ),

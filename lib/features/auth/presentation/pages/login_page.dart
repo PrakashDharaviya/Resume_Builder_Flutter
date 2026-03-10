@@ -48,7 +48,6 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
-          
           if (state is AuthAuthenticated) {
             Navigator.of(
               context,
@@ -158,7 +157,9 @@ class _LoginPageState extends State<LoginPage> {
                               onPressed: isLoading
                                   ? null
                                   : () {
-                                      // Handle forgot password
+                                      Navigator.of(
+                                        context,
+                                      ).pushNamed(AppRoutes.forgotPassword);
                                     },
                               child: const Text(AppStrings.forgotPassword),
                             ),
