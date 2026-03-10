@@ -103,7 +103,20 @@ class _PDFExportPageState extends State<PDFExportPage> {
     }
     final fileName =
         '${widget.resume.title.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_')}.pdf';
-    await PDFHelper.sharePDF(bytes, fileName);
+    try {
+      final path = await PDFHelper.savePDF(bytes, fileName);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('PDF saved to: $path'),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    } catch (e) {
+      // Fallback to share sheet if direct save fails
+      await PDFHelper.sharePDF(bytes, fileName);
+    }
   }
 
   Future<void> _printPDF() async {

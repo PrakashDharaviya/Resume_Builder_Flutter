@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -111,7 +113,15 @@ class PDFHelper {
                   child: pw.Row(
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
-                      pw.Text('•  ', style: const pw.TextStyle(fontSize: 10)),
+                      pw.Container(
+                        width: 4,
+                        height: 4,
+                        margin: const pw.EdgeInsets.only(top: 4, right: 8),
+                        decoration: const pw.BoxDecoration(
+                          color: PdfColors.black,
+                          shape: pw.BoxShape.circle,
+                        ),
+                      ),
                       pw.Expanded(
                         child: pw.Text(
                           r,
@@ -292,6 +302,24 @@ class PDFHelper {
     );
 
     return pdf.save();
+  }
+
+  /// Saves the PDF file to the device's Downloads / Documents directory
+  /// and returns the full file path.
+  static Future<String> savePDF(Uint8List pdfBytes, String fileName) async {
+    Directory? dir;
+    if (Platform.isAndroid) {
+      dir = Directory('/storage/emulated/0/Download');
+      if (!await dir.exists()) {
+        dir = await getExternalStorageDirectory();
+      }
+    } else {
+      dir = await getApplicationDocumentsDirectory();
+    }
+    dir ??= await getApplicationDocumentsDirectory();
+    final file = File('${dir.path}/$fileName');
+    await file.writeAsBytes(pdfBytes);
+    return file.path;
   }
 
   /// Opens the system print / save-as-PDF dialog.
