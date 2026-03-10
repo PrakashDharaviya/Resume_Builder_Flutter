@@ -206,7 +206,7 @@ class UserTile extends StatelessWidget {
 
   Color _avatarColor(String name) {
     final colors = [
-      const Color(0xFF1E3A8A),
+      const Color(0xFF10B981),
       const Color(0xFF10B981),
       const Color(0xFFF59E0B),
       const Color(0xFFEF4444),

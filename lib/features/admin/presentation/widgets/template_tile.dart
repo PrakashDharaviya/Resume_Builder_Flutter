@@ -47,10 +47,10 @@ class TemplateTile extends StatelessWidget {
               width: 52,
               height: 64,
               decoration: BoxDecoration(
-                color: const Color(0xFF1E3A8A).withValues(alpha: 0.08),
+                color: const Color(0xFF10B981).withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: const Color(0xFF1E3A8A).withValues(alpha: 0.15),
+                  color: const Color(0xFF10B981).withValues(alpha: 0.15),
                 ),
               ),
               child: Column(
@@ -60,8 +60,8 @@ class TemplateTile extends StatelessWidget {
                     Icons.article_outlined,
                     size: 24,
                     color: isDark
-                        ? const Color(0xFF3B82F6)
-                        : const Color(0xFF1E3A8A),
+                        ? const Color(0xFF34D399)
+                        : const Color(0xFF10B981),
                   ),
                   const SizedBox(height: 2),
                   if (template.isPremium)
@@ -193,7 +193,7 @@ class TemplateTile extends StatelessWidget {
                       Icon(
                         Icons.edit_rounded,
                         size: 18,
-                        color: Color(0xFF3B82F6),
+                        color: Color(0xFF34D399),
                       ),
                       SizedBox(width: 8),
                       Text('Edit'),

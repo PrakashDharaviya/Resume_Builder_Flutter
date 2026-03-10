@@ -144,7 +144,7 @@ class _ForgotPasswordPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.lock_reset, size: 80, color: Color(0xFF1E3A8A)),
+            const Icon(Icons.lock_reset, size: 80, color: Color(0xFF10B981)),
             const SizedBox(height: 24),
             const Text(
               'Reset Your Password',
@@ -256,13 +256,13 @@ class _CreateResumePage extends StatelessWidget {
                 width: 100,
                 height: 100,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1E3A8A).withValues(alpha: 0.1),
+                  color: const Color(0xFF10B981).withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.description_outlined,
                   size: 50,
-                  color: Color(0xFF1E3A8A),
+                  color: Color(0xFF10B981),
                 ),
               ),
               const SizedBox(height: 28),

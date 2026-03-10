@@ -119,7 +119,7 @@ class AnalyticsPage extends StatelessWidget {
                                     ? const Color(0xFF374151)
                                     : const Color(0xFFE5E7EB),
                                 valueColor: const AlwaysStoppedAnimation<Color>(
-                                  Color(0xFF1E3A8A),
+                                  Color(0xFF10B981),
                                 ),
                               ),
                             ),

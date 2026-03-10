@@ -48,6 +48,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
+          
           if (state is AuthAuthenticated) {
             Navigator.of(
               context,

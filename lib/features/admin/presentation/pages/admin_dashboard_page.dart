@@ -148,8 +148,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                                   decoration: BoxDecoration(
                                     gradient: const LinearGradient(
                                       colors: [
-                                        Color(0xFF1E3A8A),
-                                        Color(0xFF3B82F6),
+                                        Color(0xFF10B981),
+                                        Color(0xFF34D399),
                                       ],
                                       begin: Alignment.topLeft,
                                       end: Alignment.bottomRight,
@@ -158,7 +158,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                                     boxShadow: [
                                       BoxShadow(
                                         color: const Color(
-                                          0xFF1E3A8A,
+                                          0xFF10B981,
                                         ).withValues(alpha: 0.3),
                                         blurRadius: 16,
                                         offset: const Offset(0, 6),
@@ -231,7 +231,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                                         title: 'Total Users',
                                         value: '${state.stats.totalUsers}',
                                         icon: Icons.people_rounded,
-                                        color: const Color(0xFF3B82F6),
+                                        color: const Color(0xFF34D399),
                                         subtitle:
                                             '+${state.stats.todaySignups} today',
                                       ),
@@ -302,7 +302,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                                   title: 'Manage Users',
                                   subtitle:
                                       '${state.stats.totalUsers} registered users',
-                                  color: const Color(0xFF3B82F6),
+                                  color: const Color(0xFF34D399),
                                   onTap: () =>
                                       _navigateAndReload(AppRoutes.manageUsers),
                                   isDark: isDark,
@@ -465,7 +465,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
           DrawerHeader(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
+                colors: [Color(0xFF10B981), Color(0xFF34D399)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -616,7 +616,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
     final itemColor =
         color ??
         (isSelected
-            ? const Color(0xFF1E3A8A)
+            ? const Color(0xFF10B981)
             : (isDark ? const Color(0xFFD1D5DB) : const Color(0xFF4B5563)));
 
     return ListTile(
@@ -630,7 +630,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
         ),
       ),
       selected: isSelected,
-      selectedTileColor: const Color(0xFF1E3A8A).withValues(alpha: 0.08),
+      selectedTileColor: const Color(0xFF10B981).withValues(alpha: 0.08),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20),
       onTap: onTap,

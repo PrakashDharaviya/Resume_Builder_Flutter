@@ -132,14 +132,14 @@ class _AuthCheckScreenState extends State<AuthCheckScreen>
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
+                    colors: [Color(0xFF10B981), Color(0xFF34D399)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF1E3A8A).withValues(alpha: 0.3),
+                      color: const Color(0xFF10B981).withValues(alpha: 0.3),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                     ),
@@ -180,7 +180,7 @@ class _AuthCheckScreenState extends State<AuthCheckScreen>
                 height: 28,
                 child: CircularProgressIndicator(
                   strokeWidth: 3,
-                  valueColor: AlwaysStoppedAnimation(Color(0xFF1E3A8A)),
+                  valueColor: AlwaysStoppedAnimation(Color(0xFF10B981)),
                 ),
               ),
             ],

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Primary Colors
-  static const Color primary = Color(0xFF1E3A8A);
-  static const Color primaryLight = Color(0xFF3B82F6);
-  static const Color primaryDark = Color(0xFF1E40AF);
+  static const Color primary = Color(0xFF10B981);
+  static const Color primaryLight = Color(0xFF34D399);
+  static const Color primaryDark = Color(0xFF059669);
 
   // Accent Colors
   static const Color accent = Color(0xFF10B981);
@@ -35,7 +35,7 @@ class AppColors {
   static const Color success = Color(0xFF10B981);
   static const Color warning = Color(0xFFF59E0B);
   static const Color error = Color(0xFFEF4444);
-  static const Color info = Color(0xFF3B82F6);
+  static const Color info = Color(0xFF34D399);
 
   // Neutral Colors
   static const Color white = Color(0xFFFFFFFF);
@@ -53,7 +53,7 @@ class AppColors {
 
   // ATS Score Colors
   static const Color scoreExcellent = Color(0xFF10B981); // 80-100
-  static const Color scoreGood = Color(0xFF3B82F6); // 60-79
+  static const Color scoreGood = Color(0xFF34D399); // 60-79
   static const Color scoreAverage = Color(0xFFF59E0B); // 40-59
   static const Color scorePoor = Color(0xFFEF4444); // 0-39
 

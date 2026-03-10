@@ -204,7 +204,7 @@ class _ATSSettingsPageState extends State<ATSSettingsPage> {
                             label: 'Keyword Matching',
                             icon: Icons.key_rounded,
                             value: _keywordWeight,
-                            color: const Color(0xFF3B82F6),
+                            color: const Color(0xFF34D399),
                             onChanged: (v) =>
                                 setState(() => _keywordWeight = v),
                             isDark: isDark,
