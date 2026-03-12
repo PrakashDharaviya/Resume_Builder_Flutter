@@ -12,40 +12,40 @@ class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  State<RegisterPage> createState() => RegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
-  bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
+class RegisterPageState extends State<RegisterPage> {
+  final formKey = GlobalKey<FormState>();
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+  bool obscurePassword = true;
+  bool obscureConfirmPassword = true;
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
+    nameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
     super.dispose();
   }
 
-  void _handleRegister() {
-    if (_formKey.currentState!.validate()) {
+  void handleRegister() {
+    if (formKey.currentState!.validate()) {
       context.read<AuthBloc>().add(
         SignUpWithEmailEvent(
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
-          displayName: _nameController.text.trim(),
+          email: emailController.text.trim(),
+          password: passwordController.text,
+          displayName: nameController.text.trim(),
         ),
       );
     }
   }
 
-  void _handleGoogleSignIn() {
+  void handleGoogleSignIn() {
     context.read<AuthBloc>().add(const SignInWithGoogleEvent());
   }
 
@@ -76,7 +76,7 @@ class _RegisterPageState extends State<RegisterPage> {
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(24.0),
                 child: Form(
-                  key: _formKey,
+                  key: formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -100,7 +100,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                       // Full Name Field
                       TextFormField(
-                        controller: _nameController,
+                        controller: nameController,
                         keyboardType: TextInputType.name,
                         decoration: const InputDecoration(
                           labelText: AppStrings.fullName,
@@ -113,7 +113,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                       // Email Field
                       TextFormField(
-                        controller: _emailController,
+                        controller: emailController,
                         keyboardType: TextInputType.emailAddress,
                         decoration: const InputDecoration(
                           labelText: AppStrings.email,
@@ -126,20 +126,20 @@ class _RegisterPageState extends State<RegisterPage> {
 
                       // Password Field
                       TextFormField(
-                        controller: _passwordController,
-                        obscureText: _obscurePassword,
+                        controller: passwordController,
+                        obscureText: obscurePassword,
                         decoration: InputDecoration(
                           labelText: AppStrings.password,
                           prefixIcon: const Icon(Icons.lock_outlined),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _obscurePassword
+                              obscurePassword
                                   ? Icons.visibility_outlined
                                   : Icons.visibility_off_outlined,
                             ),
                             onPressed: () {
                               setState(() {
-                                _obscurePassword = !_obscurePassword;
+                                obscurePassword = !obscurePassword;
                               });
                             },
                           ),
@@ -151,21 +151,21 @@ class _RegisterPageState extends State<RegisterPage> {
 
                       // Confirm Password Field
                       TextFormField(
-                        controller: _confirmPasswordController,
-                        obscureText: _obscureConfirmPassword,
+                        controller: confirmPasswordController,
+                        obscureText: obscureConfirmPassword,
                         decoration: InputDecoration(
                           labelText: AppStrings.confirmPassword,
                           prefixIcon: const Icon(Icons.lock_outlined),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _obscureConfirmPassword
+                              obscureConfirmPassword
                                   ? Icons.visibility_outlined
                                   : Icons.visibility_off_outlined,
                             ),
                             onPressed: () {
                               setState(() {
-                                _obscureConfirmPassword =
-                                    !_obscureConfirmPassword;
+                                obscureConfirmPassword =
+                                    !obscureConfirmPassword;
                               });
                             },
                           ),
@@ -173,7 +173,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         validator: (value) =>
                             Validators.validateConfirmPassword(
                               value,
-                              _passwordController.text,
+                              passwordController.text,
                             ),
                         enabled: !isLoading,
                       ),
@@ -181,7 +181,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                       // Register Button
                       ElevatedButton(
-                        onPressed: isLoading ? null : _handleRegister,
+                        onPressed: isLoading ? null : handleRegister,
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
@@ -216,7 +216,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                       // Google Sign In Button
                       OutlinedButton.icon(
-                        onPressed: isLoading ? null : _handleGoogleSignIn,
+                        onPressed: isLoading ? null : handleGoogleSignIn,
                         icon: const Icon(Icons.g_mobiledata, size: 28),
                         label: const Text(AppStrings.signInWithGoogle),
                         style: OutlinedButton.styleFrom(

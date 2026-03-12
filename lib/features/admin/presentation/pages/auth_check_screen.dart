@@ -12,42 +12,42 @@ class AuthCheckScreen extends StatefulWidget {
   const AuthCheckScreen({super.key, required this.user});
 
   @override
-  State<AuthCheckScreen> createState() => _AuthCheckScreenState();
+  State<AuthCheckScreen> createState() => AuthCheckScreenState();
 }
 
-class _AuthCheckScreenState extends State<AuthCheckScreen>
+class AuthCheckScreenState extends State<AuthCheckScreen>
     with SingleTickerProviderStateMixin {
-  late AnimationController _animController;
-  late Animation<double> _scaleAnim;
+  late AnimationController animController;
+  late Animation<double> scaleAnim;
 
   @override
   void initState() {
     super.initState();
-    _animController = AnimationController(
+    animController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
     );
-    _scaleAnim = CurvedAnimation(
-      parent: _animController,
+    scaleAnim = CurvedAnimation(
+      parent: animController,
       curve: Curves.elasticOut,
     );
-    _animController.forward();
+    animController.forward();
 
     // Delay briefly to show animation, then route
-    Future.delayed(const Duration(milliseconds: 1200), _handleRouting);
+    Future.delayed(const Duration(milliseconds: 1200), handleRouting);
   }
 
   @override
   void dispose() {
-    _animController.dispose();
+    animController.dispose();
     super.dispose();
   }
 
-  void _handleRouting() {
+  void handleRouting() {
     if (!mounted) return;
 
     if (widget.user.isBlocked) {
-      _showBlockedDialog();
+      showBlockedDialog();
       return;
     }
 
@@ -62,7 +62,7 @@ class _AuthCheckScreenState extends State<AuthCheckScreen>
     }
   }
 
-  void _showBlockedDialog() {
+  void showBlockedDialog() {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -124,7 +124,7 @@ class _AuthCheckScreenState extends State<AuthCheckScreen>
           : AppColors.backgroundLight,
       body: Center(
         child: ScaleTransition(
-          scale: _scaleAnim,
+          scale: scaleAnim,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

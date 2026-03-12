@@ -11,11 +11,11 @@ class ManageUsersPage extends StatefulWidget {
   const ManageUsersPage({super.key});
 
   @override
-  State<ManageUsersPage> createState() => _ManageUsersPageState();
+  State<ManageUsersPage> createState() => ManageUsersPageState();
 }
 
-class _ManageUsersPageState extends State<ManageUsersPage> {
-  final _searchController = TextEditingController();
+class ManageUsersPageState extends State<ManageUsersPage> {
+  final searchController = TextEditingController();
 
   @override
   void initState() {
@@ -25,7 +25,7 @@ class _ManageUsersPageState extends State<ManageUsersPage> {
 
   @override
   void dispose() {
-    _searchController.dispose();
+    searchController.dispose();
     super.dispose();
   }
 
@@ -87,7 +87,7 @@ class _ManageUsersPageState extends State<ManageUsersPage> {
                   Padding(
                     padding: EdgeInsets.fromLTRB(hPad, 16, hPad, 10),
                     child: TextField(
-                      controller: _searchController,
+                      controller: searchController,
                       onChanged: (query) {
                         context.read<AdminBloc>().add(
                           SearchUsers(query: query),
@@ -107,11 +107,11 @@ class _ManageUsersPageState extends State<ManageUsersPage> {
                               ? const Color(0xFF6B7280)
                               : const Color(0xFF9CA3AF),
                         ),
-                        suffixIcon: _searchController.text.isNotEmpty
+                        suffixIcon: searchController.text.isNotEmpty
                             ? IconButton(
                                 icon: const Icon(Icons.clear_rounded, size: 20),
                                 onPressed: () {
-                                  _searchController.clear();
+                                  searchController.clear();
                                   context.read<AdminBloc>().add(
                                     const SearchUsers(query: ''),
                                   );
@@ -224,7 +224,7 @@ class _ManageUsersPageState extends State<ManageUsersPage> {
                               return UserTile(
                                 user: user,
                                 onToggleBlock: () {
-                                  _showConfirmDialog(
+                                  showConfirmDialog(
                                     context,
                                     title: user.isBlocked
                                         ? 'Unblock User'
@@ -268,7 +268,7 @@ class _ManageUsersPageState extends State<ManageUsersPage> {
     );
   }
 
-  void _showConfirmDialog(
+  void showConfirmDialog(
     BuildContext context, {
     required String title,
     required String message,

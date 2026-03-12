@@ -12,17 +12,17 @@ class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<ProfilePage> createState() => ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class ProfilePageState extends State<ProfilePage> {
   // Notification prefs
-  bool _pushNotif = true;
-  bool _emailNotif = true;
-  bool _resumeAlerts = true;
-  bool _jobAlerts = false;
+  bool pushNotif = true;
+  bool emailNotif = true;
+  bool resumeAlerts = true;
+  bool jobAlerts = false;
 
-  void _openNotifications(BuildContext context) {
+  void openNotifications(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -36,55 +36,55 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _sheetHandle(ctx, 'Notifications', Icons.notifications_outlined),
-              _switchTile(
+              sheetHandle(ctx, 'Notifications', Icons.notifications_outlined),
+              switchTile(
                 ctx,
                 setSheet,
                 icon: Icons.phone_android_outlined,
                 title: 'Push Notifications',
                 subtitle: 'Receive alerts on your device',
-                value: _pushNotif,
+                value: pushNotif,
                 onChanged: (v) {
-                  setState(() => _pushNotif = v);
+                  setState(() => pushNotif = v);
                   setSheet(() {});
                 },
               ),
               const Divider(height: 1, indent: 16),
-              _switchTile(
+              switchTile(
                 ctx,
                 setSheet,
                 icon: Icons.email_outlined,
                 title: 'Email Notifications',
                 subtitle: 'Get updates in your inbox',
-                value: _emailNotif,
+                value: emailNotif,
                 onChanged: (v) {
-                  setState(() => _emailNotif = v);
+                  setState(() => emailNotif = v);
                   setSheet(() {});
                 },
               ),
               const Divider(height: 1, indent: 16),
-              _switchTile(
+              switchTile(
                 ctx,
                 setSheet,
                 icon: Icons.description_outlined,
                 title: 'Resume Alerts',
                 subtitle: 'Notify when resume is viewed',
-                value: _resumeAlerts,
+                value: resumeAlerts,
                 onChanged: (v) {
-                  setState(() => _resumeAlerts = v);
+                  setState(() => resumeAlerts = v);
                   setSheet(() {});
                 },
               ),
               const Divider(height: 1, indent: 16),
-              _switchTile(
+              switchTile(
                 ctx,
                 setSheet,
                 icon: Icons.work_outline,
                 title: 'Job Match Alerts',
                 subtitle: 'Get notified of matching jobs',
-                value: _jobAlerts,
+                value: jobAlerts,
                 onChanged: (v) {
-                  setState(() => _jobAlerts = v);
+                  setState(() => jobAlerts = v);
                   setSheet(() {});
                 },
               ),
@@ -96,7 +96,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  void _openLanguage(BuildContext context) {
+  void openLanguage(BuildContext context) {
     const languages = [
       {
         'code': 'English',
@@ -125,7 +125,7 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _sheetHandle(ctx, 'Select Language', Icons.language_outlined),
+              sheetHandle(ctx, 'Select Language', Icons.language_outlined),
               ...languages.map((lang) {
                 final selected = languageNotifier.value == lang['code'];
                 return Column(
@@ -212,7 +212,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _sheetHandle(BuildContext ctx, String title, IconData icon) {
+  Widget sheetHandle(BuildContext ctx, String title, IconData icon) {
     return Column(
       children: [
         Container(
@@ -250,7 +250,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _switchTile(
+  Widget switchTile(
     BuildContext ctx,
     StateSetter setSheet, {
     required IconData icon,
@@ -286,7 +286,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  void _openEditProfile(
+  void openEditProfile(
     BuildContext context,
     String currentName,
     String currentEmail,
@@ -650,7 +650,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         const SizedBox(height: 16),
                         OutlinedButton.icon(
-                          onPressed: () => _openEditProfile(
+                          onPressed: () => openEditProfile(
                             context,
                             user.displayName,
                             user.email,
@@ -689,16 +689,16 @@ class _ProfilePageState extends State<ProfilePage> {
                         leading: const Icon(Icons.notifications_outlined),
                         title: const Text(AppStrings.notifications),
                         subtitle: Text(
-                          _pushNotif ? 'On' : 'Off',
+                          pushNotif ? 'On' : 'Off',
                           style: TextStyle(
                             fontSize: 12,
-                            color: _pushNotif
+                            color: pushNotif
                                 ? AppColors.success
                                 : AppColors.textSecondaryLight,
                           ),
                         ),
                         trailing: const Icon(Icons.chevron_right),
-                        onTap: () => _openNotifications(context),
+                        onTap: () => openNotifications(context),
                       ),
                       const Divider(height: 1),
                       ListTile(
@@ -715,7 +715,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                         trailing: const Icon(Icons.chevron_right),
-                        onTap: () => _openLanguage(context),
+                        onTap: () => openLanguage(context),
                       ),
                     ],
                   ),

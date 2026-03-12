@@ -34,21 +34,21 @@ class ATSResultPage extends StatelessWidget {
                 children: [
                   Center(child: LiveScoreMeter(score: score)),
                   const SizedBox(height: 16),
-                  _card(
+                  card(
                     context,
                     title: 'Score Breakdown (Dynamic Weights)',
                     child: Column(
                       children: [
-                        _row('Keyword', config.keywordWeight),
-                        _row('Skill', config.skillWeight),
-                        _row('Grammar', config.grammarWeight),
-                        _row('Experience', config.experienceWeight),
-                        _row('Formatting', config.formattingWeight),
+                        row('Keyword', config.keywordWeight),
+                        row('Skill', config.skillWeight),
+                        row('Grammar', config.grammarWeight),
+                        row('Experience', config.experienceWeight),
+                        row('Formatting', config.formattingWeight),
                       ],
                     ),
                   ),
                   const SizedBox(height: 12),
-                  _card(
+                  card(
                     context,
                     title: 'Missing Keywords',
                     child: Wrap(
@@ -63,7 +63,7 @@ class ATSResultPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  _card(
+                  card(
                     context,
                     title: 'Suggestions',
                     child: Column(
@@ -99,7 +99,7 @@ class ATSResultPage extends StatelessWidget {
     );
   }
 
-  Widget _card(
+  Widget card(
     BuildContext context, {
     required String title,
     required Widget child,
@@ -129,7 +129,7 @@ class ATSResultPage extends StatelessWidget {
     );
   }
 
-  Widget _row(String label, double value) {
+  Widget row(String label, double value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(

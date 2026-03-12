@@ -12,10 +12,10 @@ class AnnouncementsPage extends StatefulWidget {
   const AnnouncementsPage({super.key});
 
   @override
-  State<AnnouncementsPage> createState() => _AnnouncementsPageState();
+  State<AnnouncementsPage> createState() => AnnouncementsPageState();
 }
 
-class _AnnouncementsPageState extends State<AnnouncementsPage> {
+class AnnouncementsPageState extends State<AnnouncementsPage> {
   @override
   void initState() {
     super.initState();
@@ -64,7 +64,7 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showAnnouncementForm(context),
+        onPressed: () => showAnnouncementForm(context),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add_rounded),
@@ -171,7 +171,7 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
                       itemCount: state.announcements.length,
                       itemBuilder: (context, index) {
                         final item = state.announcements[index];
-                        return _AnnouncementCard(
+                        return AnnouncementCard(
                           announcement: item,
                           isDark: isDark,
                           onToggle: () {
@@ -179,11 +179,9 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
                               ToggleAnnouncement(announcementId: item.id),
                             );
                           },
-                          onDelete: () => _showDeleteConfirm(context, item),
-                          onEdit: () => _showAnnouncementForm(
-                            context,
-                            announcement: item,
-                          ),
+                          onDelete: () => showDeleteConfirm(context, item),
+                          onEdit: () =>
+                              showAnnouncementForm(context, announcement: item),
                         );
                       },
                     ),
@@ -199,7 +197,7 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
     );
   }
 
-  void _showAnnouncementForm(
+  void showAnnouncementForm(
     BuildContext context, {
     Announcement? announcement,
   }) {
@@ -369,7 +367,7 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
     );
   }
 
-  void _showDeleteConfirm(BuildContext context, Announcement item) {
+  void showDeleteConfirm(BuildContext context, Announcement item) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -408,14 +406,15 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
   }
 }
 
-class _AnnouncementCard extends StatelessWidget {
+class AnnouncementCard extends StatelessWidget {
   final Announcement announcement;
   final bool isDark;
   final VoidCallback onToggle;
   final VoidCallback onDelete;
   final VoidCallback onEdit;
 
-  const _AnnouncementCard({
+  const AnnouncementCard({
+    super.key,
     required this.announcement,
     required this.isDark,
     required this.onToggle,

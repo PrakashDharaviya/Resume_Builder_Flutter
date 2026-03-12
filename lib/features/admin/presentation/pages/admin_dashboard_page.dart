@@ -12,29 +12,29 @@ class AdminDashboardPage extends StatefulWidget {
   const AdminDashboardPage({super.key});
 
   @override
-  State<AdminDashboardPage> createState() => _AdminDashboardPageState();
+  State<AdminDashboardPage> createState() => AdminDashboardPageState();
 }
 
-class _AdminDashboardPageState extends State<AdminDashboardPage>
+class AdminDashboardPageState extends State<AdminDashboardPage>
     with SingleTickerProviderStateMixin {
-  late AnimationController _animController;
-  late Animation<double> _fadeAnim;
+  late AnimationController animController;
+  late Animation<double> fadeAnim;
 
   @override
   void initState() {
     super.initState();
     context.read<AdminBloc>().add(const LoadAdminDashboard());
-    _animController = AnimationController(
+    animController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 600),
     );
-    _fadeAnim = CurvedAnimation(parent: _animController, curve: Curves.easeOut);
-    _animController.forward();
+    fadeAnim = CurvedAnimation(parent: animController, curve: Curves.easeOut);
+    animController.forward();
   }
 
   @override
   void dispose() {
-    _animController.dispose();
+    animController.dispose();
     super.dispose();
   }
 
@@ -88,7 +88,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
           ),
         ],
       ),
-      drawer: _buildAdminDrawer(context, isDark),
+      drawer: buildAdminDrawer(context, isDark),
       body: BlocBuilder<AdminBloc, AdminState>(
         buildWhen: (_, current) =>
             current is AdminDashboardLoaded ||
@@ -121,7 +121,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
 
           if (state is AdminDashboardLoaded) {
             return FadeTransition(
-              opacity: _fadeAnim,
+              opacity: fadeAnim,
               child: RefreshIndicator(
                 onRefresh: () async {
                   context.read<AdminBloc>().add(const LoadAdminDashboard());
@@ -296,7 +296,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                                   ),
                                 ),
                                 const SizedBox(height: 14),
-                                _quickActionTile(
+                                quickActionTile(
                                   context,
                                   icon: Icons.people_outlined,
                                   title: 'Manage Users',
@@ -304,48 +304,48 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                                       '${state.stats.totalUsers} registered users',
                                   color: const Color(0xFF34D399),
                                   onTap: () =>
-                                      _navigateAndReload(AppRoutes.manageUsers),
+                                      navigateAndReload(AppRoutes.manageUsers),
                                   isDark: isDark,
                                 ),
-                                _quickActionTile(
+                                quickActionTile(
                                   context,
                                   icon: Icons.style_outlined,
                                   title: 'Manage Templates',
                                   subtitle:
                                       '${state.stats.activeTemplates} active templates',
                                   color: const Color(0xFF10B981),
-                                  onTap: () => _navigateAndReload(
+                                  onTap: () => navigateAndReload(
                                     AppRoutes.manageTemplates,
                                   ),
                                   isDark: isDark,
                                 ),
-                                _quickActionTile(
+                                quickActionTile(
                                   context,
                                   icon: Icons.tune_rounded,
                                   title: 'ATS Settings',
                                   subtitle: 'Configure scoring weights',
                                   color: const Color(0xFF8B5CF6),
                                   onTap: () =>
-                                      _navigateAndReload(AppRoutes.atsSettings),
+                                      navigateAndReload(AppRoutes.atsSettings),
                                   isDark: isDark,
                                 ),
-                                _quickActionTile(
+                                quickActionTile(
                                   context,
                                   icon: Icons.bar_chart_rounded,
                                   title: 'Analytics',
                                   subtitle: 'Template usage and growth trends',
                                   color: const Color(0xFF06B6D4),
                                   onTap: () =>
-                                      _navigateAndReload(AppRoutes.analytics),
+                                      navigateAndReload(AppRoutes.analytics),
                                   isDark: isDark,
                                 ),
-                                _quickActionTile(
+                                quickActionTile(
                                   context,
                                   icon: Icons.campaign_outlined,
                                   title: 'Announcements',
                                   subtitle: 'Manage platform announcements',
                                   color: const Color(0xFFF59E0B),
-                                  onTap: () => _navigateAndReload(
+                                  onTap: () => navigateAndReload(
                                     AppRoutes.announcements,
                                   ),
                                   isDark: isDark,
@@ -369,7 +369,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
     );
   }
 
-  void _navigateAndReload(String route) {
+  void navigateAndReload(String route) {
     Navigator.pushNamed(context, route).then((_) {
       if (mounted) {
         context.read<AdminBloc>().add(const LoadAdminDashboard());
@@ -377,7 +377,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
     });
   }
 
-  Widget _quickActionTile(
+  Widget quickActionTile(
     BuildContext context, {
     required IconData icon,
     required String title,
@@ -456,7 +456,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
     );
   }
 
-  Widget _buildAdminDrawer(BuildContext context, bool isDark) {
+  Widget buildAdminDrawer(BuildContext context, bool isDark) {
     return Drawer(
       backgroundColor: isDark ? const Color(0xFF111827) : Colors.white,
       child: ListView(
@@ -505,7 +505,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
               ],
             ),
           ),
-          _drawerItem(
+          drawerItem(
             context,
             icon: Icons.dashboard_rounded,
             title: 'Dashboard',
@@ -513,53 +513,53 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
             onTap: () => Navigator.pop(context),
             isDark: isDark,
           ),
-          _drawerItem(
+          drawerItem(
             context,
             icon: Icons.people_rounded,
             title: 'Users',
             onTap: () {
               Navigator.pop(context);
-              _navigateAndReload(AppRoutes.manageUsers);
+              navigateAndReload(AppRoutes.manageUsers);
             },
             isDark: isDark,
           ),
-          _drawerItem(
+          drawerItem(
             context,
             icon: Icons.style_rounded,
             title: 'Templates',
             onTap: () {
               Navigator.pop(context);
-              _navigateAndReload(AppRoutes.manageTemplates);
+              navigateAndReload(AppRoutes.manageTemplates);
             },
             isDark: isDark,
           ),
-          _drawerItem(
+          drawerItem(
             context,
             icon: Icons.tune_rounded,
             title: 'ATS Settings',
             onTap: () {
               Navigator.pop(context);
-              _navigateAndReload(AppRoutes.atsSettings);
+              navigateAndReload(AppRoutes.atsSettings);
             },
             isDark: isDark,
           ),
-          _drawerItem(
+          drawerItem(
             context,
             icon: Icons.bar_chart_rounded,
             title: 'Analytics',
             onTap: () {
               Navigator.pop(context);
-              _navigateAndReload(AppRoutes.analytics);
+              navigateAndReload(AppRoutes.analytics);
             },
             isDark: isDark,
           ),
-          _drawerItem(
+          drawerItem(
             context,
             icon: Icons.campaign_rounded,
             title: 'Announcements',
             onTap: () {
               Navigator.pop(context);
-              _navigateAndReload(AppRoutes.announcements);
+              navigateAndReload(AppRoutes.announcements);
             },
             isDark: isDark,
           ),
@@ -572,7 +572,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                   (themeMode == ThemeMode.system &&
                       MediaQuery.platformBrightnessOf(context) ==
                           Brightness.dark);
-              return _drawerItem(
+              return drawerItem(
                 context,
                 icon: isDarkMode
                     ? Icons.light_mode_rounded
@@ -587,7 +587,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
               );
             },
           ),
-          _drawerItem(
+          drawerItem(
             context,
             icon: Icons.logout_rounded,
             title: 'Logout',
@@ -604,7 +604,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
     );
   }
 
-  Widget _drawerItem(
+  Widget drawerItem(
     BuildContext context, {
     required IconData icon,
     required String title,

@@ -12,34 +12,34 @@ class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<LoginPage> createState() => LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _obscurePassword = true;
+class LoginPageState extends State<LoginPage> {
+  final formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  bool obscurePassword = true;
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
     super.dispose();
   }
 
-  void _handleLogin() {
-    if (_formKey.currentState!.validate()) {
+  void handleLogin() {
+    if (formKey.currentState!.validate()) {
       context.read<AuthBloc>().add(
         SignInWithEmailEvent(
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
+          email: emailController.text.trim(),
+          password: passwordController.text,
         ),
       );
     }
   }
 
-  void _handleGoogleSignIn() {
+  void handleGoogleSignIn() {
     context.read<AuthBloc>().add(const SignInWithGoogleEvent());
   }
 
@@ -108,13 +108,13 @@ class _LoginPageState extends State<LoginPage> {
 
                     // Login Form
                     Form(
-                      key: _formKey,
+                      key: formKey,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           // Email Field
                           TextFormField(
-                            controller: _emailController,
+                            controller: emailController,
                             keyboardType: TextInputType.emailAddress,
                             decoration: const InputDecoration(
                               labelText: AppStrings.email,
@@ -127,20 +127,20 @@ class _LoginPageState extends State<LoginPage> {
 
                           // Password Field
                           TextFormField(
-                            controller: _passwordController,
-                            obscureText: _obscurePassword,
+                            controller: passwordController,
+                            obscureText: obscurePassword,
                             decoration: InputDecoration(
                               labelText: AppStrings.password,
                               prefixIcon: const Icon(Icons.lock_outlined),
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  _obscurePassword
+                                  obscurePassword
                                       ? Icons.visibility_outlined
                                       : Icons.visibility_off_outlined,
                                 ),
                                 onPressed: () {
                                   setState(() {
-                                    _obscurePassword = !_obscurePassword;
+                                    obscurePassword = !obscurePassword;
                                   });
                                 },
                               ),
@@ -168,7 +168,7 @@ class _LoginPageState extends State<LoginPage> {
 
                           // Login Button
                           ElevatedButton(
-                            onPressed: isLoading ? null : _handleLogin,
+                            onPressed: isLoading ? null : handleLogin,
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 16),
                             ),
@@ -205,7 +205,7 @@ class _LoginPageState extends State<LoginPage> {
 
                           // Google Sign In Button
                           OutlinedButton.icon(
-                            onPressed: isLoading ? null : _handleGoogleSignIn,
+                            onPressed: isLoading ? null : handleGoogleSignIn,
                             icon: const Icon(Icons.g_mobiledata, size: 28),
                             label: const Text(AppStrings.signInWithGoogle),
                             style: OutlinedButton.styleFrom(

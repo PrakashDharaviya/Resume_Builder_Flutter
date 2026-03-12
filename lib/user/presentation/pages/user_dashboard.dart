@@ -14,10 +14,10 @@ class UserDashboard extends StatefulWidget {
   const UserDashboard({super.key});
 
   @override
-  State<UserDashboard> createState() => _UserDashboardState();
+  State<UserDashboard> createState() => UserDashboardState();
 }
 
-class _UserDashboardState extends State<UserDashboard> {
+class UserDashboardState extends State<UserDashboard> {
   @override
   void initState() {
     super.initState();

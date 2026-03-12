@@ -6,7 +6,7 @@ import '../../../auth/domain/entities/user.dart';
 
 class AdminMockDataSource {
   // ========== Mock Users ==========
-  final List<User> _users = [
+  final List<User> users = [
     const User(
       uid: 'admin_001',
       email: 'admin@resumeiq.com',
@@ -74,7 +74,7 @@ class AdminMockDataSource {
   ];
 
   // ========== Mock Templates ==========
-  final List<ResumeTemplate> _templates = [
+  final List<ResumeTemplate> templates = [
     ResumeTemplate(
       id: 'tmpl_001',
       name: 'Classic Professional',
@@ -123,7 +123,7 @@ class AdminMockDataSource {
   ];
 
   // ========== Mock ATS Config ==========
-  ATSConfig _atsConfig = const ATSConfig(
+  ATSConfig atsConfig = const ATSConfig(
     keywordWeight: 30,
     skillWeight: 25,
     grammarWeight: 15,
@@ -132,7 +132,7 @@ class AdminMockDataSource {
   );
 
   // ========== Mock Announcements ==========
-  final List<Announcement> _announcements = [
+  final List<Announcement> announcements = [
     Announcement(
       id: 'ann_001',
       title: 'Welcome to ResumeIQ!',
@@ -160,12 +160,12 @@ class AdminMockDataSource {
 
   // ========== Dashboard Stats ==========
   AdminStats getAdminStats() {
-    final premiumCount = _users.where((u) => u.isPremium).length;
-    final blockedCount = _users.where((u) => u.isBlocked).length;
-    final activeTemplates = _templates.where((t) => t.isActive).length;
+    final premiumCount = users.where((u) => u.isPremium).length;
+    final blockedCount = users.where((u) => u.isBlocked).length;
+    final activeTemplates = templates.where((t) => t.isActive).length;
 
     return AdminStats(
-      totalUsers: _users.length,
+      totalUsers: users.length,
       totalResumes: 42,
       premiumUsers: premiumCount,
       avgAtsScore: 72.5,
@@ -177,87 +177,87 @@ class AdminMockDataSource {
   }
 
   // ========== Template Operations ==========
-  List<ResumeTemplate> getAllTemplates() => List.unmodifiable(_templates);
+  List<ResumeTemplate> getAllTemplates() => List.unmodifiable(templates);
 
   ResumeTemplate addTemplate(ResumeTemplate template) {
     final newTemplate = template.copyWith(
       id: 'tmpl_${DateTime.now().millisecondsSinceEpoch}',
       createdAt: DateTime.now(),
     );
-    _templates.add(newTemplate);
+    templates.add(newTemplate);
     return newTemplate;
   }
 
   ResumeTemplate updateTemplate(ResumeTemplate template) {
-    final index = _templates.indexWhere((t) => t.id == template.id);
+    final index = templates.indexWhere((t) => t.id == template.id);
     if (index != -1) {
-      _templates[index] = template;
+      templates[index] = template;
       return template;
     }
     throw Exception('Template not found');
   }
 
   void deleteTemplate(String id) {
-    _templates.removeWhere((t) => t.id == id);
+    templates.removeWhere((t) => t.id == id);
   }
 
   // ========== User Operations ==========
-  List<User> getAllUsers() => List.unmodifiable(_users);
+  List<User> getAllUsers() => List.unmodifiable(users);
 
   User toggleBlockUser(String uid) {
-    final index = _users.indexWhere((u) => u.uid == uid);
+    final index = users.indexWhere((u) => u.uid == uid);
     if (index != -1) {
-      final user = _users[index];
+      final user = users[index];
       final updated = user.copyWith(isBlocked: !user.isBlocked);
-      _users[index] = updated;
+      users[index] = updated;
       return updated;
     }
     throw Exception('User not found');
   }
 
   User togglePremiumUser(String uid) {
-    final index = _users.indexWhere((u) => u.uid == uid);
+    final index = users.indexWhere((u) => u.uid == uid);
     if (index != -1) {
-      final user = _users[index];
+      final user = users[index];
       final updated = user.copyWith(isPremium: !user.isPremium);
-      _users[index] = updated;
+      users[index] = updated;
       return updated;
     }
     throw Exception('User not found');
   }
 
   // ========== ATS Config Operations ==========
-  ATSConfig getATSConfig() => _atsConfig;
+  ATSConfig getATSConfig() => atsConfig;
 
   ATSConfig updateATSConfig(ATSConfig config) {
-    _atsConfig = config;
-    return _atsConfig;
+    atsConfig = config;
+    return atsConfig;
   }
 
   // ========== Announcement Operations ==========
-  List<Announcement> getAllAnnouncements() => List.unmodifiable(_announcements);
+  List<Announcement> getAllAnnouncements() => List.unmodifiable(announcements);
 
   Announcement addAnnouncement(Announcement announcement) {
     final newAnnouncement = announcement.copyWith(
       id: 'ann_${DateTime.now().millisecondsSinceEpoch}',
       createdAt: DateTime.now(),
     );
-    _announcements.insert(0, newAnnouncement);
+    announcements.insert(0, newAnnouncement);
     return newAnnouncement;
   }
 
   Announcement toggleAnnouncement(String id) {
-    final index = _announcements.indexWhere((a) => a.id == id);
+    final index = announcements.indexWhere((a) => a.id == id);
     if (index != -1) {
-      final ann = _announcements[index];
+      final ann = announcements[index];
       final updated = ann.copyWith(isActive: !ann.isActive);
-      _announcements[index] = updated;
+      announcements[index] = updated;
       return updated;
     }
     throw Exception('Announcement not found');
   }
 
   void deleteAnnouncement(String id) {
-    _announcements.removeWhere((a) => a.id == id);
+    announcements.removeWhere((a) => a.id == id);
   }
 }

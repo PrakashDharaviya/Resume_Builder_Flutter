@@ -7,39 +7,39 @@ class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
 
   @override
-  State<SplashPage> createState() => _SplashPageState();
+  State<SplashPage> createState() => SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage>
+class SplashPageState extends State<SplashPage>
     with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
-  late Animation<double> _scaleAnimation;
+  late AnimationController animationController;
+  late Animation<double> fadeAnimation;
+  late Animation<double> scaleAnimation;
 
   @override
   void initState() {
     super.initState();
 
-    _animationController = AnimationController(
+    animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
-        parent: _animationController,
+        parent: animationController,
         curve: const Interval(0.0, 0.6, curve: Curves.easeIn),
       ),
     );
 
-    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
+    scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
       CurvedAnimation(
-        parent: _animationController,
+        parent: animationController,
         curve: const Interval(0.0, 0.6, curve: Curves.easeOutBack),
       ),
     );
 
-    _animationController.forward();
+    animationController.forward();
 
     // Navigate after 2 seconds
     Future.delayed(const Duration(seconds: 2), () {
@@ -51,7 +51,7 @@ class _SplashPageState extends State<SplashPage>
 
   @override
   void dispose() {
-    _animationController.dispose();
+    animationController.dispose();
     super.dispose();
   }
 
@@ -62,12 +62,12 @@ class _SplashPageState extends State<SplashPage>
         decoration: const BoxDecoration(gradient: AppColors.primaryGradient),
         child: Center(
           child: AnimatedBuilder(
-            animation: _animationController,
+            animation: animationController,
             builder: (context, child) {
               return FadeTransition(
-                opacity: _fadeAnimation,
+                opacity: fadeAnimation,
                 child: ScaleTransition(
-                  scale: _scaleAnimation,
+                  scale: scaleAnimation,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

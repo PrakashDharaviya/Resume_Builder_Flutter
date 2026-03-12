@@ -70,14 +70,14 @@ class AnalyticsPage extends StatelessWidget {
           final maxContentWidth = isDesktop ? 1200.0 : 900.0;
 
           final metricCards = [
-            _metricCard(
+            metricCard(
               context,
               title: 'Average ATS Score',
               value: '${stats.avgAtsScore.toStringAsFixed(1)}%',
               icon: Icons.analytics_rounded,
               color: const Color(0xFF8B5CF6),
             ),
-            _metricCard(
+            metricCard(
               context,
               title: 'Resume Growth',
               value: '+${stats.todaySignups} today',
@@ -86,7 +86,7 @@ class AnalyticsPage extends StatelessWidget {
             ),
           ];
 
-          final usageCard = _sectionCard(
+          final usageCard = sectionCard(
             context,
             title: 'Template Usage',
             child: Column(
@@ -134,7 +134,7 @@ class AnalyticsPage extends StatelessWidget {
             ),
           );
 
-          final premiumCard = _sectionCard(
+          final premiumCard = sectionCard(
             context,
             title: 'Premium Users Split',
             child: Row(
@@ -234,7 +234,7 @@ class AnalyticsPage extends StatelessWidget {
     );
   }
 
-  Widget _metricCard(
+  Widget metricCard(
     BuildContext context, {
     required String title,
     required String value,
@@ -293,7 +293,7 @@ class AnalyticsPage extends StatelessWidget {
     );
   }
 
-  Widget _sectionCard(
+  Widget sectionCard(
     BuildContext context, {
     required String title,
     required Widget child,

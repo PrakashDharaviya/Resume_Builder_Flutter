@@ -7,10 +7,10 @@ class ATSBloc extends Bloc<ATSEvent, ATSState> {
   final AnalyzeResume analyzeResume;
 
   ATSBloc({required this.analyzeResume}) : super(const ATSInitial()) {
-    on<AnalyzeResumeEvent>(_onAnalyzeResume);
+    on<AnalyzeResumeEvent>(onAnalyzeResume);
   }
 
-  Future<void> _onAnalyzeResume(
+  Future<void> onAnalyzeResume(
     AnalyzeResumeEvent event,
     Emitter<ATSState> emit,
   ) async {

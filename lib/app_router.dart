@@ -52,7 +52,7 @@ class AppRouter {
         );
 
       case AppRoutes.createResume:
-        return MaterialPageRoute(builder: (_) => const _CreateResumePage());
+        return MaterialPageRoute(builder: (_) => const CreateResumePage());
 
       case AppRoutes.resumeEditor:
         final resumeArg = settings.arguments as Resume?;
@@ -116,13 +116,13 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const AnnouncementsPage());
 
       case AppRoutes.forgotPassword:
-        return MaterialPageRoute(builder: (_) => const _ForgotPasswordPage());
+        return MaterialPageRoute(builder: (_) => const ForgotPasswordPage());
 
       case AppRoutes.settings:
-        return MaterialPageRoute(builder: (_) => const _SettingsPage());
+        return MaterialPageRoute(builder: (_) => const SettingsPage());
 
       case AppRoutes.privacy:
-        return MaterialPageRoute(builder: (_) => const _PrivacyPage());
+        return MaterialPageRoute(builder: (_) => const PrivacyPage());
 
       default:
         return MaterialPageRoute(
@@ -134,8 +134,8 @@ class AppRouter {
   }
 }
 
-class _ForgotPasswordPage extends StatelessWidget {
-  const _ForgotPasswordPage();
+class ForgotPasswordPage extends StatelessWidget {
+  const ForgotPasswordPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -196,8 +196,8 @@ class _ForgotPasswordPage extends StatelessWidget {
   }
 }
 
-class _SettingsPage extends StatelessWidget {
-  const _SettingsPage();
+class SettingsPage extends StatelessWidget {
+  const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -242,8 +242,8 @@ class _SettingsPage extends StatelessWidget {
   }
 }
 
-class _PrivacyPage extends StatelessWidget {
-  const _PrivacyPage();
+class PrivacyPage extends StatelessWidget {
+  const PrivacyPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -308,8 +308,8 @@ class _PrivacyPage extends StatelessWidget {
   }
 }
 
-class _CreateResumePage extends StatelessWidget {
-  const _CreateResumePage();
+class CreateResumePage extends StatelessWidget {
+  const CreateResumePage({super.key});
 
   @override
   Widget build(BuildContext context) {

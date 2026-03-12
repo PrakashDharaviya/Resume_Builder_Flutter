@@ -12,10 +12,10 @@ class ManageTemplatesPage extends StatefulWidget {
   const ManageTemplatesPage({super.key});
 
   @override
-  State<ManageTemplatesPage> createState() => _ManageTemplatesPageState();
+  State<ManageTemplatesPage> createState() => ManageTemplatesPageState();
 }
 
-class _ManageTemplatesPageState extends State<ManageTemplatesPage> {
+class ManageTemplatesPageState extends State<ManageTemplatesPage> {
   @override
   void initState() {
     super.initState();
@@ -64,7 +64,7 @@ class _ManageTemplatesPageState extends State<ManageTemplatesPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showTemplateForm(context),
+        onPressed: () => showTemplateForm(context),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add_rounded),
@@ -159,9 +159,9 @@ class _ManageTemplatesPageState extends State<ManageTemplatesPage> {
                         return TemplateTile(
                           template: template,
                           onEdit: () =>
-                              _showTemplateForm(context, template: template),
+                              showTemplateForm(context, template: template),
                           onDelete: () {
-                            _showDeleteConfirm(context, template);
+                            showDeleteConfirm(context, template);
                           },
                           onToggleActive: (active) {
                             context.read<AdminBloc>().add(
@@ -185,7 +185,7 @@ class _ManageTemplatesPageState extends State<ManageTemplatesPage> {
     );
   }
 
-  void _showTemplateForm(BuildContext context, {ResumeTemplate? template}) {
+  void showTemplateForm(BuildContext context, {ResumeTemplate? template}) {
     final isEdit = template != null;
     final nameController = TextEditingController(text: template?.name ?? '');
     bool isPremium = template?.isPremium ?? false;
@@ -334,7 +334,7 @@ class _ManageTemplatesPageState extends State<ManageTemplatesPage> {
     );
   }
 
-  void _showDeleteConfirm(BuildContext context, ResumeTemplate template) {
+  void showDeleteConfirm(BuildContext context, ResumeTemplate template) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(

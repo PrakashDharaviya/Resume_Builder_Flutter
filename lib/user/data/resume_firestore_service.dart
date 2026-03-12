@@ -5,17 +5,17 @@ import '../../features/admin/domain/entities/resume_template.dart';
 import '../../features/resume/domain/entities/resume.dart';
 
 class ResumeFirestoreService {
-  final MockDatabaseService _db;
+  final MockDatabaseService db;
 
   ResumeFirestoreService({MockDatabaseService? databaseService})
-    : _db = databaseService ?? MockDatabaseService.instance;
+    : db = databaseService ?? MockDatabaseService.instance;
 
-  Future<List<Resume>> getResumes() => _db.getResumes();
+  Future<List<Resume>> getResumes() => db.getResumes();
 
   List<ResumeTemplate> getActiveTemplates() =>
-      _db.getTemplates().where((t) => t.isActive).toList();
+      db.getTemplates().where((t) => t.isActive).toList();
 
-  ATSConfig getAtsConfig() => _db.getAtsConfig();
+  ATSConfig getAtsConfig() => db.getAtsConfig();
 
-  List<Announcement> getActiveAnnouncements() => _db.getActiveAnnouncements();
+  List<Announcement> getActiveAnnouncements() => db.getActiveAnnouncements();
 }

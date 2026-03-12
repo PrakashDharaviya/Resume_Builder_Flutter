@@ -10,54 +10,54 @@ class ResumeEditorPage extends StatefulWidget {
   const ResumeEditorPage({super.key, this.resume});
 
   @override
-  State<ResumeEditorPage> createState() => _ResumeEditorPageState();
+  State<ResumeEditorPage> createState() => ResumeEditorPageState();
 }
 
-class _ResumeEditorPageState extends State<ResumeEditorPage> {
+class ResumeEditorPageState extends State<ResumeEditorPage> {
   // Personal Info controllers
-  final _firstNameCtrl = TextEditingController();
-  final _lastNameCtrl = TextEditingController();
-  final _emailCtrl = TextEditingController();
-  final _phoneCtrl = TextEditingController();
-  final _locationCtrl = TextEditingController();
-  final _websiteCtrl = TextEditingController();
-  final _summaryCtrl = TextEditingController();
+  final firstNameCtrl = TextEditingController();
+  final lastNameCtrl = TextEditingController();
+  final emailCtrl = TextEditingController();
+  final phoneCtrl = TextEditingController();
+  final locationCtrl = TextEditingController();
+  final websiteCtrl = TextEditingController();
+  final summaryCtrl = TextEditingController();
 
   // Section data lists
-  final List<Map<String, dynamic>> _educations = [];
-  final List<Map<String, dynamic>> _experiences = [];
-  final List<Map<String, dynamic>> _skills = [];
-  final List<Map<String, dynamic>> _languages = [];
-  final List<Map<String, dynamic>> _projects = [];
-  final List<Map<String, dynamic>> _certifications = [];
-  final List<Map<String, dynamic>> _achievements = [];
+  final List<Map<String, dynamic>> educations = [];
+  final List<Map<String, dynamic>> experiences = [];
+  final List<Map<String, dynamic>> skills = [];
+  final List<Map<String, dynamic>> languages = [];
+  final List<Map<String, dynamic>> projects = [];
+  final List<Map<String, dynamic>> certifications = [];
+  final List<Map<String, dynamic>> achievements = [];
 
   @override
   void initState() {
     super.initState();
-    _populateFromResume(widget.resume);
+    populateFromResume(widget.resume);
   }
 
-  void _populateFromResume(Resume? resume) {
+  void populateFromResume(Resume? resume) {
     if (resume == null) return;
 
     // Personal info
     final pi = resume.personalInfo;
     if (pi != null) {
-      _firstNameCtrl.text = pi.firstName;
-      _lastNameCtrl.text = pi.lastName;
-      _emailCtrl.text = pi.email;
-      _phoneCtrl.text = pi.phone ?? '';
-      _locationCtrl.text = pi.location ?? '';
-      _websiteCtrl.text = pi.website ?? '';
-      _summaryCtrl.text = pi.summary ?? '';
+      firstNameCtrl.text = pi.firstName;
+      lastNameCtrl.text = pi.lastName;
+      emailCtrl.text = pi.email;
+      phoneCtrl.text = pi.phone ?? '';
+      locationCtrl.text = pi.location ?? '';
+      websiteCtrl.text = pi.website ?? '';
+      summaryCtrl.text = pi.summary ?? '';
     }
 
     final dateFmt = DateFormat('MMM yyyy');
 
     // Education
     for (final edu in resume.education) {
-      _educations.add({
+      educations.add({
         'degree': edu.degree,
         'institution': edu.institution,
         'field': edu.fieldOfStudy ?? '',
@@ -72,7 +72,7 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
 
     // Experience
     for (final exp in resume.experience) {
-      _experiences.add({
+      experiences.add({
         'title': exp.jobTitle,
         'company': exp.company,
         'type': exp.employmentType ?? '',
@@ -87,7 +87,7 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
 
     // Skills
     for (final skill in resume.skills) {
-      _skills.add({
+      skills.add({
         'name': skill.name,
         'category': skill.category ?? '',
         'level': skill.proficiency ?? 'Intermediate',
@@ -96,12 +96,12 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
 
     // Languages
     for (final lang in resume.languages) {
-      _languages.add({'name': lang.name, 'level': lang.proficiency});
+      languages.add({'name': lang.name, 'level': lang.proficiency});
     }
 
     // Projects
     for (final proj in resume.projects) {
-      _projects.add({
+      projects.add({
         'name': proj.name,
         'desc': proj.description,
         'tech': proj.technologies.join(', '),
@@ -111,7 +111,7 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
 
     // Certifications
     for (final cert in resume.certifications) {
-      _certifications.add({
+      certifications.add({
         'name': cert.name,
         'org': cert.issuingOrganization,
         'date': dateFmt.format(cert.issueDate),
@@ -122,7 +122,7 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
 
     // Achievements
     for (final ach in resume.achievements) {
-      _achievements.add({
+      achievements.add({
         'title': ach.title,
         'desc': ach.description,
         'date': ach.date != null ? dateFmt.format(ach.date!) : '',
@@ -132,18 +132,18 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
 
   @override
   void dispose() {
-    _firstNameCtrl.dispose();
-    _lastNameCtrl.dispose();
-    _emailCtrl.dispose();
-    _phoneCtrl.dispose();
-    _locationCtrl.dispose();
-    _websiteCtrl.dispose();
-    _summaryCtrl.dispose();
+    firstNameCtrl.dispose();
+    lastNameCtrl.dispose();
+    emailCtrl.dispose();
+    phoneCtrl.dispose();
+    locationCtrl.dispose();
+    websiteCtrl.dispose();
+    summaryCtrl.dispose();
     super.dispose();
   }
 
   // ─── Generic section card ────────────────────────────────────────────────
-  Widget _sectionHeader({
+  Widget sectionHeader({
     required IconData icon,
     required String title,
     required String subtitle,
@@ -190,7 +190,7 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
   }
 
   // ─── Item card ───────────────────────────────────────────────────────────
-  Widget _itemCard({
+  Widget itemCard({
     required String title,
     required String subtitle,
     String? trailing,
@@ -265,7 +265,7 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
   }
 
   // ─── Bottom-sheet helper ─────────────────────────────────────────────────
-  Future<void> _showSheet(Widget form) async {
+  Future<void> showSheet(Widget form) async {
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -286,7 +286,7 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
   }
 
   // ─── Sheet header widget ─────────────────────────────────────────────────
-  Widget _sheetHandle(String title) {
+  Widget sheetHandle(String title) {
     return Column(
       children: [
         const SizedBox(height: 12),
@@ -316,7 +316,7 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
   // ═══════════════════════════════════════════════════════════════════════════
   // EDUCATION
   // ═══════════════════════════════════════════════════════════════════════════
-  void _addOrEditEducation({Map<String, dynamic>? existing, int? index}) {
+  void addOrEditEducation({Map<String, dynamic>? existing, int? index}) {
     final degreeCtrl = TextEditingController(text: existing?['degree'] ?? '');
     final institutionCtrl = TextEditingController(
       text: existing?['institution'] ?? '',
@@ -327,7 +327,7 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
     final endCtrl = TextEditingController(text: existing?['end'] ?? '');
     bool current = existing?['current'] ?? false;
 
-    _showSheet(
+    showSheet(
       StatefulBuilder(
         builder: (ctx, setS) {
           return SingleChildScrollView(
@@ -335,33 +335,33 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _sheetHandle(
+                sheetHandle(
                   index == null ? 'Add Education' : 'Edit Education',
                 ),
-                _field(
+                field(
                   'Degree / Qualification',
                   degreeCtrl,
                   hint: 'e.g. Bachelor of Science',
                 ),
-                _field(
+                field(
                   'Institution',
                   institutionCtrl,
                   hint: 'e.g. Stanford University',
                 ),
-                _field(
+                field(
                   'Field of Study',
                   fieldCtrl,
                   hint: 'e.g. Computer Science',
                 ),
-                _field('Grade / CGPA', gradeCtrl, hint: 'e.g. 3.8 GPA'),
+                field('Grade / CGPA', gradeCtrl, hint: 'e.g. 3.8 GPA'),
                 Row(
                   children: [
                     Expanded(
-                      child: _field('Start Year', startCtrl, hint: '2020'),
+                      child: field('Start Year', startCtrl, hint: '2020'),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: _field(
+                      child: field(
                         'End Year',
                         endCtrl,
                         hint: '2024',
@@ -377,7 +377,7 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
                   onChanged: (v) => setS(() => current = v ?? false),
                 ),
                 const SizedBox(height: 16),
-                _saveBtn(() {
+                saveBtn(() {
                   if (degreeCtrl.text.isEmpty || institutionCtrl.text.isEmpty) {
                     return;
                   }
@@ -392,9 +392,9 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
                   };
                   setState(() {
                     if (index == null) {
-                      _educations.add(item);
+                      educations.add(item);
                     } else {
-                      _educations[index] = item;
+                      educations[index] = item;
                     }
                   });
                   Navigator.pop(ctx);
@@ -410,7 +410,7 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
   // ═══════════════════════════════════════════════════════════════════════════
   // EXPERIENCE
   // ═══════════════════════════════════════════════════════════════════════════
-  void _addOrEditExperience({Map<String, dynamic>? existing, int? index}) {
+  void addOrEditExperience({Map<String, dynamic>? existing, int? index}) {
     final titleCtrl = TextEditingController(text: existing?['title'] ?? '');
     final companyCtrl = TextEditingController(text: existing?['company'] ?? '');
     final locationCtrl = TextEditingController(
@@ -421,7 +421,7 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
     final descCtrl = TextEditingController(text: existing?['desc'] ?? '');
     bool current = existing?['current'] ?? false;
 
-    _showSheet(
+    showSheet(
       StatefulBuilder(
         builder: (ctx, setS) {
           return SingleChildScrollView(
@@ -429,12 +429,12 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _sheetHandle(
+                sheetHandle(
                   index == null ? 'Add Experience' : 'Edit Experience',
                 ),
-                _field('Job Title', titleCtrl, hint: 'e.g. Software Engineer'),
-                _field('Company', companyCtrl, hint: 'e.g. Google'),
-                _field(
+                field('Job Title', titleCtrl, hint: 'e.g. Software Engineer'),
+                field('Company', companyCtrl, hint: 'e.g. Google'),
+                field(
                   'Location',
                   locationCtrl,
                   hint: 'e.g. San Francisco, CA (or Remote)',
@@ -442,11 +442,11 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
                 Row(
                   children: [
                     Expanded(
-                      child: _field('Start', startCtrl, hint: 'Jan 2022'),
+                      child: field('Start', startCtrl, hint: 'Jan 2022'),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: _field(
+                      child: field(
                         'End',
                         endCtrl,
                         hint: 'Dec 2024',
@@ -461,14 +461,14 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
                   value: current,
                   onChanged: (v) => setS(() => current = v ?? false),
                 ),
-                _field(
+                field(
                   'Description / Responsibilities',
                   descCtrl,
                   hint: 'Describe your role and achievements…',
                   maxLines: 4,
                 ),
                 const SizedBox(height: 16),
-                _saveBtn(() {
+                saveBtn(() {
                   if (titleCtrl.text.isEmpty || companyCtrl.text.isEmpty) {
                     return;
                   }
@@ -483,9 +483,9 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
                   };
                   setState(() {
                     if (index == null) {
-                      _experiences.add(item);
+                      experiences.add(item);
                     } else {
-                      _experiences[index] = item;
+                      experiences[index] = item;
                     }
                   });
                   Navigator.pop(ctx);
@@ -501,14 +501,14 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
   // ═══════════════════════════════════════════════════════════════════════════
   // SKILLS
   // ═══════════════════════════════════════════════════════════════════════════
-  void _addOrEditSkill({Map<String, dynamic>? existing, int? index}) {
+  void addOrEditSkill({Map<String, dynamic>? existing, int? index}) {
     final nameCtrl = TextEditingController(text: existing?['name'] ?? '');
     final categoryCtrl = TextEditingController(
       text: existing?['category'] ?? '',
     );
     String level = existing?['level'] ?? 'Intermediate';
 
-    _showSheet(
+    showSheet(
       StatefulBuilder(
         builder: (ctx, setS) {
           return SingleChildScrollView(
@@ -516,9 +516,9 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _sheetHandle(index == null ? 'Add Skill' : 'Edit Skill'),
-                _field('Skill Name', nameCtrl, hint: 'e.g. Flutter'),
-                _field(
+                sheetHandle(index == null ? 'Add Skill' : 'Edit Skill'),
+                field('Skill Name', nameCtrl, hint: 'e.g. Flutter'),
+                field(
                   'Category',
                   categoryCtrl,
                   hint: 'e.g. Mobile, Backend, Design',
@@ -545,7 +545,7 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
                       .toList(),
                 ),
                 const SizedBox(height: 24),
-                _saveBtn(() {
+                saveBtn(() {
                   if (nameCtrl.text.isEmpty) return;
                   final item = {
                     'name': nameCtrl.text,
@@ -554,9 +554,9 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
                   };
                   setState(() {
                     if (index == null) {
-                      _skills.add(item);
+                      skills.add(item);
                     } else {
-                      _skills[index] = item;
+                      skills[index] = item;
                     }
                   });
                   Navigator.pop(ctx);
@@ -572,11 +572,11 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
   // ═══════════════════════════════════════════════════════════════════════════
   // LANGUAGES
   // ═══════════════════════════════════════════════════════════════════════════
-  void _addOrEditLanguage({Map<String, dynamic>? existing, int? index}) {
+  void addOrEditLanguage({Map<String, dynamic>? existing, int? index}) {
     final nameCtrl = TextEditingController(text: existing?['name'] ?? '');
     String level = existing?['level'] ?? 'Fluent';
 
-    _showSheet(
+    showSheet(
       StatefulBuilder(
         builder: (ctx, setS) {
           return SingleChildScrollView(
@@ -584,8 +584,8 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _sheetHandle(index == null ? 'Add Language' : 'Edit Language'),
-                _field('Language', nameCtrl, hint: 'e.g. English'),
+                sheetHandle(index == null ? 'Add Language' : 'Edit Language'),
+                field('Language', nameCtrl, hint: 'e.g. English'),
                 const SizedBox(height: 8),
                 const Text(
                   'Proficiency Level',
@@ -609,14 +609,14 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
                       .toList(),
                 ),
                 const SizedBox(height: 24),
-                _saveBtn(() {
+                saveBtn(() {
                   if (nameCtrl.text.isEmpty) return;
                   final item = {'name': nameCtrl.text, 'level': level};
                   setState(() {
                     if (index == null) {
-                      _languages.add(item);
+                      languages.add(item);
                     } else {
-                      _languages[index] = item;
+                      languages[index] = item;
                     }
                   });
                   Navigator.pop(ctx);
@@ -632,13 +632,13 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
   // ═══════════════════════════════════════════════════════════════════════════
   // PROJECTS
   // ═══════════════════════════════════════════════════════════════════════════
-  void _addOrEditProject({Map<String, dynamic>? existing, int? index}) {
+  void addOrEditProject({Map<String, dynamic>? existing, int? index}) {
     final nameCtrl = TextEditingController(text: existing?['name'] ?? '');
     final descCtrl = TextEditingController(text: existing?['desc'] ?? '');
     final techCtrl = TextEditingController(text: existing?['tech'] ?? '');
     final linkCtrl = TextEditingController(text: existing?['link'] ?? '');
 
-    _showSheet(
+    showSheet(
       StatefulBuilder(
         builder: (ctx, setS) {
           return SingleChildScrollView(
@@ -646,26 +646,26 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _sheetHandle(index == null ? 'Add Project' : 'Edit Project'),
-                _field('Project Name', nameCtrl, hint: 'e.g. ResumeIQ App'),
-                _field(
+                sheetHandle(index == null ? 'Add Project' : 'Edit Project'),
+                field('Project Name', nameCtrl, hint: 'e.g. ResumeIQ App'),
+                field(
                   'Description',
                   descCtrl,
                   hint: 'What does the project do?',
                   maxLines: 3,
                 ),
-                _field(
+                field(
                   'Technologies Used',
                   techCtrl,
                   hint: 'e.g. Flutter, Firebase, Node.js',
                 ),
-                _field(
+                field(
                   'Project Link (optional)',
                   linkCtrl,
                   hint: 'https://github.com/...',
                 ),
                 const SizedBox(height: 24),
-                _saveBtn(() {
+                saveBtn(() {
                   if (nameCtrl.text.isEmpty) return;
                   final item = {
                     'name': nameCtrl.text,
@@ -675,9 +675,9 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
                   };
                   setState(() {
                     if (index == null) {
-                      _projects.add(item);
+                      projects.add(item);
                     } else {
-                      _projects[index] = item;
+                      projects[index] = item;
                     }
                   });
                   Navigator.pop(ctx);
@@ -693,13 +693,13 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
   // ═══════════════════════════════════════════════════════════════════════════
   // CERTIFICATIONS
   // ═══════════════════════════════════════════════════════════════════════════
-  void _addOrEditCert({Map<String, dynamic>? existing, int? index}) {
+  void addOrEditCert({Map<String, dynamic>? existing, int? index}) {
     final nameCtrl = TextEditingController(text: existing?['name'] ?? '');
     final orgCtrl = TextEditingController(text: existing?['org'] ?? '');
     final dateCtrl = TextEditingController(text: existing?['date'] ?? '');
     final idCtrl = TextEditingController(text: existing?['id'] ?? '');
 
-    _showSheet(
+    showSheet(
       StatefulBuilder(
         builder: (ctx, setS) {
           return SingleChildScrollView(
@@ -707,27 +707,27 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _sheetHandle(
+                sheetHandle(
                   index == null ? 'Add Certification' : 'Edit Certification',
                 ),
-                _field(
+                field(
                   'Certificate Name',
                   nameCtrl,
                   hint: 'e.g. AWS Solutions Architect',
                 ),
-                _field(
+                field(
                   'Issuing Organization',
                   orgCtrl,
                   hint: 'e.g. Amazon Web Services',
                 ),
-                _field('Issue Date', dateCtrl, hint: 'e.g. May 2023'),
-                _field(
+                field('Issue Date', dateCtrl, hint: 'e.g. May 2023'),
+                field(
                   'Credential ID (optional)',
                   idCtrl,
                   hint: 'e.g. AWS-123456',
                 ),
                 const SizedBox(height: 24),
-                _saveBtn(() {
+                saveBtn(() {
                   if (nameCtrl.text.isEmpty || orgCtrl.text.isEmpty) return;
                   final item = {
                     'name': nameCtrl.text,
@@ -737,9 +737,9 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
                   };
                   setState(() {
                     if (index == null) {
-                      _certifications.add(item);
+                      certifications.add(item);
                     } else {
-                      _certifications[index] = item;
+                      certifications[index] = item;
                     }
                   });
                   Navigator.pop(ctx);
@@ -755,12 +755,12 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
   // ═══════════════════════════════════════════════════════════════════════════
   // ACHIEVEMENTS
   // ═══════════════════════════════════════════════════════════════════════════
-  void _addOrEditAchievement({Map<String, dynamic>? existing, int? index}) {
+  void addOrEditAchievement({Map<String, dynamic>? existing, int? index}) {
     final titleCtrl = TextEditingController(text: existing?['title'] ?? '');
     final descCtrl = TextEditingController(text: existing?['desc'] ?? '');
     final dateCtrl = TextEditingController(text: existing?['date'] ?? '');
 
-    _showSheet(
+    showSheet(
       StatefulBuilder(
         builder: (ctx, setS) {
           return SingleChildScrollView(
@@ -768,19 +768,19 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _sheetHandle(
+                sheetHandle(
                   index == null ? 'Add Achievement' : 'Edit Achievement',
                 ),
-                _field('Title', titleCtrl, hint: 'e.g. Hackathon Winner'),
-                _field(
+                field('Title', titleCtrl, hint: 'e.g. Hackathon Winner'),
+                field(
                   'Description',
                   descCtrl,
                   hint: 'Describe your achievement…',
                   maxLines: 3,
                 ),
-                _field('Date (optional)', dateCtrl, hint: 'e.g. Oct 2023'),
+                field('Date (optional)', dateCtrl, hint: 'e.g. Oct 2023'),
                 const SizedBox(height: 24),
-                _saveBtn(() {
+                saveBtn(() {
                   if (titleCtrl.text.isEmpty) return;
                   final item = {
                     'title': titleCtrl.text,
@@ -789,9 +789,9 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
                   };
                   setState(() {
                     if (index == null) {
-                      _achievements.add(item);
+                      achievements.add(item);
                     } else {
-                      _achievements[index] = item;
+                      achievements[index] = item;
                     }
                   });
                   Navigator.pop(ctx);
@@ -805,7 +805,7 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
   }
 
   // ─── Reusable field widget ────────────────────────────────────────────────
-  Widget _field(
+  Widget field(
     String label,
     TextEditingController ctrl, {
     String? hint,
@@ -828,7 +828,7 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
   }
 
   // ─── Save button ──────────────────────────────────────────────────────────
-  Widget _saveBtn(VoidCallback onSave) {
+  Widget saveBtn(VoidCallback onSave) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
@@ -842,7 +842,7 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
   }
 
   // ─── Delete confirm ───────────────────────────────────────────────────────
-  Future<void> _confirmDelete(
+  Future<void> confirmDelete(
     List<Map<String, dynamic>> list,
     int index,
   ) async {
@@ -902,7 +902,7 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // ── Personal Info ──────────────────────────────────────────────
-            _sectionCard(
+            sectionCard(
               icon: Icons.person_outline,
               title: 'Personal Information',
               child: Column(
@@ -910,46 +910,46 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
                   Row(
                     children: [
                       Expanded(
-                        child: _field(
+                        child: field(
                           'First Name',
-                          _firstNameCtrl,
+                          firstNameCtrl,
                           hint: 'John',
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: _field('Last Name', _lastNameCtrl, hint: 'Doe'),
+                        child: field('Last Name', lastNameCtrl, hint: 'Doe'),
                       ),
                     ],
                   ),
-                  _field('Email', _emailCtrl, hint: 'john@example.com'),
+                  field('Email', emailCtrl, hint: 'john@example.com'),
                   Row(
                     children: [
                       Expanded(
-                        child: _field(
+                        child: field(
                           'Phone',
-                          _phoneCtrl,
+                          phoneCtrl,
                           hint: '+91 98765 43210',
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: _field(
+                        child: field(
                           'Location',
-                          _locationCtrl,
+                          locationCtrl,
                           hint: 'Mumbai, India',
                         ),
                       ),
                     ],
                   ),
-                  _field(
+                  field(
                     'Website / LinkedIn',
-                    _websiteCtrl,
+                    websiteCtrl,
                     hint: 'https://yoursite.com',
                   ),
-                  _field(
+                  field(
                     'Professional Summary',
-                    _summaryCtrl,
+                    summaryCtrl,
                     hint: 'Brief intro about yourself…',
                     maxLines: 3,
                   ),
@@ -959,66 +959,66 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
             const SizedBox(height: 16),
 
             // ── Education ─────────────────────────────────────────────────
-            _sectionHeader(
+            sectionHeader(
               icon: Icons.school_outlined,
               title: 'Education',
-              subtitle: _educations.isEmpty
+              subtitle: educations.isEmpty
                   ? 'Add your educational background'
-                  : '${_educations.length} entr${_educations.length == 1 ? 'y' : 'ies'}',
-              onAdd: () => _addOrEditEducation(),
+                  : '${educations.length} entr${educations.length == 1 ? 'y' : 'ies'}',
+              onAdd: () => addOrEditEducation(),
             ),
-            ..._educations.asMap().entries.map(
-              (e) => _itemCard(
+            ...educations.asMap().entries.map(
+              (e) => itemCard(
                 title: e.value['degree'],
                 subtitle:
                     '${e.value['institution']}${e.value['field'].isNotEmpty ? ' • ${e.value['field']}' : ''}',
                 trailing: '${e.value['start']} – ${e.value['end']}',
                 onEdit: () =>
-                    _addOrEditEducation(existing: e.value, index: e.key),
-                onDelete: () => _confirmDelete(_educations, e.key),
+                    addOrEditEducation(existing: e.value, index: e.key),
+                onDelete: () => confirmDelete(educations, e.key),
               ),
             ),
             const SizedBox(height: 16),
 
             // ── Experience ────────────────────────────────────────────────
-            _sectionHeader(
+            sectionHeader(
               icon: Icons.work_outline,
               title: 'Experience',
-              subtitle: _experiences.isEmpty
+              subtitle: experiences.isEmpty
                   ? 'Add your work experience'
-                  : '${_experiences.length} entr${_experiences.length == 1 ? 'y' : 'ies'}',
-              onAdd: () => _addOrEditExperience(),
+                  : '${experiences.length} entr${experiences.length == 1 ? 'y' : 'ies'}',
+              onAdd: () => addOrEditExperience(),
             ),
-            ..._experiences.asMap().entries.map(
-              (e) => _itemCard(
+            ...experiences.asMap().entries.map(
+              (e) => itemCard(
                 title: e.value['title'],
                 subtitle:
                     '${e.value['company']}${e.value['location'].isNotEmpty ? ' • ${e.value['location']}' : ''}',
                 trailing: '${e.value['start']} – ${e.value['end']}',
                 onEdit: () =>
-                    _addOrEditExperience(existing: e.value, index: e.key),
-                onDelete: () => _confirmDelete(_experiences, e.key),
+                    addOrEditExperience(existing: e.value, index: e.key),
+                onDelete: () => confirmDelete(experiences, e.key),
               ),
             ),
             const SizedBox(height: 16),
 
             // ── Skills ────────────────────────────────────────────────────
-            _sectionHeader(
+            sectionHeader(
               icon: Icons.psychology_outlined,
               title: 'Skills',
-              subtitle: _skills.isEmpty
+              subtitle: skills.isEmpty
                   ? 'Add your skills'
-                  : '${_skills.length} skill${_skills.length == 1 ? '' : 's'}',
-              onAdd: () => _addOrEditSkill(),
+                  : '${skills.length} skill${skills.length == 1 ? '' : 's'}',
+              onAdd: () => addOrEditSkill(),
             ),
-            if (_skills.isNotEmpty) ...[
+            if (skills.isNotEmpty) ...[
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: _skills.asMap().entries.map((e) {
+                children: skills.asMap().entries.map((e) {
                   return GestureDetector(
-                    onLongPress: () => _confirmDelete(_skills, e.key),
+                    onLongPress: () => confirmDelete(skills, e.key),
                     child: Chip(
                       label: Text(
                         '${e.value['name']} • ${e.value['level']}',
@@ -1029,7 +1029,7 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
                         color: AppColors.primary.withValues(alpha: 0.3),
                       ),
                       deleteIcon: const Icon(Icons.close, size: 14),
-                      onDeleted: () => _confirmDelete(_skills, e.key),
+                      onDeleted: () => confirmDelete(skills, e.key),
                     ),
                   );
                 }).toList(),
@@ -1038,84 +1038,84 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
             const SizedBox(height: 16),
 
             // ── Projects ──────────────────────────────────────────────────
-            _sectionHeader(
+            sectionHeader(
               icon: Icons.folder_outlined,
               title: 'Projects',
-              subtitle: _projects.isEmpty
+              subtitle: projects.isEmpty
                   ? 'Add your projects'
-                  : '${_projects.length} project${_projects.length == 1 ? '' : 's'}',
-              onAdd: () => _addOrEditProject(),
+                  : '${projects.length} project${projects.length == 1 ? '' : 's'}',
+              onAdd: () => addOrEditProject(),
             ),
-            ..._projects.asMap().entries.map(
-              (e) => _itemCard(
+            ...projects.asMap().entries.map(
+              (e) => itemCard(
                 title: e.value['name'],
                 subtitle: e.value['tech'].isNotEmpty
                     ? e.value['tech']
                     : e.value['desc'],
                 onEdit: () =>
-                    _addOrEditProject(existing: e.value, index: e.key),
-                onDelete: () => _confirmDelete(_projects, e.key),
+                    addOrEditProject(existing: e.value, index: e.key),
+                onDelete: () => confirmDelete(projects, e.key),
               ),
             ),
             const SizedBox(height: 16),
 
             // ── Certifications ────────────────────────────────────────────
-            _sectionHeader(
+            sectionHeader(
               icon: Icons.verified_outlined,
               title: 'Certifications',
-              subtitle: _certifications.isEmpty
+              subtitle: certifications.isEmpty
                   ? 'Add certifications'
-                  : '${_certifications.length} certification${_certifications.length == 1 ? '' : 's'}',
-              onAdd: () => _addOrEditCert(),
+                  : '${certifications.length} certification${certifications.length == 1 ? '' : 's'}',
+              onAdd: () => addOrEditCert(),
             ),
-            ..._certifications.asMap().entries.map(
-              (e) => _itemCard(
+            ...certifications.asMap().entries.map(
+              (e) => itemCard(
                 title: e.value['name'],
                 subtitle: e.value['org'],
                 trailing: e.value['date'],
-                onEdit: () => _addOrEditCert(existing: e.value, index: e.key),
-                onDelete: () => _confirmDelete(_certifications, e.key),
+                onEdit: () => addOrEditCert(existing: e.value, index: e.key),
+                onDelete: () => confirmDelete(certifications, e.key),
               ),
             ),
             const SizedBox(height: 16),
 
             // ── Achievements ──────────────────────────────────────────────
-            _sectionHeader(
+            sectionHeader(
               icon: Icons.emoji_events_outlined,
               title: 'Achievements',
-              subtitle: _achievements.isEmpty
+              subtitle: achievements.isEmpty
                   ? 'Add your achievements'
-                  : '${_achievements.length} achievement${_achievements.length == 1 ? '' : 's'}',
-              onAdd: () => _addOrEditAchievement(),
+                  : '${achievements.length} achievement${achievements.length == 1 ? '' : 's'}',
+              onAdd: () => addOrEditAchievement(),
             ),
-            ..._achievements.asMap().entries.map(
-              (e) => _itemCard(
+            ...achievements.asMap().entries.map(
+              (e) => itemCard(
                 title: e.value['title'],
                 subtitle: e.value['desc'],
                 trailing: e.value['date'].isNotEmpty ? e.value['date'] : null,
                 onEdit: () =>
-                    _addOrEditAchievement(existing: e.value, index: e.key),
-                onDelete: () => _confirmDelete(_achievements, e.key),
+                    addOrEditAchievement(existing: e.value, index: e.key),
+                onDelete: () => confirmDelete(achievements, e.key),
               ),
             ),
             const SizedBox(height: 16),
 
             // ── Languages ───────────────────────────────────────────────
-            _sectionHeader(
+            sectionHeader(
               icon: Icons.language_outlined,
               title: 'Languages',
-              subtitle: _languages.isEmpty
+              subtitle: languages.isEmpty
                   ? 'Add your languages'
-                  : '${_languages.length} language${_languages.length == 1 ? '' : 's'}',
-              onAdd: () => _addOrEditLanguage(),
+                  : '${languages.length} language${languages.length == 1 ? '' : 's'}',
+              onAdd: () => addOrEditLanguage(),
             ),
-            ..._languages.asMap().entries.map(
-              (e) => _itemCard(
+            ...languages.asMap().entries.map(
+              (e) => itemCard(
                 title: e.value['name'],
                 subtitle: 'Proficiency: ${e.value['level']}',
                 onEdit: () =>
-                    _addOrEditLanguage(existing: e.value, index: e.key),
-                onDelete: () => _confirmDelete(_languages, e.key),
+                    addOrEditLanguage(existing: e.value, index: e.key),
+                onDelete: () => confirmDelete(languages, e.key),
               ),
             ),
 
@@ -1127,9 +1127,9 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
                 Navigator.of(context).pushNamed(
                   AppRoutes.atsAnalysis,
                   arguments: {
-                    'firstName': _firstNameCtrl.text,
-                    'skills': _skills.map((s) => s['name']).toList(),
-                    'experience': _experiences.length,
+                    'firstName': firstNameCtrl.text,
+                    'skills': skills.map((s) => s['name']).toList(),
+                    'experience': experiences.length,
                   },
                 );
               },
@@ -1147,7 +1147,7 @@ class _ResumeEditorPageState extends State<ResumeEditorPage> {
   }
 
   // ─── Expandable section card ──────────────────────────────────────────────
-  Widget _sectionCard({
+  Widget sectionCard({
     required IconData icon,
     required String title,
     required Widget child,

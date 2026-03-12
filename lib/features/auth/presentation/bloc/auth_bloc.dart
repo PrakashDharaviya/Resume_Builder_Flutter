@@ -21,14 +21,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.signOut,
     required this.getCurrentUser,
   }) : super(const AuthInitial()) {
-    on<SignInWithEmailEvent>(_onSignInWithEmail);
-    on<SignUpWithEmailEvent>(_onSignUpWithEmail);
-    on<SignInWithGoogleEvent>(_onSignInWithGoogle);
-    on<SignOutEvent>(_onSignOut);
-    on<CheckAuthStatusEvent>(_onCheckAuthStatus);
+    on<SignInWithEmailEvent>(onSignInWithEmail);
+    on<SignUpWithEmailEvent>(onSignUpWithEmail);
+    on<SignInWithGoogleEvent>(onSignInWithGoogle);
+    on<SignOutEvent>(onSignOut);
+    on<CheckAuthStatusEvent>(onCheckAuthStatus);
   }
 
-  Future<void> _onSignInWithEmail(
+  Future<void> onSignInWithEmail(
     SignInWithEmailEvent event,
     Emitter<AuthState> emit,
   ) async {
@@ -45,7 +45,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  Future<void> _onSignUpWithEmail(
+  Future<void> onSignUpWithEmail(
     SignUpWithEmailEvent event,
     Emitter<AuthState> emit,
   ) async {
@@ -63,7 +63,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  Future<void> _onSignInWithGoogle(
+  Future<void> onSignInWithGoogle(
     SignInWithGoogleEvent event,
     Emitter<AuthState> emit,
   ) async {
@@ -77,7 +77,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  Future<void> _onSignOut(SignOutEvent event, Emitter<AuthState> emit) async {
+  Future<void> onSignOut(SignOutEvent event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
 
     final result = await signOut();
@@ -88,7 +88,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  void _onCheckAuthStatus(CheckAuthStatusEvent event, Emitter<AuthState> emit) {
+  void onCheckAuthStatus(CheckAuthStatusEvent event, Emitter<AuthState> emit) {
     final result = getCurrentUser();
 
     result.fold((failure) => emit(const AuthUnauthenticated()), (user) {

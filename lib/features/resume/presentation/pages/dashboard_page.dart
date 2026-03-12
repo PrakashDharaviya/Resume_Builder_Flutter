@@ -15,10 +15,10 @@ class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
   @override
-  State<DashboardPage> createState() => _DashboardPageState();
+  State<DashboardPage> createState() => DashboardPageState();
 }
 
-class _DashboardPageState extends State<DashboardPage> {
+class DashboardPageState extends State<DashboardPage> {
   @override
   void initState() {
     super.initState();
@@ -59,9 +59,9 @@ class _DashboardPageState extends State<DashboardPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildWelcomeSection(userName, constraints.maxWidth),
+                      buildWelcomeSection(userName, constraints.maxWidth),
                       const SizedBox(height: 24),
-                      _buildResumesSection(isTablet),
+                      buildResumesSection(isTablet),
                     ],
                   ),
                 );
@@ -80,7 +80,7 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildWelcomeSection(String userName, double width) {
+  Widget buildWelcomeSection(String userName, double width) {
     final titleSize = width < 360 ? 18.0 : 22.0;
     final subSize = width < 360 ? 13.0 : 15.0;
     final vPad = width < 360 ? 16.0 : 24.0;
@@ -112,7 +112,7 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildResumesSection([bool isTablet = false]) {
+  Widget buildResumesSection([bool isTablet = false]) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -173,7 +173,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
             if (state is ResumeListLoaded) {
               if (state.resumes.isEmpty) {
-                return _buildEmptyState();
+                return buildEmptyState();
               }
               if (isTablet) {
                 // 2-column grid on tablets/landscape
@@ -188,7 +188,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   itemCount: state.resumes.length,
                   itemBuilder: (context, index) =>
-                      _buildResumeCard(state.resumes[index]),
+                      buildResumeCard(state.resumes[index]),
                 );
               }
               return ListView.builder(
@@ -196,19 +196,19 @@ class _DashboardPageState extends State<DashboardPage> {
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: state.resumes.length,
                 itemBuilder: (context, index) {
-                  return _buildResumeCard(state.resumes[index]);
+                  return buildResumeCard(state.resumes[index]);
                 },
               );
             }
 
-            return _buildEmptyState();
+            return buildEmptyState();
           },
         ),
       ],
     );
   }
 
-  Widget _buildResumeCard(Resume resume) {
+  Widget buildResumeCard(Resume resume) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       child: InkWell(
@@ -266,7 +266,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: _getScoreColor(resume.atsScore!),
+                        color: getScoreColor(resume.atsScore!),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -289,7 +289,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   if (w < 320) {
                     return Row(
                       children: [
-                        _compactBtn(
+                        compactBtn(
                           icon: Icons.edit_outlined,
                           label: 'Edit',
                           filled: false,
@@ -299,7 +299,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           ),
                         ),
                         const SizedBox(width: 6),
-                        _compactBtn(
+                        compactBtn(
                           icon: Icons.visibility_outlined,
                           label: 'Preview',
                           filled: false,
@@ -309,13 +309,13 @@ class _DashboardPageState extends State<DashboardPage> {
                           ),
                         ),
                         const SizedBox(width: 6),
-                        _compactBtn(
+                        compactBtn(
                           icon: Icons.analytics_outlined,
                           label: 'Analyze',
                           filled: true,
                           onTap: () => Navigator.of(context).pushNamed(
                             AppRoutes.atsAnalysis,
-                            arguments: _resumeToMap(resume),
+                            arguments: resumeToMap(resume),
                           ),
                         ),
                       ],
@@ -369,7 +369,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         child: ElevatedButton.icon(
                           onPressed: () => Navigator.of(context).pushNamed(
                             AppRoutes.atsAnalysis,
-                            arguments: _resumeToMap(resume),
+                            arguments: resumeToMap(resume),
                           ),
                           icon: Icon(Icons.analytics_outlined, size: iconSize),
                           label: Text(
@@ -393,7 +393,7 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget buildEmptyState() {
     return Center(
       child: Column(
         children: [
@@ -424,7 +424,7 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Color _getScoreColor(int score) {
+  Color getScoreColor(int score) {
     if (score >= 80) return AppColors.scoreExcellent;
     if (score >= 60) return AppColors.scoreGood;
     if (score >= 40) return AppColors.scoreAverage;
@@ -432,7 +432,7 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   /// Convert a [Resume] entity into the `Map<String,dynamic>` expected by [ATSAnalysisPage].
-  Map<String, dynamic> _resumeToMap(Resume resume) {
+  Map<String, dynamic> resumeToMap(Resume resume) {
     return {
       'firstName': resume.personalInfo?.firstName ?? '',
       'lastName': resume.personalInfo?.lastName ?? '',
@@ -445,7 +445,7 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   // Compact icon+label button for very small screens
-  Widget _compactBtn({
+  Widget compactBtn({
     required IconData icon,
     required String label,
     required bool filled,

@@ -14,17 +14,17 @@ class ATSAnalysisPage extends StatefulWidget {
   const ATSAnalysisPage({super.key, required this.resumeData});
 
   @override
-  State<ATSAnalysisPage> createState() => _ATSAnalysisPageState();
+  State<ATSAnalysisPage> createState() => ATSAnalysisPageState();
 }
 
-class _ATSAnalysisPageState extends State<ATSAnalysisPage>
+class ATSAnalysisPageState extends State<ATSAnalysisPage>
     with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
+  late AnimationController animationController;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
+    animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2000),
     );
@@ -35,7 +35,7 @@ class _ATSAnalysisPageState extends State<ATSAnalysisPage>
 
   @override
   void dispose() {
-    _animationController.dispose();
+    animationController.dispose();
     super.dispose();
   }
 
@@ -46,20 +46,20 @@ class _ATSAnalysisPageState extends State<ATSAnalysisPage>
       body: BlocConsumer<ATSBloc, ATSState>(
         listener: (context, state) {
           if (state is ATSAnalysisComplete) {
-            _animationController.forward();
+            animationController.forward();
           }
         },
         builder: (context, state) {
           if (state is ATSAnalyzing) {
-            return _buildAnalyzingState();
+            return buildAnalyzingState();
           }
 
           if (state is ATSAnalysisComplete) {
-            return _buildAnalysisResults(state.analysis);
+            return buildAnalysisResults(state.analysis);
           }
 
           if (state is ATSError) {
-            return _buildErrorState(state.message);
+            return buildErrorState(state.message);
           }
 
           return const SizedBox.shrink();
@@ -68,7 +68,7 @@ class _ATSAnalysisPageState extends State<ATSAnalysisPage>
     );
   }
 
-  Widget _buildAnalyzingState() {
+  Widget buildAnalyzingState() {
     return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -89,26 +89,26 @@ class _ATSAnalysisPageState extends State<ATSAnalysisPage>
     );
   }
 
-  Widget _buildAnalysisResults(ATSAnalysis analysis) {
+  Widget buildAnalysisResults(ATSAnalysis analysis) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Score Circle
-          _buildScoreCircle(analysis.overallScore),
+          buildScoreCircle(analysis.overallScore),
           const SizedBox(height: 32),
 
           // Score Breakdown
-          _buildScoreBreakdown(analysis.scoreBreakdown),
+          buildScoreBreakdown(analysis.scoreBreakdown),
           const SizedBox(height: 24),
 
           // Matched Keywords
-          _buildMatchedKeywords(analysis.matchedKeywords),
+          buildMatchedKeywords(analysis.matchedKeywords),
           const SizedBox(height: 24),
 
           // Missing Keywords
-          _buildMissingKeywords(analysis.missingKeywords),
+          buildMissingKeywords(analysis.missingKeywords),
           const SizedBox(height: 24),
 
           // Action Button
@@ -127,9 +127,9 @@ class _ATSAnalysisPageState extends State<ATSAnalysisPage>
     );
   }
 
-  Widget _buildScoreCircle(int score) {
+  Widget buildScoreCircle(int score) {
     return AnimatedBuilder(
-      animation: _animationController,
+      animation: animationController,
       builder: (context, child) {
         return Center(
           child: Column(
@@ -140,15 +140,15 @@ class _ATSAnalysisPageState extends State<ATSAnalysisPage>
                 child: CustomPaint(
                   painter: ScoreCirclePainter(
                     score: score,
-                    progress: _animationController.value,
-                    color: _getScoreColor(score),
+                    progress: animationController.value,
+                    color: getScoreColor(score),
                   ),
                   child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          '${(score * _animationController.value).toInt()}',
+                          '${(score * animationController.value).toInt()}',
                           style: const TextStyle(
                             fontSize: 48,
                             fontWeight: FontWeight.bold,
@@ -168,7 +168,7 @@ class _ATSAnalysisPageState extends State<ATSAnalysisPage>
               ),
               const SizedBox(height: 16),
               Text(
-                _getScoreMessage(score),
+                getScoreMessage(score),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
@@ -179,7 +179,7 @@ class _ATSAnalysisPageState extends State<ATSAnalysisPage>
     );
   }
 
-  Widget _buildScoreBreakdown(Map<String, int> scoreBreakdown) {
+  Widget buildScoreBreakdown(Map<String, int> scoreBreakdown) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -212,7 +212,7 @@ class _ATSAnalysisPageState extends State<ATSAnalysisPage>
                       value: entry.value / 100,
                       backgroundColor: AppColors.grey200,
                       valueColor: AlwaysStoppedAnimation(
-                        _getScoreColor(entry.value),
+                        getScoreColor(entry.value),
                       ),
                     ),
                   ],
@@ -225,7 +225,7 @@ class _ATSAnalysisPageState extends State<ATSAnalysisPage>
     );
   }
 
-  Widget _buildMatchedKeywords(List<KeywordMatch> keywords) {
+  Widget buildMatchedKeywords(List<KeywordMatch> keywords) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -254,7 +254,7 @@ class _ATSAnalysisPageState extends State<ATSAnalysisPage>
     );
   }
 
-  Widget _buildMissingKeywords(List<MissingKeyword> keywords) {
+  Widget buildMissingKeywords(List<MissingKeyword> keywords) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -270,13 +270,13 @@ class _ATSAnalysisPageState extends State<ATSAnalysisPage>
               return ListTile(
                 leading: Icon(
                   Icons.error_outline,
-                  color: _getImportanceColor(keyword.importance),
+                  color: getImportanceColor(keyword.importance),
                 ),
                 title: Text(keyword.keyword),
                 subtitle: Text(keyword.category),
                 trailing: Chip(
                   label: Text(keyword.importance),
-                  backgroundColor: _getImportanceColor(
+                  backgroundColor: getImportanceColor(
                     keyword.importance,
                   ).withValues(alpha: 0.1),
                 ),
@@ -288,7 +288,7 @@ class _ATSAnalysisPageState extends State<ATSAnalysisPage>
     );
   }
 
-  Widget _buildErrorState(String message) {
+  Widget buildErrorState(String message) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -323,14 +323,14 @@ class _ATSAnalysisPageState extends State<ATSAnalysisPage>
     );
   }
 
-  Color _getScoreColor(int score) {
+  Color getScoreColor(int score) {
     if (score >= 80) return AppColors.scoreExcellent;
     if (score >= 60) return AppColors.scoreGood;
     if (score >= 40) return AppColors.scoreAverage;
     return AppColors.scorePoor;
   }
 
-  Color _getImportanceColor(String importance) {
+  Color getImportanceColor(String importance) {
     switch (importance.toLowerCase()) {
       case 'high':
         return AppColors.error;
@@ -341,7 +341,7 @@ class _ATSAnalysisPageState extends State<ATSAnalysisPage>
     }
   }
 
-  String _getScoreMessage(int score) {
+  String getScoreMessage(int score) {
     if (score >= 80) {
       return 'Excellent! Your resume is highly optimized for ATS systems.';
     } else if (score >= 60) {

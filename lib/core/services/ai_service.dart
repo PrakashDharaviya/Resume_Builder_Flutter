@@ -4,7 +4,7 @@ import 'dart:math';
 // Generates fake but realistic ATS scores and analysis
 
 class AIService {
-  final Random _random = Random();
+  final Random random = Random();
 
   // Generate mock ATS score
   Future<Map<String, dynamic>> analyzeResume({
@@ -14,12 +14,12 @@ class AIService {
     await Future.delayed(const Duration(seconds: 3));
 
     // Generate mock scores
-    final overallScore = 65 + _random.nextInt(30); // 65-95
-    final formattingScore = 70 + _random.nextInt(30);
-    final keywordScore = 60 + _random.nextInt(35);
-    final skillScore = 65 + _random.nextInt(30);
-    final experienceScore = 70 + _random.nextInt(25);
-    final grammarScore = 80 + _random.nextInt(20);
+    final overallScore = 65 + random.nextInt(30); // 65-95
+    final formattingScore = 70 + random.nextInt(30);
+    final keywordScore = 60 + random.nextInt(35);
+    final skillScore = 65 + random.nextInt(30);
+    final experienceScore = 70 + random.nextInt(25);
+    final grammarScore = 80 + random.nextInt(20);
 
     return {
       'overallScore': overallScore,
@@ -30,15 +30,15 @@ class AIService {
         'experience': experienceScore,
         'grammar': grammarScore,
       },
-      'matchedKeywords': _generateMatchedKeywords(),
-      'missingKeywords': _generateMissingKeywords(),
-      'suggestions': _generateSuggestions(overallScore),
+      'matchedKeywords': generateMatchedKeywords(),
+      'missingKeywords': generateMissingKeywords(),
+      'suggestions': generateSuggestions(overallScore),
       'analyzedAt': DateTime.now().toIso8601String(),
     };
   }
 
   // Generate matched keywords
-  List<Map<String, dynamic>> _generateMatchedKeywords() {
+  List<Map<String, dynamic>> generateMatchedKeywords() {
     final keywords = [
       {'keyword': 'Flutter', 'count': 8, 'weight': 'high'},
       {'keyword': 'Dart', 'count': 6, 'weight': 'high'},
@@ -54,7 +54,7 @@ class AIService {
   }
 
   // Generate missing keywords
-  List<Map<String, dynamic>> _generateMissingKeywords() {
+  List<Map<String, dynamic>> generateMissingKeywords() {
     final keywords = [
       {
         'keyword': 'State Management',
@@ -85,7 +85,7 @@ class AIService {
   }
 
   // Generate improvement suggestions
-  List<Map<String, dynamic>> _generateSuggestions(int score) {
+  List<Map<String, dynamic>> generateSuggestions(int score) {
     final allSuggestions = [
       {
         'title': 'Add More Quantifiable Achievements',

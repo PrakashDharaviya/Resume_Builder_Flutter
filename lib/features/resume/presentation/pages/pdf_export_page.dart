@@ -11,16 +11,16 @@ class PDFExportPage extends StatefulWidget {
   const PDFExportPage({super.key, required this.resume});
 
   @override
-  State<PDFExportPage> createState() => _PDFExportPageState();
+  State<PDFExportPage> createState() => PDFExportPageState();
 }
 
-class _PDFExportPageState extends State<PDFExportPage> {
-  bool _isGenerating = false;
-  double _progress = 0.0;
-  String _selectedTemplate = 'professional';
-  Uint8List? _pdfBytes;
+class PDFExportPageState extends State<PDFExportPage> {
+  bool isGenerating = false;
+  double progress = 0.0;
+  String selectedTemplate = 'professional';
+  Uint8List? pdfBytes;
 
-  final List<Map<String, dynamic>> _templates = [
+  final List<Map<String, dynamic>> templates = [
     {
       'id': 'professional',
       'name': 'Professional',
@@ -47,10 +47,10 @@ class _PDFExportPageState extends State<PDFExportPage> {
     },
   ];
 
-  Future<void> _generatePDF() async {
+  Future<void> generatePDF() async {
     setState(() {
-      _isGenerating = true;
-      _progress = 0.0;
+      isGenerating = true;
+      progress = 0.0;
     });
 
     // Simulate PDF generation progress
@@ -58,21 +58,21 @@ class _PDFExportPageState extends State<PDFExportPage> {
       await Future.delayed(const Duration(milliseconds: 200));
       if (mounted) {
         setState(() {
-          _progress = i / 100;
+          progress = i / 100;
         });
       }
     }
 
-    final pdfBytes = await PDFHelper.generateResumePDF(
+    final generatedBytes = await PDFHelper.generateResumePDF(
       widget.resume,
-      template: _selectedTemplate,
+      template: selectedTemplate,
     );
 
     if (mounted) {
       setState(() {
-        _isGenerating = false;
-        _progress = 1.0;
-        _pdfBytes = pdfBytes;
+        isGenerating = false;
+        progress = 1.0;
+        pdfBytes = generatedBytes;
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -82,7 +82,7 @@ class _PDFExportPageState extends State<PDFExportPage> {
               const Icon(Icons.check_circle, color: Colors.white),
               const SizedBox(width: 12),
               Text(
-                'PDF generated (${(pdfBytes.length / 1024).toStringAsFixed(1)} KB)',
+                'PDF generated (${(generatedBytes.length / 1024).toStringAsFixed(1)} KB)',
               ),
             ],
           ),
@@ -93,8 +93,8 @@ class _PDFExportPageState extends State<PDFExportPage> {
     }
   }
 
-  Future<void> _downloadPDF() async {
-    final bytes = _pdfBytes;
+  Future<void> downloadPDF() async {
+    final bytes = pdfBytes;
     if (bytes == null) {
       ScaffoldMessenger.of(
         context,
@@ -119,8 +119,8 @@ class _PDFExportPageState extends State<PDFExportPage> {
     }
   }
 
-  Future<void> _printPDF() async {
-    final bytes = _pdfBytes;
+  Future<void> printPDF() async {
+    final bytes = pdfBytes;
     if (bytes == null) {
       ScaffoldMessenger.of(
         context,
@@ -191,7 +191,7 @@ class _PDFExportPageState extends State<PDFExportPage> {
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: _getScoreColor(widget.resume.atsScore!),
+                              color: getScoreColor(widget.resume.atsScore!),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
@@ -228,15 +228,15 @@ class _PDFExportPageState extends State<PDFExportPage> {
                 mainAxisSpacing: 12,
                 childAspectRatio: 1.2,
               ),
-              itemCount: _templates.length,
+              itemCount: templates.length,
               itemBuilder: (context, index) {
-                final template = _templates[index];
-                final isSelected = _selectedTemplate == template['id'];
+                final template = templates[index];
+                final isSelected = selectedTemplate == template['id'];
 
                 return InkWell(
                   onTap: () {
                     setState(() {
-                      _selectedTemplate = template['id'] as String;
+                      selectedTemplate = template['id'] as String;
                     });
                   },
                   borderRadius: BorderRadius.circular(12),
@@ -335,7 +335,7 @@ class _PDFExportPageState extends State<PDFExportPage> {
             const SizedBox(height: 24),
 
             // Progress Indicator
-            if (_isGenerating) ...[
+            if (isGenerating) ...[
               Card(
                 color: AppColors.accent.withValues(alpha: 0.1),
                 child: Padding(
@@ -363,7 +363,7 @@ class _PDFExportPageState extends State<PDFExportPage> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  '${(_progress * 100).toInt()}% complete',
+                                  '${(progress * 100).toInt()}% complete',
                                   style: const TextStyle(
                                     fontSize: 14,
                                     color: AppColors.textSecondaryLight,
@@ -376,7 +376,7 @@ class _PDFExportPageState extends State<PDFExportPage> {
                       ),
                       const SizedBox(height: 12),
                       LinearProgressIndicator(
-                        value: _progress,
+                        value: progress,
                         backgroundColor: Colors.grey[300],
                         valueColor: const AlwaysStoppedAnimation<Color>(
                           AppColors.accent,
@@ -391,9 +391,9 @@ class _PDFExportPageState extends State<PDFExportPage> {
 
             // Action Buttons
             ElevatedButton.icon(
-              onPressed: _isGenerating ? null : _generatePDF,
+              onPressed: isGenerating ? null : generatePDF,
               icon: const Icon(Icons.picture_as_pdf),
-              label: Text(_isGenerating ? 'Generating...' : 'Generate PDF'),
+              label: Text(isGenerating ? 'Generating...' : 'Generate PDF'),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
@@ -405,7 +405,7 @@ class _PDFExportPageState extends State<PDFExportPage> {
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: _isGenerating ? null : _downloadPDF,
+                    onPressed: isGenerating ? null : downloadPDF,
                     icon: const Icon(Icons.download),
                     label: const Text('Download'),
                   ),
@@ -413,7 +413,7 @@ class _PDFExportPageState extends State<PDFExportPage> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: _isGenerating ? null : _printPDF,
+                    onPressed: isGenerating ? null : printPDF,
                     icon: const Icon(Icons.print),
                     label: const Text('Print'),
                   ),
@@ -428,7 +428,7 @@ class _PDFExportPageState extends State<PDFExportPage> {
     );
   }
 
-  Color _getScoreColor(int score) {
+  Color getScoreColor(int score) {
     if (score >= 80) return AppColors.scoreExcellent;
     if (score >= 60) return AppColors.scoreGood;
     if (score >= 40) return AppColors.scoreAverage;

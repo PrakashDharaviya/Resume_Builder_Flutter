@@ -10,7 +10,7 @@ import 'package:printing/printing.dart';
 import '../../features/resume/domain/entities/resume.dart';
 
 class PDFHelper {
-  static final _dateFormat = DateFormat('MMM yyyy');
+  static final dateFormat = DateFormat('MMM yyyy');
 
   /// Generates a real PDF document from a [Resume] entity.
   static Future<Uint8List> generateResumePDF(
@@ -46,13 +46,13 @@ class PDFHelper {
             pw.SizedBox(height: 4),
             pw.Row(
               children: [
-                if (personal.email.isNotEmpty) _contactChip(personal.email),
+                if (personal.email.isNotEmpty) contactChip(personal.email),
                 if (personal.phone != null && personal.phone!.isNotEmpty)
-                  _contactChip(personal.phone!),
+                  contactChip(personal.phone!),
                 if (personal.location != null && personal.location!.isNotEmpty)
-                  _contactChip(personal.location!),
+                  contactChip(personal.location!),
                 if (personal.website != null && personal.website!.isNotEmpty)
-                  _contactChip(personal.website!),
+                  contactChip(personal.website!),
               ],
             ),
             if (personal.summary != null && personal.summary!.isNotEmpty) ...[
@@ -67,7 +67,7 @@ class PDFHelper {
 
           // Experience
           if (resume.experience.isNotEmpty) ...[
-            _sectionTitle('Experience'),
+            sectionTitle('Experience'),
             for (final exp in resume.experience) ...[
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
@@ -82,7 +82,7 @@ class PDFHelper {
                     ),
                   ),
                   pw.Text(
-                    _dateRange(
+                    dateRange(
                       exp.startDate,
                       exp.endDate,
                       exp.currentlyWorking,
@@ -137,7 +137,7 @@ class PDFHelper {
 
           // Education
           if (resume.education.isNotEmpty) ...[
-            _sectionTitle('Education'),
+            sectionTitle('Education'),
             for (final edu in resume.education) ...[
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
@@ -152,7 +152,7 @@ class PDFHelper {
                     ),
                   ),
                   pw.Text(
-                    _dateRange(
+                    dateRange(
                       edu.startDate,
                       edu.endDate,
                       edu.currentlyStudying,
@@ -176,7 +176,7 @@ class PDFHelper {
 
           // Skills
           if (resume.skills.isNotEmpty) ...[
-            _sectionTitle('Skills'),
+            sectionTitle('Skills'),
             pw.Wrap(
               spacing: 6,
               runSpacing: 6,
@@ -206,7 +206,7 @@ class PDFHelper {
 
           // Projects
           if (resume.projects.isNotEmpty) ...[
-            _sectionTitle('Projects'),
+            sectionTitle('Projects'),
             for (final proj in resume.projects) ...[
               pw.Text(
                 proj.name,
@@ -236,7 +236,7 @@ class PDFHelper {
 
           // Certifications
           if (resume.certifications.isNotEmpty) ...[
-            _sectionTitle('Certifications'),
+            sectionTitle('Certifications'),
             for (final cert in resume.certifications) ...[
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
@@ -251,7 +251,7 @@ class PDFHelper {
                     ),
                   ),
                   pw.Text(
-                    _dateFormat.format(cert.issueDate),
+                    dateFormat.format(cert.issueDate),
                     style: const pw.TextStyle(fontSize: 10),
                   ),
                 ],
@@ -266,7 +266,7 @@ class PDFHelper {
 
           // Languages
           if (resume.languages.isNotEmpty) ...[
-            _sectionTitle('Languages'),
+            sectionTitle('Languages'),
             pw.Wrap(
               spacing: 16,
               runSpacing: 4,
@@ -284,7 +284,7 @@ class PDFHelper {
 
           // Achievements
           if (resume.achievements.isNotEmpty) ...[
-            _sectionTitle('Achievements'),
+            sectionTitle('Achievements'),
             for (final a in resume.achievements) ...[
               pw.Text(
                 a.title,
@@ -334,7 +334,7 @@ class PDFHelper {
 
   // ── helpers ──────────────────────────────────────────────
 
-  static pw.Widget _sectionTitle(String title) {
+  static pw.Widget sectionTitle(String title) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
@@ -352,17 +352,17 @@ class PDFHelper {
     );
   }
 
-  static pw.Widget _contactChip(String text) {
+  static pw.Widget contactChip(String text) {
     return pw.Padding(
       padding: const pw.EdgeInsets.only(right: 12),
       child: pw.Text(text, style: const pw.TextStyle(fontSize: 10)),
     );
   }
 
-  static String _dateRange(DateTime start, DateTime? end, bool isCurrent) {
-    final s = _dateFormat.format(start);
+  static String dateRange(DateTime start, DateTime? end, bool isCurrent) {
+    final s = dateFormat.format(start);
     if (isCurrent) return '$s — Present';
-    if (end != null) return '$s — ${_dateFormat.format(end)}';
+    if (end != null) return '$s — ${dateFormat.format(end)}';
     return s;
   }
 }

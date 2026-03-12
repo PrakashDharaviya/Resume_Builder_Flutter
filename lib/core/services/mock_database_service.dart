@@ -13,37 +13,37 @@ class MockDatabaseService {
 
   static final MockDatabaseService instance = MockDatabaseService._();
 
-  AdminMockDataSource get _adminSource => di.sl<AdminMockDataSource>();
-  ResumeLocalDataSource get _resumeSource => di.sl<ResumeLocalDataSource>();
+  AdminMockDataSource get adminSource => di.sl<AdminMockDataSource>();
+  ResumeLocalDataSource get resumeSource => di.sl<ResumeLocalDataSource>();
 
-  AdminStats getAdminStats() => _adminSource.getAdminStats();
+  AdminStats getAdminStats() => adminSource.getAdminStats();
 
-  List<User> getUsers() => _adminSource.getAllUsers();
-  User toggleUserBlock(String uid) => _adminSource.toggleBlockUser(uid);
-  User toggleUserPremium(String uid) => _adminSource.togglePremiumUser(uid);
+  List<User> getUsers() => adminSource.getAllUsers();
+  User toggleUserBlock(String uid) => adminSource.toggleBlockUser(uid);
+  User toggleUserPremium(String uid) => adminSource.togglePremiumUser(uid);
 
-  List<ResumeTemplate> getTemplates() => _adminSource.getAllTemplates();
+  List<ResumeTemplate> getTemplates() => adminSource.getAllTemplates();
   ResumeTemplate addTemplate(ResumeTemplate template) =>
-      _adminSource.addTemplate(template);
+      adminSource.addTemplate(template);
   ResumeTemplate updateTemplate(ResumeTemplate template) =>
-      _adminSource.updateTemplate(template);
-  void deleteTemplate(String id) => _adminSource.deleteTemplate(id);
+      adminSource.updateTemplate(template);
+  void deleteTemplate(String id) => adminSource.deleteTemplate(id);
 
-  ATSConfig getAtsConfig() => _adminSource.getATSConfig();
+  ATSConfig getAtsConfig() => adminSource.getATSConfig();
   ATSConfig updateAtsConfig(ATSConfig config) =>
-      _adminSource.updateATSConfig(config);
+      adminSource.updateATSConfig(config);
 
-  List<Announcement> getAnnouncements() => _adminSource.getAllAnnouncements();
+  List<Announcement> getAnnouncements() => adminSource.getAllAnnouncements();
   List<Announcement> getActiveAnnouncements() =>
-      _adminSource.getAllAnnouncements().where((a) => a.isActive).toList();
+      adminSource.getAllAnnouncements().where((a) => a.isActive).toList();
   Announcement addAnnouncement(Announcement announcement) =>
-      _adminSource.addAnnouncement(announcement);
+      adminSource.addAnnouncement(announcement);
   Announcement toggleAnnouncement(String id) =>
-      _adminSource.toggleAnnouncement(id);
-  void deleteAnnouncement(String id) => _adminSource.deleteAnnouncement(id);
+      adminSource.toggleAnnouncement(id);
+  void deleteAnnouncement(String id) => adminSource.deleteAnnouncement(id);
 
   Future<List<Resume>> getResumes() async {
-    final models = await _resumeSource.getAllResumes();
+    final models = await resumeSource.getAllResumes();
     return List<Resume>.from(models);
   }
 }

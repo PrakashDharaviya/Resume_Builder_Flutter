@@ -41,7 +41,7 @@ class UserTile extends StatelessWidget {
           // Avatar
           CircleAvatar(
             radius: 22,
-            backgroundColor: _avatarColor(user.displayName),
+            backgroundColor: avatarColor(user.displayName),
             child: Text(
               user.displayName.isNotEmpty
                   ? user.displayName[0].toUpperCase()
@@ -204,7 +204,7 @@ class UserTile extends StatelessWidget {
     );
   }
 
-  Color _avatarColor(String name) {
+  Color avatarColor(String name) {
     final colors = [
       const Color(0xFF10B981),
       const Color(0xFF10B981),

@@ -10,7 +10,7 @@ abstract class ResumeLocalDataSource {
 
 class ResumeLocalDataSourceImpl implements ResumeLocalDataSource {
   // Mock data storage
-  final List<ResumeModel> _mockResumes = [
+  final List<ResumeModel> mockResumes = [
     ResumeModel(
       id: 'resume_1',
       userId: 'mock_uid_123',
@@ -192,28 +192,28 @@ class ResumeLocalDataSourceImpl implements ResumeLocalDataSource {
   @override
   Future<List<ResumeModel>> getAllResumes() async {
     await Future.delayed(const Duration(milliseconds: 500));
-    return _mockResumes;
+    return mockResumes;
   }
 
   @override
   Future<ResumeModel> getResumeById(String id) async {
     await Future.delayed(const Duration(milliseconds: 300));
-    return _mockResumes.firstWhere((resume) => resume.id == id);
+    return mockResumes.firstWhere((resume) => resume.id == id);
   }
 
   @override
   Future<ResumeModel> createResume(ResumeModel resume) async {
     await Future.delayed(const Duration(milliseconds: 500));
-    _mockResumes.add(resume);
+    mockResumes.add(resume);
     return resume;
   }
 
   @override
   Future<ResumeModel> updateResume(ResumeModel resume) async {
     await Future.delayed(const Duration(milliseconds: 500));
-    final index = _mockResumes.indexWhere((r) => r.id == resume.id);
+    final index = mockResumes.indexWhere((r) => r.id == resume.id);
     if (index != -1) {
-      _mockResumes[index] = resume;
+      mockResumes[index] = resume;
     }
     return resume;
   }
@@ -221,6 +221,6 @@ class ResumeLocalDataSourceImpl implements ResumeLocalDataSource {
   @override
   Future<void> deleteResume(String id) async {
     await Future.delayed(const Duration(milliseconds: 300));
-    _mockResumes.removeWhere((resume) => resume.id == id);
+    mockResumes.removeWhere((resume) => resume.id == id);
   }
 }

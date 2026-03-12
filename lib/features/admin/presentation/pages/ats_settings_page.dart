@@ -11,15 +11,15 @@ class ATSSettingsPage extends StatefulWidget {
   const ATSSettingsPage({super.key});
 
   @override
-  State<ATSSettingsPage> createState() => _ATSSettingsPageState();
+  State<ATSSettingsPage> createState() => ATSSettingsPageState();
 }
 
-class _ATSSettingsPageState extends State<ATSSettingsPage> {
-  double _keywordWeight = 30;
-  double _skillWeight = 25;
-  double _grammarWeight = 15;
-  double _experienceWeight = 20;
-  double _formattingWeight = 10;
+class ATSSettingsPageState extends State<ATSSettingsPage> {
+  double keywordWeight = 30;
+  double skillWeight = 25;
+  double grammarWeight = 15;
+  double experienceWeight = 20;
+  double formattingWeight = 10;
 
   @override
   void initState() {
@@ -72,11 +72,11 @@ class _ATSSettingsPageState extends State<ATSSettingsPage> {
         listener: (context, state) {
           if (state is ATSConfigLoaded) {
             setState(() {
-              _keywordWeight = state.config.keywordWeight;
-              _skillWeight = state.config.skillWeight;
-              _grammarWeight = state.config.grammarWeight;
-              _experienceWeight = state.config.experienceWeight;
-              _formattingWeight = state.config.formattingWeight;
+              keywordWeight = state.config.keywordWeight;
+              skillWeight = state.config.skillWeight;
+              grammarWeight = state.config.grammarWeight;
+              experienceWeight = state.config.experienceWeight;
+              formattingWeight = state.config.formattingWeight;
             });
           }
           if (state is AdminActionSuccess) {
@@ -102,11 +102,11 @@ class _ATSSettingsPageState extends State<ATSSettingsPage> {
           }
 
           final totalWeight =
-              _keywordWeight +
-              _skillWeight +
-              _grammarWeight +
-              _experienceWeight +
-              _formattingWeight;
+              keywordWeight +
+              skillWeight +
+              grammarWeight +
+              experienceWeight +
+              formattingWeight;
 
           return SingleChildScrollView(
             child: Align(
@@ -199,53 +199,53 @@ class _ATSSettingsPageState extends State<ATSSettingsPage> {
                           const SizedBox(height: 28),
 
                           // Sliders
-                          _weightSlider(
+                          weightSlider(
                             context,
                             label: 'Keyword Matching',
                             icon: Icons.key_rounded,
-                            value: _keywordWeight,
+                            value: keywordWeight,
                             color: const Color(0xFF34D399),
                             onChanged: (v) =>
-                                setState(() => _keywordWeight = v),
+                                setState(() => keywordWeight = v),
                             isDark: isDark,
                           ),
-                          _weightSlider(
+                          weightSlider(
                             context,
                             label: 'Skills Assessment',
                             icon: Icons.psychology_rounded,
-                            value: _skillWeight,
+                            value: skillWeight,
                             color: const Color(0xFF10B981),
-                            onChanged: (v) => setState(() => _skillWeight = v),
+                            onChanged: (v) => setState(() => skillWeight = v),
                             isDark: isDark,
                           ),
-                          _weightSlider(
+                          weightSlider(
                             context,
                             label: 'Grammar & Language',
                             icon: Icons.spellcheck_rounded,
-                            value: _grammarWeight,
+                            value: grammarWeight,
                             color: const Color(0xFFF59E0B),
                             onChanged: (v) =>
-                                setState(() => _grammarWeight = v),
+                                setState(() => grammarWeight = v),
                             isDark: isDark,
                           ),
-                          _weightSlider(
+                          weightSlider(
                             context,
                             label: 'Experience Relevance',
                             icon: Icons.work_outline_rounded,
-                            value: _experienceWeight,
+                            value: experienceWeight,
                             color: const Color(0xFFEF4444),
                             onChanged: (v) =>
-                                setState(() => _experienceWeight = v),
+                                setState(() => experienceWeight = v),
                             isDark: isDark,
                           ),
-                          _weightSlider(
+                          weightSlider(
                             context,
                             label: 'Formatting & Layout',
                             icon: Icons.format_align_left_rounded,
-                            value: _formattingWeight,
+                            value: formattingWeight,
                             color: const Color(0xFF8B5CF6),
                             onChanged: (v) =>
-                                setState(() => _formattingWeight = v),
+                                setState(() => formattingWeight = v),
                             isDark: isDark,
                           ),
 
@@ -261,11 +261,11 @@ class _ATSSettingsPageState extends State<ATSSettingsPage> {
                                       context.read<AdminBloc>().add(
                                         UpdateATSConfig(
                                           config: ATSConfig(
-                                            keywordWeight: _keywordWeight,
-                                            skillWeight: _skillWeight,
-                                            grammarWeight: _grammarWeight,
-                                            experienceWeight: _experienceWeight,
-                                            formattingWeight: _formattingWeight,
+                                            keywordWeight: keywordWeight,
+                                            skillWeight: skillWeight,
+                                            grammarWeight: grammarWeight,
+                                            experienceWeight: experienceWeight,
+                                            formattingWeight: formattingWeight,
                                           ),
                                         ),
                                       );
@@ -319,7 +319,7 @@ class _ATSSettingsPageState extends State<ATSSettingsPage> {
     );
   }
 
-  Widget _weightSlider(
+  Widget weightSlider(
     BuildContext context, {
     required String label,
     required IconData icon,

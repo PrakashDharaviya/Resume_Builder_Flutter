@@ -21,15 +21,15 @@ class ResumeBloc extends Bloc<ResumeEvent, ResumeState> {
     required this.updateResume,
     required this.deleteResume,
   }) : super(const ResumeInitial()) {
-    on<LoadAllResumesEvent>(_onLoadAllResumes);
-    on<LoadResumeByIdEvent>(_onLoadResumeById);
-    on<CreateResumeEvent>(_onCreateResume);
-    on<UpdateResumeEvent>(_onUpdateResume);
-    on<DeleteResumeEvent>(_onDeleteResume);
-    on<SelectResumeEvent>(_onSelectResume);
+    on<LoadAllResumesEvent>(onLoadAllResumes);
+    on<LoadResumeByIdEvent>(onLoadResumeById);
+    on<CreateResumeEvent>(onCreateResume);
+    on<UpdateResumeEvent>(onUpdateResume);
+    on<DeleteResumeEvent>(onDeleteResume);
+    on<SelectResumeEvent>(onSelectResume);
   }
 
-  Future<void> _onLoadAllResumes(
+  Future<void> onLoadAllResumes(
     LoadAllResumesEvent event,
     Emitter<ResumeState> emit,
   ) async {
@@ -43,7 +43,7 @@ class ResumeBloc extends Bloc<ResumeEvent, ResumeState> {
     );
   }
 
-  Future<void> _onLoadResumeById(
+  Future<void> onLoadResumeById(
     LoadResumeByIdEvent event,
     Emitter<ResumeState> emit,
   ) async {
@@ -57,7 +57,7 @@ class ResumeBloc extends Bloc<ResumeEvent, ResumeState> {
     );
   }
 
-  Future<void> _onCreateResume(
+  Future<void> onCreateResume(
     CreateResumeEvent event,
     Emitter<ResumeState> emit,
   ) async {
@@ -71,7 +71,7 @@ class ResumeBloc extends Bloc<ResumeEvent, ResumeState> {
     );
   }
 
-  Future<void> _onUpdateResume(
+  Future<void> onUpdateResume(
     UpdateResumeEvent event,
     Emitter<ResumeState> emit,
   ) async {
@@ -85,7 +85,7 @@ class ResumeBloc extends Bloc<ResumeEvent, ResumeState> {
     );
   }
 
-  Future<void> _onDeleteResume(
+  Future<void> onDeleteResume(
     DeleteResumeEvent event,
     Emitter<ResumeState> emit,
   ) async {
@@ -99,7 +99,7 @@ class ResumeBloc extends Bloc<ResumeEvent, ResumeState> {
     );
   }
 
-  void _onSelectResume(SelectResumeEvent event, Emitter<ResumeState> emit) {
+  void onSelectResume(SelectResumeEvent event, Emitter<ResumeState> emit) {
     emit(ResumeSelected(event.resume));
   }
 }

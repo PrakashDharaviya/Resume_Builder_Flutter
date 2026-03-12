@@ -34,37 +34,37 @@ class AdminDrawer extends StatelessWidget {
               ),
             ),
           ),
-          _item(
+          item(
             context,
             Icons.dashboard_rounded,
             'Dashboard',
             AdminRoutes.dashboard,
           ),
-          _item(
+          item(
             context,
             Icons.people_rounded,
             'Users',
             AdminRoutes.manageUsers,
           ),
-          _item(
+          item(
             context,
             Icons.style_rounded,
             'Templates',
             AdminRoutes.manageTemplates,
           ),
-          _item(
+          item(
             context,
             Icons.tune_rounded,
             'ATS Settings',
             AdminRoutes.atsSettings,
           ),
-          _item(
+          item(
             context,
             Icons.insights_rounded,
             'Analytics',
             AdminRoutes.analytics,
           ),
-          _item(
+          item(
             context,
             Icons.campaign_rounded,
             'Announcements',
@@ -106,7 +106,7 @@ class AdminDrawer extends StatelessWidget {
     );
   }
 
-  Widget _item(
+  Widget item(
     BuildContext context,
     IconData icon,
     String label,

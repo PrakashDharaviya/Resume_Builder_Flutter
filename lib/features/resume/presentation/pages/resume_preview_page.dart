@@ -59,21 +59,21 @@ class ResumePreviewPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildHeader(),
+                buildHeader(),
                 const Divider(height: 32),
 
                 if (resume.personalInfo?.summary != null) ...[
-                  _buildSummary(),
+                  buildSummary(),
                   const SizedBox(height: 24),
                 ],
 
                 if (resume.experience.isNotEmpty) ...[
-                  _buildSection(
+                  buildSection(
                     title: AppStrings.experience,
                     icon: Icons.work,
                     child: Column(
                       children: resume.experience
-                          .map((exp) => _buildExperienceItem(exp))
+                          .map((exp) => buildExperienceItem(exp))
                           .toList(),
                     ),
                   ),
@@ -81,12 +81,12 @@ class ResumePreviewPage extends StatelessWidget {
                 ],
 
                 if (resume.education.isNotEmpty) ...[
-                  _buildSection(
+                  buildSection(
                     title: AppStrings.education,
                     icon: Icons.school,
                     child: Column(
                       children: resume.education
-                          .map((edu) => _buildEducationItem(edu))
+                          .map((edu) => buildEducationItem(edu))
                           .toList(),
                     ),
                   ),
@@ -94,21 +94,21 @@ class ResumePreviewPage extends StatelessWidget {
                 ],
 
                 if (resume.skills.isNotEmpty) ...[
-                  _buildSection(
+                  buildSection(
                     title: AppStrings.skills,
                     icon: Icons.star,
-                    child: _buildSkills(),
+                    child: buildSkills(),
                   ),
                   const SizedBox(height: 24),
                 ],
 
                 if (resume.projects.isNotEmpty) ...[
-                  _buildSection(
+                  buildSection(
                     title: AppStrings.projects,
                     icon: Icons.folder,
                     child: Column(
                       children: resume.projects
-                          .map((proj) => _buildProjectItem(proj))
+                          .map((proj) => buildProjectItem(proj))
                           .toList(),
                     ),
                   ),
@@ -116,12 +116,12 @@ class ResumePreviewPage extends StatelessWidget {
                 ],
 
                 if (resume.certifications.isNotEmpty) ...[
-                  _buildSection(
+                  buildSection(
                     title: AppStrings.certifications,
                     icon: Icons.verified,
                     child: Column(
                       children: resume.certifications
-                          .map((cert) => _buildCertificationItem(cert))
+                          .map((cert) => buildCertificationItem(cert))
                           .toList(),
                     ),
                   ),
@@ -129,12 +129,12 @@ class ResumePreviewPage extends StatelessWidget {
                 ],
 
                 if (resume.achievements.isNotEmpty) ...[
-                  _buildSection(
+                  buildSection(
                     title: AppStrings.achievements,
                     icon: Icons.emoji_events,
                     child: Column(
                       children: resume.achievements
-                          .map((ach) => _buildAchievementItem(ach))
+                          .map((ach) => buildAchievementItem(ach))
                           .toList(),
                     ),
                   ),
@@ -142,10 +142,10 @@ class ResumePreviewPage extends StatelessWidget {
                 ],
 
                 if (resume.languages.isNotEmpty) ...[
-                  _buildSection(
+                  buildSection(
                     title: AppStrings.languages,
                     icon: Icons.language,
-                    child: _buildLanguages(),
+                    child: buildLanguages(),
                   ),
                 ],
               ],
@@ -163,7 +163,7 @@ class ResumePreviewPage extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
+  Widget buildHeader() {
     final personal = resume.personalInfo;
 
     if (personal == null) {
@@ -186,13 +186,13 @@ class ResumePreviewPage extends StatelessWidget {
           spacing: 16,
           runSpacing: 8,
           children: [
-            _buildContactItem(Icons.email, personal.email),
+            buildContactItem(Icons.email, personal.email),
             if (personal.phone != null)
-              _buildContactItem(Icons.phone, personal.phone!),
+              buildContactItem(Icons.phone, personal.phone!),
             if (personal.location != null)
-              _buildContactItem(Icons.location_on, personal.location!),
+              buildContactItem(Icons.location_on, personal.location!),
             if (personal.website != null)
-              _buildContactItem(Icons.link, personal.website!),
+              buildContactItem(Icons.link, personal.website!),
           ],
         ),
         if (resume.socialLinks != null) ...[
@@ -202,11 +202,11 @@ class ResumePreviewPage extends StatelessWidget {
             runSpacing: 8,
             children: [
               if (resume.socialLinks!.linkedin != null)
-                _buildSocialLink(Icons.work, resume.socialLinks!.linkedin!),
+                buildSocialLink(Icons.work, resume.socialLinks!.linkedin!),
               if (resume.socialLinks!.github != null)
-                _buildSocialLink(Icons.code, resume.socialLinks!.github!),
+                buildSocialLink(Icons.code, resume.socialLinks!.github!),
               if (resume.socialLinks!.portfolio != null)
-                _buildSocialLink(Icons.web, resume.socialLinks!.portfolio!),
+                buildSocialLink(Icons.web, resume.socialLinks!.portfolio!),
             ],
           ),
         ],
@@ -214,7 +214,7 @@ class ResumePreviewPage extends StatelessWidget {
     );
   }
 
-  Widget _buildContactItem(IconData icon, String text) {
+  Widget buildContactItem(IconData icon, String text) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -231,7 +231,7 @@ class ResumePreviewPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSocialLink(IconData icon, String url) {
+  Widget buildSocialLink(IconData icon, String url) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -252,7 +252,7 @@ class ResumePreviewPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSummary() {
+  Widget buildSummary() {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -271,7 +271,7 @@ class ResumePreviewPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSection({
+  Widget buildSection({
     required String title,
     required IconData icon,
     required Widget child,
@@ -300,7 +300,7 @@ class ResumePreviewPage extends StatelessWidget {
     );
   }
 
-  Widget _buildExperienceItem(Experience experience) {
+  Widget buildExperienceItem(Experience experience) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Column(
@@ -371,7 +371,7 @@ class ResumePreviewPage extends StatelessWidget {
     );
   }
 
-  Widget _buildEducationItem(Education education) {
+  Widget buildEducationItem(Education education) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Column(
@@ -417,7 +417,7 @@ class ResumePreviewPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSkills() {
+  Widget buildSkills() {
     // Group skills by category
     final skillsByCategory = <String, List<Skill>>{};
     for (final skill in resume.skills) {
@@ -478,7 +478,7 @@ class ResumePreviewPage extends StatelessWidget {
     );
   }
 
-  Widget _buildProjectItem(Project project) {
+  Widget buildProjectItem(Project project) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Column(
@@ -549,7 +549,7 @@ class ResumePreviewPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCertificationItem(Certification certification) {
+  Widget buildCertificationItem(Certification certification) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Column(
@@ -576,7 +576,7 @@ class ResumePreviewPage extends StatelessWidget {
     );
   }
 
-  Widget _buildAchievementItem(Achievement achievement) {
+  Widget buildAchievementItem(Achievement achievement) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Column(
@@ -614,7 +614,7 @@ class ResumePreviewPage extends StatelessWidget {
     );
   }
 
-  Widget _buildLanguages() {
+  Widget buildLanguages() {
     return Wrap(
       spacing: 12,
       runSpacing: 12,
