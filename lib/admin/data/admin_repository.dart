@@ -11,25 +11,25 @@ class AdminRepository {
   AdminRepository({AdminFirestoreService? service})
     : service = service ?? AdminFirestoreService();
 
-  AdminStats getStats() => service.getStats();
+  Future<AdminStats> getStats() => service.getStats();
 
-  List<User> getUsers() => service.getUsers();
-  User toggleBlock(String uid) => service.toggleBlock(uid);
-  User togglePremium(String uid) => service.togglePremium(uid);
+  Future<List<User>> getUsers() => service.getUsers();
+  Future<User> toggleBlock(String uid) => service.toggleBlock(uid);
+  Future<User> togglePremium(String uid) => service.togglePremium(uid);
 
-  List<ResumeTemplate> getTemplates() => service.getTemplates();
-  ResumeTemplate addTemplate(ResumeTemplate template) =>
+  Future<List<ResumeTemplate>> getTemplates() => service.getTemplates();
+  Future<ResumeTemplate> addTemplate(ResumeTemplate template) =>
       service.addTemplate(template);
-  ResumeTemplate updateTemplate(ResumeTemplate template) =>
+  Future<ResumeTemplate> updateTemplate(ResumeTemplate template) =>
       service.updateTemplate(template);
-  void deleteTemplate(String id) => service.deleteTemplate(id);
+  Future<void> deleteTemplate(String id) => service.deleteTemplate(id);
 
-  ATSConfig getAtsConfig() => service.getAtsConfig();
-  ATSConfig saveAtsConfig(ATSConfig config) => service.saveAtsConfig(config);
+  Future<ATSConfig> getAtsConfig() => service.getAtsConfig();
+  Future<ATSConfig> saveAtsConfig(ATSConfig config) => service.saveAtsConfig(config);
 
-  List<Announcement> getAnnouncements() => service.getAnnouncements();
-  Announcement addAnnouncement(Announcement announcement) =>
+  Future<List<Announcement>> getAnnouncements() => service.getAnnouncements();
+  Future<Announcement> addAnnouncement(Announcement announcement) =>
       service.addAnnouncement(announcement);
-  Announcement toggleAnnouncement(String id) => service.toggleAnnouncement(id);
-  void deleteAnnouncement(String id) => service.deleteAnnouncement(id);
+  Future<Announcement> toggleAnnouncement(String id) => service.toggleAnnouncement(id);
+  Future<void> deleteAnnouncement(String id) => service.deleteAnnouncement(id);
 }

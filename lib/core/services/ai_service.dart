@@ -1,188 +1,95 @@
-import 'dart:math';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-// Mock AI Service for ATS scoring
-// Generates fake but realistic ATS scores and analysis
+// Replace with your actual Gemini API key
+const String _geminiApiKey = 'AIzaSyCw1Sz5MjUzbX5umEtwYBKyCf-xuq52Rsc';
+const String _geminiEndpoint =
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
 class AIService {
-  final Random random = Random();
-
-  // Generate mock ATS score
   Future<Map<String, dynamic>> analyzeResume({
     required Map<String, dynamic> resumeData,
   }) async {
-    // Simulate AI processing delay
-    await Future.delayed(const Duration(seconds: 3));
+    final prompt =
+        '''
+Analyze this resume for ATS (Applicant Tracking System) compatibility. Return a JSON object with these exact keys:
+- overallScore (integer 0-100)
+- scoreBreakdown: {formatting: int, keywordMatch: int, skills: int, experience: int, grammar: int}
+- matchedKeywords: list of {keyword: string, count: int, weight: string (high/medium/low)}
+- missingKeywords: list of {keyword: string, importance: string}
+- suggestions: list of {category: string, suggestion: string, priority: string}
+- analyzedAt: ISO date string
 
-    // Generate mock scores
-    final overallScore = 65 + random.nextInt(30); // 65-95
-    final formattingScore = 70 + random.nextInt(30);
-    final keywordScore = 60 + random.nextInt(35);
-    final skillScore = 65 + random.nextInt(30);
-    final experienceScore = 70 + random.nextInt(25);
-    final grammarScore = 80 + random.nextInt(20);
+Resume data: ${jsonEncode(resumeData)}
 
+Return ONLY valid JSON, no markdown, no explanation.''';
+
+    try {
+      final uri = Uri.parse('$_geminiEndpoint?key=$_geminiApiKey');
+      final response = await http.post(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'contents': [
+            {
+              'parts': [
+                {'text': prompt},
+              ],
+            },
+          ],
+          'generationConfig': {'temperature': 0.2, 'maxOutputTokens': 2048},
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final body = jsonDecode(response.body) as Map<String, dynamic>;
+        final text =
+            body['candidates'][0]['content']['parts'][0]['text'] as String;
+        final jsonStr = _extractJson(text);
+        final result = jsonDecode(jsonStr) as Map<String, dynamic>;
+        return result;
+      } else {
+        return _fallbackError(
+          'Gemini API returned status ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      return _fallbackError(e.toString());
+    }
+  }
+
+  /// Extracts a JSON object from text that may contain markdown fences.
+  String _extractJson(String text) {
+    var cleaned = text.trim();
+    // Strip ```json ... ``` or ``` ... ```
+    final fencePattern = RegExp(r'^```(?:json)?\s*', multiLine: true);
+    cleaned = cleaned.replaceAll(fencePattern, '');
+    cleaned = cleaned.replaceAll(RegExp(r'```\s*$', multiLine: true), '');
+    return cleaned.trim();
+  }
+
+  Map<String, dynamic> _fallbackError(String error) {
     return {
-      'overallScore': overallScore,
+      'overallScore': 0,
       'scoreBreakdown': {
-        'formatting': formattingScore,
-        'keywordMatch': keywordScore,
-        'skills': skillScore,
-        'experience': experienceScore,
-        'grammar': grammarScore,
+        'formatting': 0,
+        'keywordMatch': 0,
+        'skills': 0,
+        'experience': 0,
+        'grammar': 0,
       },
-      'matchedKeywords': generateMatchedKeywords(),
-      'missingKeywords': generateMissingKeywords(),
-      'suggestions': generateSuggestions(overallScore),
+      'matchedKeywords': <Map<String, dynamic>>[],
+      'missingKeywords': <Map<String, dynamic>>[],
+      'suggestions': [
+        {
+          'category': 'Error',
+          'suggestion': 'ATS analysis failed: $error',
+          'priority': 'high',
+        },
+      ],
       'analyzedAt': DateTime.now().toIso8601String(),
+      'error': error,
     };
-  }
-
-  // Generate matched keywords
-  List<Map<String, dynamic>> generateMatchedKeywords() {
-    final keywords = [
-      {'keyword': 'Flutter', 'count': 8, 'weight': 'high'},
-      {'keyword': 'Dart', 'count': 6, 'weight': 'high'},
-      {'keyword': 'Mobile Development', 'count': 5, 'weight': 'high'},
-      {'keyword': 'UI/UX', 'count': 4, 'weight': 'medium'},
-      {'keyword': 'Git', 'count': 3, 'weight': 'medium'},
-      {'keyword': 'REST API', 'count': 4, 'weight': 'medium'},
-      {'keyword': 'Firebase', 'count': 3, 'weight': 'low'},
-      {'keyword': 'Agile', 'count': 2, 'weight': 'low'},
-    ];
-
-    return keywords;
-  }
-
-  // Generate missing keywords
-  List<Map<String, dynamic>> generateMissingKeywords() {
-    final keywords = [
-      {
-        'keyword': 'State Management',
-        'importance': 'high',
-        'category': 'Technical',
-      },
-      {'keyword': 'CI/CD', 'importance': 'high', 'category': 'Technical'},
-      {'keyword': 'Testing', 'importance': 'high', 'category': 'Technical'},
-      {
-        'keyword': 'Team Leadership',
-        'importance': 'medium',
-        'category': 'Soft Skills',
-      },
-      {
-        'keyword': 'Cloud Services',
-        'importance': 'medium',
-        'category': 'Technical',
-      },
-      {
-        'keyword': 'Problem Solving',
-        'importance': 'medium',
-        'category': 'Soft Skills',
-      },
-      {'keyword': 'Docker', 'importance': 'low', 'category': 'Technical'},
-    ];
-
-    return keywords;
-  }
-
-  // Generate improvement suggestions
-  List<Map<String, dynamic>> generateSuggestions(int score) {
-    final allSuggestions = [
-      {
-        'title': 'Add More Quantifiable Achievements',
-        'description':
-            'Include specific metrics and numbers to demonstrate your impact (e.g., "Increased app performance by 40%")',
-        'priority': 'high',
-        'category': 'Content',
-      },
-      {
-        'title': 'Include State Management Experience',
-        'description':
-            'Add experience with popular state management solutions like Bloc, Provider, or Riverpod',
-        'priority': 'high',
-        'category': 'Skills',
-      },
-      {
-        'title': 'Add Testing Experience',
-        'description':
-            'Mention unit testing, widget testing, and integration testing experience',
-        'priority': 'high',
-        'category': 'Skills',
-      },
-      {
-        'title': 'Improve Action Verbs',
-        'description':
-            'Start bullet points with strong action verbs like "Developed", "Implemented", "Optimized"',
-        'priority': 'medium',
-        'category': 'Writing',
-      },
-      {
-        'title': 'Add CI/CD Experience',
-        'description':
-            'Include experience with continuous integration and deployment tools',
-        'priority': 'medium',
-        'category': 'Skills',
-      },
-      {
-        'title': 'Highlight Team Collaboration',
-        'description':
-            'Emphasize teamwork and collaboration experiences in your descriptions',
-        'priority': 'medium',
-        'category': 'Content',
-      },
-      {
-        'title': 'Optimize Formatting',
-        'description':
-            'Ensure consistent spacing, bullet points, and section headers throughout',
-        'priority': 'low',
-        'category': 'Format',
-      },
-      {
-        'title': 'Add Certifications',
-        'description':
-            'Include relevant certifications or online courses completed',
-        'priority': 'low',
-        'category': 'Content',
-      },
-    ];
-
-    // Return more suggestions for lower scores
-    final suggestionCount = score < 70 ? 6 : (score < 85 ? 4 : 3);
-    return allSuggestions.take(suggestionCount).toList();
-  }
-
-  // Mock keyword extraction from job description
-  Future<List<String>> extractKeywordsFromJobDescription(
-    String jobDescription,
-  ) async {
-    await Future.delayed(const Duration(seconds: 1));
-
-    return [
-      'Flutter',
-      'Dart',
-      'Mobile Development',
-      'State Management',
-      'REST API',
-      'Firebase',
-      'Git',
-      'Agile',
-      'Unit Testing',
-      'CI/CD',
-    ];
-  }
-
-  // Mock resume improvement suggestions
-  Future<List<String>> generateImprovementSuggestions(
-    Map<String, dynamic> resumeData,
-  ) async {
-    await Future.delayed(const Duration(seconds: 2));
-
-    return [
-      'Add more specific quantifiable achievements',
-      'Include keywords from the job description',
-      'Improve formatting consistency',
-      'Add more technical skills',
-      'Enhance project descriptions',
-    ];
   }
 
   // Get score color based on value

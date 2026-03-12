@@ -14,45 +14,45 @@ class AdminRepositoryImpl implements AdminRepository {
   AdminRepositoryImpl({required this.dataSource});
 
   @override
-  Either<Failure, AdminStats> getAdminStats() {
+  Future<Either<Failure, AdminStats>> getAdminStats() async {
     try {
-      return Right(dataSource.getAdminStats());
+      return Right(await dataSource.getAdminStats());
     } catch (e) {
       return const Left(ServerFailure('Failed to load admin stats'));
     }
   }
 
   @override
-  Either<Failure, List<ResumeTemplate>> getAllTemplates() {
+  Future<Either<Failure, List<ResumeTemplate>>> getAllTemplates() async {
     try {
-      return Right(dataSource.getAllTemplates());
+      return Right(await dataSource.getAllTemplates());
     } catch (e) {
       return const Left(ServerFailure('Failed to load templates'));
     }
   }
 
   @override
-  Either<Failure, ResumeTemplate> addTemplate(ResumeTemplate template) {
+  Future<Either<Failure, ResumeTemplate>> addTemplate(ResumeTemplate template) async {
     try {
-      return Right(dataSource.addTemplate(template));
+      return Right(await dataSource.addTemplate(template));
     } catch (e) {
       return const Left(ServerFailure('Failed to add template'));
     }
   }
 
   @override
-  Either<Failure, ResumeTemplate> updateTemplate(ResumeTemplate template) {
+  Future<Either<Failure, ResumeTemplate>> updateTemplate(ResumeTemplate template) async {
     try {
-      return Right(dataSource.updateTemplate(template));
+      return Right(await dataSource.updateTemplate(template));
     } catch (e) {
       return const Left(ServerFailure('Failed to update template'));
     }
   }
 
   @override
-  Either<Failure, Unit> deleteTemplate(String id) {
+  Future<Either<Failure, Unit>> deleteTemplate(String id) async {
     try {
-      dataSource.deleteTemplate(id);
+      await dataSource.deleteTemplate(id);
       return const Right(unit);
     } catch (e) {
       return const Left(ServerFailure('Failed to delete template'));
@@ -60,81 +60,81 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
-  Either<Failure, List<User>> getAllUsers() {
+  Future<Either<Failure, List<User>>> getAllUsers() async {
     try {
-      return Right(dataSource.getAllUsers());
+      return Right(await dataSource.getAllUsers());
     } catch (e) {
       return const Left(ServerFailure('Failed to load users'));
     }
   }
 
   @override
-  Either<Failure, User> toggleBlockUser(String uid) {
+  Future<Either<Failure, User>> toggleBlockUser(String uid) async {
     try {
-      return Right(dataSource.toggleBlockUser(uid));
+      return Right(await dataSource.toggleBlockUser(uid));
     } catch (e) {
       return const Left(ServerFailure('Failed to toggle block status'));
     }
   }
 
   @override
-  Either<Failure, User> togglePremiumUser(String uid) {
+  Future<Either<Failure, User>> togglePremiumUser(String uid) async {
     try {
-      return Right(dataSource.togglePremiumUser(uid));
+      return Right(await dataSource.togglePremiumUser(uid));
     } catch (e) {
       return const Left(ServerFailure('Failed to toggle premium status'));
     }
   }
 
   @override
-  Either<Failure, ATSConfig> getATSConfig() {
+  Future<Either<Failure, ATSConfig>> getATSConfig() async {
     try {
-      return Right(dataSource.getATSConfig());
+      return Right(await dataSource.getATSConfig());
     } catch (e) {
       return const Left(ServerFailure('Failed to load ATS config'));
     }
   }
 
   @override
-  Either<Failure, ATSConfig> updateATSConfig(ATSConfig config) {
+  Future<Either<Failure, ATSConfig>> updateATSConfig(ATSConfig config) async {
     try {
-      return Right(dataSource.updateATSConfig(config));
+      return Right(await dataSource.updateATSConfig(config));
     } catch (e) {
       return const Left(ServerFailure('Failed to update ATS config'));
     }
   }
 
   @override
-  Either<Failure, List<Announcement>> getAllAnnouncements() {
+  Future<Either<Failure, List<Announcement>>> getAllAnnouncements() async {
     try {
-      return Right(dataSource.getAllAnnouncements());
+      return Right(await dataSource.getAllAnnouncements());
     } catch (e) {
       return const Left(ServerFailure('Failed to load announcements'));
     }
   }
 
   @override
-  Either<Failure, Announcement> addAnnouncement(Announcement announcement) {
+  Future<Either<Failure, Announcement>> addAnnouncement(Announcement announcement) async {
     try {
-      return Right(dataSource.addAnnouncement(announcement));
+      return Right(await dataSource.addAnnouncement(announcement));
     } catch (e) {
       return const Left(ServerFailure('Failed to add announcement'));
     }
   }
 
   @override
-  Either<Failure, Announcement> toggleAnnouncement(String id) {
+  Future<Either<Failure, Announcement>> toggleAnnouncement(String id) async {
     try {
-      return Right(dataSource.toggleAnnouncement(id));
+      return Right(await dataSource.toggleAnnouncement(id));
     } catch (e) {
       return const Left(ServerFailure('Failed to toggle announcement'));
     }
   }
 
   @override
-  Either<Failure, Unit> deleteAnnouncement(String id) {
+  Future<Either<Failure, Unit>> deleteAnnouncement(String id) async {
     try {
-      dataSource.deleteAnnouncement(id);
+      await dataSource.deleteAnnouncement(id);
       return const Right(unit);
     } catch (e) {
       return const Left(ServerFailure('Failed to delete announcement'));

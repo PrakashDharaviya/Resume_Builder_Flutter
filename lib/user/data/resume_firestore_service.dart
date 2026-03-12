@@ -12,10 +12,10 @@ class ResumeFirestoreService {
 
   Future<List<Resume>> getResumes() => db.getResumes();
 
-  List<ResumeTemplate> getActiveTemplates() =>
-      db.getTemplates().where((t) => t.isActive).toList();
+  Future<List<ResumeTemplate>> getActiveTemplates() async =>
+      (await db.getTemplates()).where((t) => t.isActive).toList();
 
-  ATSConfig getAtsConfig() => db.getAtsConfig();
+  Future<ATSConfig> getAtsConfig() => db.getAtsConfig();
 
-  List<Announcement> getActiveAnnouncements() => db.getActiveAnnouncements();
+  Future<List<Announcement>> getActiveAnnouncements() => db.getActiveAnnouncements();
 }

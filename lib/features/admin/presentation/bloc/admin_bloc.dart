@@ -38,9 +38,9 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   }
 
   // ========== Dashboard ==========
-  void onLoadDashboard(LoadAdminDashboard event, Emitter<AdminState> emit) {
+  Future<void> onLoadDashboard(LoadAdminDashboard event, Emitter<AdminState> emit) async {
     emit(const AdminLoading());
-    final result = repository.getAdminStats();
+    final result = await repository.getAdminStats();
     result.fold(
       (failure) => emit(AdminError(message: failure.message)),
       (stats) => emit(AdminDashboardLoaded(stats: stats)),
@@ -48,18 +48,18 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   }
 
   // ========== Templates ==========
-  void onLoadTemplates(LoadTemplates event, Emitter<AdminState> emit) {
+  Future<void> onLoadTemplates(LoadTemplates event, Emitter<AdminState> emit) async {
     emit(const AdminLoading());
-    final result = repository.getAllTemplates();
+    final result = await repository.getAllTemplates();
     result.fold(
       (failure) => emit(AdminError(message: failure.message)),
       (templates) => emit(TemplatesLoaded(templates: templates)),
     );
   }
 
-  void onAddTemplate(AddTemplate event, Emitter<AdminState> emit) {
-    repository.addTemplate(event.template);
-    final result = repository.getAllTemplates();
+  Future<void> onAddTemplate(AddTemplate event, Emitter<AdminState> emit) async {
+    await repository.addTemplate(event.template);
+    final result = await repository.getAllTemplates();
     result.fold((failure) => emit(AdminError(message: failure.message)), (
       templates,
     ) {
@@ -68,9 +68,9 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     });
   }
 
-  void onUpdateTemplate(UpdateTemplate event, Emitter<AdminState> emit) {
-    repository.updateTemplate(event.template);
-    final result = repository.getAllTemplates();
+  Future<void> onUpdateTemplate(UpdateTemplate event, Emitter<AdminState> emit) async {
+    await repository.updateTemplate(event.template);
+    final result = await repository.getAllTemplates();
     result.fold((failure) => emit(AdminError(message: failure.message)), (
       templates,
     ) {
@@ -79,9 +79,9 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     });
   }
 
-  void onDeleteTemplate(DeleteTemplate event, Emitter<AdminState> emit) {
-    repository.deleteTemplate(event.templateId);
-    final result = repository.getAllTemplates();
+  Future<void> onDeleteTemplate(DeleteTemplate event, Emitter<AdminState> emit) async {
+    await repository.deleteTemplate(event.templateId);
+    final result = await repository.getAllTemplates();
     result.fold((failure) => emit(AdminError(message: failure.message)), (
       templates,
     ) {
@@ -91,9 +91,9 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   }
 
   // ========== Users ==========
-  void onLoadUsers(LoadUsers event, Emitter<AdminState> emit) {
+  Future<void> onLoadUsers(LoadUsers event, Emitter<AdminState> emit) async {
     emit(const AdminLoading());
-    final result = repository.getAllUsers();
+    final result = await repository.getAllUsers();
     result.fold((failure) => emit(AdminError(message: failure.message)), (
       users,
     ) {
@@ -102,9 +102,9 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     });
   }
 
-  void onToggleBlockUser(ToggleBlockUser event, Emitter<AdminState> emit) {
-    repository.toggleBlockUser(event.uid);
-    final result = repository.getAllUsers();
+  Future<void> onToggleBlockUser(ToggleBlockUser event, Emitter<AdminState> emit) async {
+    await repository.toggleBlockUser(event.uid);
+    final result = await repository.getAllUsers();
     result.fold((failure) => emit(AdminError(message: failure.message)), (
       users,
     ) {
@@ -114,9 +114,9 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     });
   }
 
-  void onTogglePremiumUser(TogglePremiumUser event, Emitter<AdminState> emit) {
-    repository.togglePremiumUser(event.uid);
-    final result = repository.getAllUsers();
+  Future<void> onTogglePremiumUser(TogglePremiumUser event, Emitter<AdminState> emit) async {
+    await repository.togglePremiumUser(event.uid);
+    final result = await repository.getAllUsers();
     result.fold((failure) => emit(AdminError(message: failure.message)), (
       users,
     ) {
@@ -145,17 +145,17 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   }
 
   // ========== ATS Config ==========
-  void onLoadATSConfig(LoadATSConfig event, Emitter<AdminState> emit) {
+  Future<void> onLoadATSConfig(LoadATSConfig event, Emitter<AdminState> emit) async {
     emit(const AdminLoading());
-    final result = repository.getATSConfig();
+    final result = await repository.getATSConfig();
     result.fold(
       (failure) => emit(AdminError(message: failure.message)),
       (config) => emit(ATSConfigLoaded(config: config)),
     );
   }
 
-  void onUpdateATSConfig(UpdateATSConfig event, Emitter<AdminState> emit) {
-    final result = repository.updateATSConfig(event.config);
+  Future<void> onUpdateATSConfig(UpdateATSConfig event, Emitter<AdminState> emit) async {
+    final result = await repository.updateATSConfig(event.config);
     result.fold((failure) => emit(AdminError(message: failure.message)), (
       config,
     ) {
@@ -165,9 +165,9 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   }
 
   // ========== Announcements ==========
-  void onLoadAnnouncements(LoadAnnouncements event, Emitter<AdminState> emit) {
+  Future<void> onLoadAnnouncements(LoadAnnouncements event, Emitter<AdminState> emit) async {
     emit(const AdminLoading());
-    final result = repository.getAllAnnouncements();
+    final result = await repository.getAllAnnouncements();
     result.fold(
       (failure) => emit(AdminError(message: failure.message)),
       (announcements) =>
@@ -175,9 +175,9 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     );
   }
 
-  void onAddAnnouncement(AddAnnouncement event, Emitter<AdminState> emit) {
-    repository.addAnnouncement(event.announcement);
-    final result = repository.getAllAnnouncements();
+  Future<void> onAddAnnouncement(AddAnnouncement event, Emitter<AdminState> emit) async {
+    await repository.addAnnouncement(event.announcement);
+    final result = await repository.getAllAnnouncements();
     result.fold((failure) => emit(AdminError(message: failure.message)), (
       announcements,
     ) {
@@ -186,12 +186,12 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     });
   }
 
-  void onToggleAnnouncement(
+  Future<void> onToggleAnnouncement(
     ToggleAnnouncement event,
     Emitter<AdminState> emit,
-  ) {
-    repository.toggleAnnouncement(event.announcementId);
-    final result = repository.getAllAnnouncements();
+  ) async {
+    await repository.toggleAnnouncement(event.announcementId);
+    final result = await repository.getAllAnnouncements();
     result.fold((failure) => emit(AdminError(message: failure.message)), (
       announcements,
     ) {
@@ -200,12 +200,12 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     });
   }
 
-  void onDeleteAnnouncement(
+  Future<void> onDeleteAnnouncement(
     DeleteAnnouncement event,
     Emitter<AdminState> emit,
-  ) {
-    repository.deleteAnnouncement(event.announcementId);
-    final result = repository.getAllAnnouncements();
+  ) async {
+    await repository.deleteAnnouncement(event.announcementId);
+    final result = await repository.getAllAnnouncements();
     result.fold((failure) => emit(AdminError(message: failure.message)), (
       announcements,
     ) {

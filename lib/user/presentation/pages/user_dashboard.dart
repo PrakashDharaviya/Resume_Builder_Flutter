@@ -27,10 +27,12 @@ class UserDashboardState extends State<UserDashboard> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final announcement =
-        MockDatabaseService.instance.getActiveAnnouncements().isNotEmpty
-        ? MockDatabaseService.instance.getActiveAnnouncements().first
-        : null;
+
+    return FutureBuilder<List<dynamic>>(
+      future: MockDatabaseService.instance.getActiveAnnouncements(),
+      builder: (context, snapshot) {
+        final announcements = snapshot.data ?? [];
+        final announcement = announcements.isNotEmpty ? announcements.first : null;
 
     return Scaffold(
       appBar: AppBar(
@@ -223,6 +225,8 @@ class UserDashboardState extends State<UserDashboard> {
         icon: const Icon(Icons.add_rounded),
         label: const Text('Create Resume'),
       ),
+    );
+      },
     );
   }
 }

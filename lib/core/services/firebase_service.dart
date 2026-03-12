@@ -1,112 +1,150 @@
-// Mock Firebase Service - UI Only
-// No actual Firebase implementation
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class FirebaseService {
-  // Mock sign in with email
-  Future<Map<String, dynamic>> signInWithEmail({
-    required String email,
-    required String password,
-  }) async {
-    // Simulate network delay
-    await Future.delayed(const Duration(seconds: 1));
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-    // Admin login
-    if (email == 'admin@resumeiq.com') {
+  Future<Map<String, dynamic>> _getUserData(User user) async {
+    final doc = await _firestore.collection('users').doc(user.uid).get();
+    if (doc.exists) {
+      final data = doc.data()!;
       return {
-        'uid': 'admin_001',
-        'email': email,
-        'displayName': 'Admin User',
-        'role': 'admin',
-        'isBlocked': false,
-        'isPremium': true,
+        'uid': user.uid,
+        'email': user.email ?? '',
+        'displayName': data['displayName'] ?? user.displayName ?? '',
+        'photoURL': user.photoURL ?? '',
+        'role': data['role'] ?? 'user',
+        'isBlocked': data['isBlocked'] ?? false,
+        'isPremium': data['isPremium'] ?? false,
       };
     }
-
-    // Blocked user demo
-    if (email == 'blocked@test.com') {
-      return {
-        'uid': 'blocked_001',
-        'email': email,
-        'displayName': 'Blocked User',
-        'role': 'user',
-        'isBlocked': true,
-        'isPremium': false,
-      };
-    }
-
-    // Regular user login
     return {
-      'uid': 'mock_uid_123',
-      'email': email,
-      'displayName': 'John Doe',
+      'uid': user.uid,
+      'email': user.email ?? '',
+      'displayName': user.displayName ?? '',
+      'photoURL': user.photoURL ?? '',
       'role': 'user',
       'isBlocked': false,
       'isPremium': false,
     };
   }
 
-  // Mock sign up with email
+  Future<Map<String, dynamic>> signInWithEmail({
+    required String email,
+    required String password,
+  }) async {
+    final credential = await _auth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    return _getUserData(credential.user!);
+  }
+
   Future<Map<String, dynamic>> signUpWithEmail({
     required String email,
     required String password,
     required String displayName,
   }) async {
-    // Simulate network delay
-    await Future.delayed(const Duration(seconds: 1));
+    final credential = await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    final user = credential.user!;
+    await user.updateDisplayName(displayName);
 
-    // Mock successful registration
-    return {
-      'uid': 'mock_uid_${DateTime.now().millisecondsSinceEpoch}',
+    final userData = {
+      'uid': user.uid,
       'email': email,
       'displayName': displayName,
       'role': 'user',
       'isBlocked': false,
       'isPremium': false,
+      'createdAt': FieldValue.serverTimestamp(),
+    };
+    await _firestore.collection('users').doc(user.uid).set(userData);
+
+    return {
+      'uid': user.uid,
+      'email': email,
+      'displayName': displayName,
+      'photoURL': '',
+      'role': 'user',
+      'isBlocked': false,
+      'isPremium': false,
     };
   }
 
-  // Mock sign in with Google
   Future<Map<String, dynamic>> signInWithGoogle() async {
-    // Simulate network delay
-    await Future.delayed(const Duration(seconds: 2));
+    final googleUser = await _googleSignIn.signIn();
+    if (googleUser == null) {
+      throw FirebaseAuthException(
+        code: 'sign-in-cancelled',
+        message: 'Google sign-in was cancelled.',
+      );
+    }
 
-    // Mock successful Google login
-    return {
-      'uid': 'mock_google_uid_123',
-      'email': 'user@gmail.com',
-      'displayName': 'Google User',
-      'photoURL': 'https://via.placeholder.com/150',
-      'role': 'user',
-      'isBlocked': false,
-      'isPremium': false,
-    };
+    final googleAuth = await googleUser.authentication;
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    final userCredential = await _auth.signInWithCredential(credential);
+    final user = userCredential.user!;
+
+    final doc = await _firestore.collection('users').doc(user.uid).get();
+    if (!doc.exists) {
+      final userData = {
+        'uid': user.uid,
+        'email': user.email ?? '',
+        'displayName': user.displayName ?? '',
+        'role': 'user',
+        'isBlocked': false,
+        'isPremium': false,
+        'createdAt': FieldValue.serverTimestamp(),
+      };
+      await _firestore.collection('users').doc(user.uid).set(userData);
+    }
+
+    return _getUserData(user);
   }
 
-  // Mock sign out
   Future<void> signOut() async {
-    await Future.delayed(const Duration(milliseconds: 500));
+    await _googleSignIn.signOut();
+    await _auth.signOut();
   }
 
-  // Mock get current user
+  Future<void> resetPassword(String email) async {
+    await _auth.sendPasswordResetEmail(email: email);
+  }
+
   Map<String, dynamic>? getCurrentUser() {
-    // Return mock user or null
+    final user = _auth.currentUser;
+    if (user == null) return null;
     return {
-      'uid': 'mock_uid_123',
-      'email': 'user@example.com',
-      'displayName': 'John Doe',
+      'uid': user.uid,
+      'email': user.email ?? '',
+      'displayName': user.displayName ?? '',
+      'photoURL': user.photoURL ?? '',
       'role': 'user',
       'isBlocked': false,
       'isPremium': false,
     };
   }
 
-  // Mock password reset
-  Future<void> resetPassword(String email) async {
-    await Future.delayed(const Duration(seconds: 1));
-  }
-
-  // Check if user is signed in
   bool isSignedIn() {
-    return true; // Mock always signed in for UI testing
+    return _auth.currentUser != null;
   }
+}
+
+class FirebaseAuthException implements Exception {
+  final String code;
+  final String message;
+  FirebaseAuthException({required this.code, required this.message});
+
+  @override
+  String toString() => 'FirebaseAuthException($code): $message';
 }

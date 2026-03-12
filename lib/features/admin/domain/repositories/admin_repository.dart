@@ -8,26 +8,26 @@ import '../../../auth/domain/entities/user.dart';
 
 abstract class AdminRepository {
   // Dashboard
-  Either<Failure, AdminStats> getAdminStats();
+  Future<Either<Failure, AdminStats>> getAdminStats();
 
   // Templates
-  Either<Failure, List<ResumeTemplate>> getAllTemplates();
-  Either<Failure, ResumeTemplate> addTemplate(ResumeTemplate template);
-  Either<Failure, ResumeTemplate> updateTemplate(ResumeTemplate template);
-  Either<Failure, Unit> deleteTemplate(String id);
+  Future<Either<Failure, List<ResumeTemplate>>> getAllTemplates();
+  Future<Either<Failure, ResumeTemplate>> addTemplate(ResumeTemplate template);
+  Future<Either<Failure, ResumeTemplate>> updateTemplate(ResumeTemplate template);
+  Future<Either<Failure, Unit>> deleteTemplate(String id);
 
   // Users
-  Either<Failure, List<User>> getAllUsers();
-  Either<Failure, User> toggleBlockUser(String uid);
-  Either<Failure, User> togglePremiumUser(String uid);
+  Future<Either<Failure, List<User>>> getAllUsers();
+  Future<Either<Failure, User>> toggleBlockUser(String uid);
+  Future<Either<Failure, User>> togglePremiumUser(String uid);
 
   // ATS Config
-  Either<Failure, ATSConfig> getATSConfig();
-  Either<Failure, ATSConfig> updateATSConfig(ATSConfig config);
+  Future<Either<Failure, ATSConfig>> getATSConfig();
+  Future<Either<Failure, ATSConfig>> updateATSConfig(ATSConfig config);
 
   // Announcements
-  Either<Failure, List<Announcement>> getAllAnnouncements();
-  Either<Failure, Announcement> addAnnouncement(Announcement announcement);
-  Either<Failure, Announcement> toggleAnnouncement(String id);
-  Either<Failure, Unit> deleteAnnouncement(String id);
+  Future<Either<Failure, List<Announcement>>> getAllAnnouncements();
+  Future<Either<Failure, Announcement>> addAnnouncement(Announcement announcement);
+  Future<Either<Failure, Announcement>> toggleAnnouncement(String id);
+  Future<Either<Failure, Unit>> deleteAnnouncement(String id);
 }

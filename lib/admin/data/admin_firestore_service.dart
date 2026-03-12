@@ -11,25 +11,25 @@ class AdminFirestoreService {
   AdminFirestoreService({MockDatabaseService? databaseService})
     : db = databaseService ?? MockDatabaseService.instance;
 
-  AdminStats getStats() => db.getAdminStats();
+  Future<AdminStats> getStats() => db.getAdminStats();
 
-  List<User> getUsers() => db.getUsers();
-  User toggleBlock(String uid) => db.toggleUserBlock(uid);
-  User togglePremium(String uid) => db.toggleUserPremium(uid);
+  Future<List<User>> getUsers() => db.getUsers();
+  Future<User> toggleBlock(String uid) => db.toggleUserBlock(uid);
+  Future<User> togglePremium(String uid) => db.toggleUserPremium(uid);
 
-  List<ResumeTemplate> getTemplates() => db.getTemplates();
-  ResumeTemplate addTemplate(ResumeTemplate template) =>
+  Future<List<ResumeTemplate>> getTemplates() => db.getTemplates();
+  Future<ResumeTemplate> addTemplate(ResumeTemplate template) =>
       db.addTemplate(template);
-  ResumeTemplate updateTemplate(ResumeTemplate template) =>
+  Future<ResumeTemplate> updateTemplate(ResumeTemplate template) =>
       db.updateTemplate(template);
-  void deleteTemplate(String id) => db.deleteTemplate(id);
+  Future<void> deleteTemplate(String id) => db.deleteTemplate(id);
 
-  ATSConfig getAtsConfig() => db.getAtsConfig();
-  ATSConfig saveAtsConfig(ATSConfig config) => db.updateAtsConfig(config);
+  Future<ATSConfig> getAtsConfig() => db.getAtsConfig();
+  Future<ATSConfig> saveAtsConfig(ATSConfig config) => db.updateAtsConfig(config);
 
-  List<Announcement> getAnnouncements() => db.getAnnouncements();
-  Announcement addAnnouncement(Announcement announcement) =>
+  Future<List<Announcement>> getAnnouncements() => db.getAnnouncements();
+  Future<Announcement> addAnnouncement(Announcement announcement) =>
       db.addAnnouncement(announcement);
-  Announcement toggleAnnouncement(String id) => db.toggleAnnouncement(id);
-  void deleteAnnouncement(String id) => db.deleteAnnouncement(id);
+  Future<Announcement> toggleAnnouncement(String id) => db.toggleAnnouncement(id);
+  Future<void> deleteAnnouncement(String id) => db.deleteAnnouncement(id);
 }

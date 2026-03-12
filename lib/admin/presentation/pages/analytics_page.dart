@@ -3,6 +3,8 @@ import '../../admin_routes.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/services/mock_database_service.dart';
 import '../../../core/utils/app_preferences.dart';
+import '../../../features/admin/domain/entities/admin_stats.dart';
+import '../../../features/admin/domain/entities/resume_template.dart';
 import '../widgets/admin_drawer.dart';
 
 class AnalyticsPage extends StatelessWidget {
@@ -13,8 +15,20 @@ class AnalyticsPage extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textTheme = Theme.of(context).textTheme;
     final db = MockDatabaseService.instance;
-    final stats = db.getAdminStats();
-    final templates = db.getTemplates();
+
+    return FutureBuilder<List<dynamic>>(
+      future: Future.wait([db.getAdminStats(), db.getTemplates()]),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Scaffold(
+            backgroundColor: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+            drawer: const AdminDrawer(currentRoute: AdminRoutes.analytics),
+            appBar: AppBar(title: const Text('Analytics', style: TextStyle(fontWeight: FontWeight.w700)), centerTitle: true),
+            body: const Center(child: CircularProgressIndicator()),
+          );
+        }
+        final stats = snapshot.data![0] as AdminStats;
+        final templates = snapshot.data![1] as List<ResumeTemplate>;
 
     final totalUsage = templates.length * 10;
     final usage = <String, int>{
@@ -231,6 +245,8 @@ class AnalyticsPage extends StatelessWidget {
           );
         },
       ),
+    );
+      },
     );
   }
 

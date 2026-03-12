@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/services/mock_database_service.dart';
+import '../../../features/admin/domain/entities/ats_config.dart';
 import '../widgets/live_score_meter.dart';
 
 class ATSResultPage extends StatelessWidget {
@@ -10,13 +11,17 @@ class ATSResultPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final config = MockDatabaseService.instance.getAtsConfig();
     final suggestions = const [
       'Add more measurable impact in experience points',
       'Increase role-specific keywords in skills section',
       'Improve formatting consistency and heading hierarchy',
       'Expand project outcomes with clear business value',
     ];
+
+    return FutureBuilder<ATSConfig>(
+      future: MockDatabaseService.instance.getAtsConfig(),
+      builder: (context, snapshot) {
+        final config = snapshot.data ?? const ATSConfig();
 
     return Scaffold(
       backgroundColor: isDark
@@ -96,6 +101,8 @@ class ATSResultPage extends StatelessWidget {
           );
         },
       ),
+    );
+      },
     );
   }
 

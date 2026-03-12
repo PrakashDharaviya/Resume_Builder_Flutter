@@ -11,8 +11,8 @@ class UserRepository {
     : service = service ?? ResumeFirestoreService();
 
   Future<List<Resume>> getResumes() => service.getResumes();
-  List<ResumeTemplate> getActiveTemplates() => service.getActiveTemplates();
-  ATSConfig getAtsConfig() => service.getAtsConfig();
-  List<Announcement> getActiveAnnouncements() =>
+  Future<List<ResumeTemplate>> getActiveTemplates() => service.getActiveTemplates();
+  Future<ATSConfig> getAtsConfig() => service.getAtsConfig();
+  Future<List<Announcement>> getActiveAnnouncements() =>
       service.getActiveAnnouncements();
 }

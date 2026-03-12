@@ -1,6 +1,8 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'app_router.dart';
+import 'firebase_options.dart';
 import 'core/constants/app_routes.dart';
 import 'core/constants/app_theme.dart';
 import 'core/utils/app_preferences.dart';
@@ -12,6 +14,7 @@ import 'injection_container.dart' as di;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await di.init();
   runApp(const ResumeIQApp());
 }

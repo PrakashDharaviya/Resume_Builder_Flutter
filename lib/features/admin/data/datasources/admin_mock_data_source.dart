@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/admin_stats.dart';
 import '../../domain/entities/announcement.dart';
 import '../../domain/entities/ats_config.dart';
@@ -5,259 +6,248 @@ import '../../domain/entities/resume_template.dart';
 import '../../../auth/domain/entities/user.dart';
 
 class AdminMockDataSource {
-  // ========== Mock Users ==========
-  final List<User> users = [
-    const User(
-      uid: 'admin_001',
-      email: 'admin@resumeiq.com',
-      displayName: 'Admin User',
-      role: 'admin',
-      isBlocked: false,
-      isPremium: true,
-    ),
-    const User(
-      uid: 'user_001',
-      email: 'john.doe@gmail.com',
-      displayName: 'John Doe',
-      role: 'user',
-      isBlocked: false,
-      isPremium: true,
-    ),
-    const User(
-      uid: 'user_002',
-      email: 'jane.smith@gmail.com',
-      displayName: 'Jane Smith',
-      role: 'user',
-      isBlocked: false,
-      isPremium: false,
-    ),
-    const User(
-      uid: 'user_003',
-      email: 'alex.wilson@gmail.com',
-      displayName: 'Alex Wilson',
-      role: 'user',
-      isBlocked: true,
-      isPremium: false,
-    ),
-    const User(
-      uid: 'user_004',
-      email: 'sarah.jones@gmail.com',
-      displayName: 'Sarah Jones',
-      role: 'user',
-      isBlocked: false,
-      isPremium: true,
-    ),
-    const User(
-      uid: 'user_005',
-      email: 'mike.brown@gmail.com',
-      displayName: 'Mike Brown',
-      role: 'user',
-      isBlocked: false,
-      isPremium: false,
-    ),
-    const User(
-      uid: 'user_006',
-      email: 'emily.davis@gmail.com',
-      displayName: 'Emily Davis',
-      role: 'user',
-      isBlocked: false,
-      isPremium: false,
-    ),
-    const User(
-      uid: 'user_007',
-      email: 'robert.taylor@gmail.com',
-      displayName: 'Robert Taylor',
-      role: 'user',
-      isBlocked: true,
-      isPremium: false,
-    ),
-  ];
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // ========== Mock Templates ==========
-  final List<ResumeTemplate> templates = [
-    ResumeTemplate(
-      id: 'tmpl_001',
-      name: 'Classic Professional',
-      isActive: true,
-      isPremium: false,
-      layoutJson: '{"style": "classic", "columns": 1}',
-      previewImage: 'assets/templates/classic.png',
-      createdAt: DateTime(2024, 1, 15),
-    ),
-    ResumeTemplate(
-      id: 'tmpl_002',
-      name: 'Modern Minimalist',
-      isActive: true,
-      isPremium: true,
-      layoutJson: '{"style": "modern", "columns": 2}',
-      previewImage: 'assets/templates/modern.png',
-      createdAt: DateTime(2024, 2, 10),
-    ),
-    ResumeTemplate(
-      id: 'tmpl_003',
-      name: 'Creative Portfolio',
-      isActive: true,
-      isPremium: true,
-      layoutJson: '{"style": "creative", "columns": 2}',
-      previewImage: 'assets/templates/creative.png',
-      createdAt: DateTime(2024, 3, 5),
-    ),
-    ResumeTemplate(
-      id: 'tmpl_004',
-      name: 'Executive Suite',
-      isActive: false,
-      isPremium: true,
-      layoutJson: '{"style": "executive", "columns": 1}',
-      previewImage: 'assets/templates/executive.png',
-      createdAt: DateTime(2024, 4, 20),
-    ),
-    ResumeTemplate(
-      id: 'tmpl_005',
-      name: 'Tech Developer',
-      isActive: true,
-      isPremium: false,
-      layoutJson: '{"style": "tech", "columns": 2}',
-      previewImage: 'assets/templates/tech.png',
-      createdAt: DateTime(2024, 5, 12),
-    ),
-  ];
-
-  // ========== Mock ATS Config ==========
-  ATSConfig atsConfig = const ATSConfig(
-    keywordWeight: 30,
-    skillWeight: 25,
-    grammarWeight: 15,
-    experienceWeight: 20,
-    formattingWeight: 10,
-  );
-
-  // ========== Mock Announcements ==========
-  final List<Announcement> announcements = [
-    Announcement(
-      id: 'ann_001',
-      title: 'Welcome to ResumeIQ!',
-      message:
-          'Build professional resumes with our AI-powered platform. Get started today!',
-      createdAt: DateTime(2024, 6, 1),
-      isActive: true,
-    ),
-    Announcement(
-      id: 'ann_002',
-      title: 'New Templates Available',
-      message:
-          'Check out our latest premium resume templates designed for tech professionals.',
-      createdAt: DateTime(2024, 7, 15),
-      isActive: true,
-    ),
-    Announcement(
-      id: 'ann_003',
-      title: 'System Maintenance',
-      message: 'Scheduled maintenance on August 5th from 2 AM to 4 AM UTC.',
-      createdAt: DateTime(2024, 8, 1),
-      isActive: false,
-    ),
-  ];
+  CollectionReference<Map<String, dynamic>> get _usersCol =>
+      _firestore.collection('users');
+  CollectionReference<Map<String, dynamic>> get _resumesCol =>
+      _firestore.collection('resumes');
+  CollectionReference<Map<String, dynamic>> get _templatesCol =>
+      _firestore.collection('templates');
+  CollectionReference<Map<String, dynamic>> get _announcementsCol =>
+      _firestore.collection('announcements');
+  DocumentReference<Map<String, dynamic>> get _atsConfigDoc =>
+      _firestore.collection('config').doc('ats');
 
   // ========== Dashboard Stats ==========
-  AdminStats getAdminStats() {
-    final premiumCount = users.where((u) => u.isPremium).length;
-    final blockedCount = users.where((u) => u.isBlocked).length;
-    final activeTemplates = templates.where((t) => t.isActive).length;
+  Future<AdminStats> getAdminStats() async {
+    int totalUsers = 0;
+    int totalResumes = 0;
+    int premiumCount = 0;
+    int blockedCount = 0;
+    int todaySignups = 0;
+    int activeTemplates = 0;
+
+    // Users
+    try {
+      final usersSnap = await _usersCol.get();
+      totalUsers = usersSnap.size;
+      final users = usersSnap.docs.map((d) => d.data()).toList();
+      premiumCount = users.where((u) => u['isPremium'] == true).length;
+      blockedCount = users.where((u) => u['isBlocked'] == true).length;
+
+      final now = DateTime.now();
+      final todayStart = DateTime(now.year, now.month, now.day);
+      todaySignups = users.where((u) {
+        final createdAt = u['createdAt'];
+        if (createdAt is Timestamp) {
+          return createdAt.toDate().isAfter(todayStart);
+        }
+        return false;
+      }).length;
+    } catch (_) {}
+
+    // Resumes
+    try {
+      final resumesSnap = await _resumesCol.get();
+      totalResumes = resumesSnap.size;
+    } catch (_) {}
+
+    // Templates – count active in Dart to avoid needing a Firestore index
+    try {
+      final templatesSnap = await _templatesCol.get();
+      activeTemplates = templatesSnap.docs
+          .where((d) => d.data()['isActive'] == true)
+          .length;
+    } catch (_) {}
 
     return AdminStats(
-      totalUsers: users.length,
-      totalResumes: 42,
+      totalUsers: totalUsers,
+      totalResumes: totalResumes,
       premiumUsers: premiumCount,
-      avgAtsScore: 72.5,
+      avgAtsScore: 0,
       mostUsedTemplate: 'Classic Professional',
       activeTemplates: activeTemplates,
       blockedUsers: blockedCount,
-      todaySignups: 3,
+      todaySignups: todaySignups,
     );
   }
 
   // ========== Template Operations ==========
-  List<ResumeTemplate> getAllTemplates() => List.unmodifiable(templates);
-
-  ResumeTemplate addTemplate(ResumeTemplate template) {
-    final newTemplate = template.copyWith(
-      id: 'tmpl_${DateTime.now().millisecondsSinceEpoch}',
-      createdAt: DateTime.now(),
-    );
-    templates.add(newTemplate);
-    return newTemplate;
+  Future<List<ResumeTemplate>> getAllTemplates() async {
+    final snap = await _templatesCol.get();
+    final templates = snap.docs.map((doc) {
+      final d = doc.data();
+      return ResumeTemplate(
+        id: doc.id,
+        name: d['name'] ?? '',
+        isActive: d['isActive'] ?? true,
+        isPremium: d['isPremium'] ?? false,
+        layoutJson: d['layoutJson'] ?? '{}',
+        previewImage: d['previewImage'] ?? '',
+        createdAt: (d['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      );
+    }).toList();
+    templates.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return templates;
   }
 
-  ResumeTemplate updateTemplate(ResumeTemplate template) {
-    final index = templates.indexWhere((t) => t.id == template.id);
-    if (index != -1) {
-      templates[index] = template;
-      return template;
-    }
-    throw Exception('Template not found');
+  Future<ResumeTemplate> addTemplate(ResumeTemplate template) async {
+    final id = 'tmpl_${DateTime.now().millisecondsSinceEpoch}';
+    final now = DateTime.now();
+    final data = {
+      'name': template.name,
+      'isActive': template.isActive,
+      'isPremium': template.isPremium,
+      'layoutJson': template.layoutJson,
+      'previewImage': template.previewImage,
+      'createdAt': Timestamp.fromDate(now),
+    };
+    await _templatesCol.doc(id).set(data);
+    return template.copyWith(id: id, createdAt: now);
   }
 
-  void deleteTemplate(String id) {
-    templates.removeWhere((t) => t.id == id);
+  Future<ResumeTemplate> updateTemplate(ResumeTemplate template) async {
+    await _templatesCol.doc(template.id).update({
+      'name': template.name,
+      'isActive': template.isActive,
+      'isPremium': template.isPremium,
+      'layoutJson': template.layoutJson,
+      'previewImage': template.previewImage,
+    });
+    return template;
+  }
+
+  Future<void> deleteTemplate(String id) async {
+    await _templatesCol.doc(id).delete();
   }
 
   // ========== User Operations ==========
-  List<User> getAllUsers() => List.unmodifiable(users);
-
-  User toggleBlockUser(String uid) {
-    final index = users.indexWhere((u) => u.uid == uid);
-    if (index != -1) {
-      final user = users[index];
-      final updated = user.copyWith(isBlocked: !user.isBlocked);
-      users[index] = updated;
-      return updated;
-    }
-    throw Exception('User not found');
+  Future<List<User>> getAllUsers() async {
+    final snap = await _usersCol.get();
+    return snap.docs.map((doc) {
+      final d = doc.data();
+      return User(
+        uid: doc.id,
+        email: d['email'] ?? '',
+        displayName: d['displayName'] ?? '',
+        photoURL: d['photoURL'],
+        role: d['role'] ?? 'user',
+        isBlocked: d['isBlocked'] ?? false,
+        isPremium: d['isPremium'] ?? false,
+      );
+    }).toList();
   }
 
-  User togglePremiumUser(String uid) {
-    final index = users.indexWhere((u) => u.uid == uid);
-    if (index != -1) {
-      final user = users[index];
-      final updated = user.copyWith(isPremium: !user.isPremium);
-      users[index] = updated;
-      return updated;
-    }
-    throw Exception('User not found');
+  Future<User> toggleBlockUser(String uid) async {
+    final doc = await _usersCol.doc(uid).get();
+    if (!doc.exists) throw Exception('User not found');
+    final currentBlocked = doc.data()?['isBlocked'] ?? false;
+    await _usersCol.doc(uid).update({'isBlocked': !currentBlocked});
+    final updated = await _usersCol.doc(uid).get();
+    final d = updated.data()!;
+    return User(
+      uid: uid,
+      email: d['email'] ?? '',
+      displayName: d['displayName'] ?? '',
+      photoURL: d['photoURL'],
+      role: d['role'] ?? 'user',
+      isBlocked: d['isBlocked'] ?? false,
+      isPremium: d['isPremium'] ?? false,
+    );
+  }
+
+  Future<User> togglePremiumUser(String uid) async {
+    final doc = await _usersCol.doc(uid).get();
+    if (!doc.exists) throw Exception('User not found');
+    final currentPremium = doc.data()?['isPremium'] ?? false;
+    await _usersCol.doc(uid).update({'isPremium': !currentPremium});
+    final updated = await _usersCol.doc(uid).get();
+    final d = updated.data()!;
+    return User(
+      uid: uid,
+      email: d['email'] ?? '',
+      displayName: d['displayName'] ?? '',
+      photoURL: d['photoURL'],
+      role: d['role'] ?? 'user',
+      isBlocked: d['isBlocked'] ?? false,
+      isPremium: d['isPremium'] ?? false,
+    );
   }
 
   // ========== ATS Config Operations ==========
-  ATSConfig getATSConfig() => atsConfig;
+  Future<ATSConfig> getATSConfig() async {
+    final doc = await _atsConfigDoc.get();
+    if (!doc.exists) {
+      return const ATSConfig();
+    }
+    final d = doc.data()!;
+    return ATSConfig(
+      keywordWeight: (d['keywordWeight'] ?? 30).toDouble(),
+      skillWeight: (d['skillWeight'] ?? 25).toDouble(),
+      grammarWeight: (d['grammarWeight'] ?? 15).toDouble(),
+      experienceWeight: (d['experienceWeight'] ?? 20).toDouble(),
+      formattingWeight: (d['formattingWeight'] ?? 10).toDouble(),
+    );
+  }
 
-  ATSConfig updateATSConfig(ATSConfig config) {
-    atsConfig = config;
-    return atsConfig;
+  Future<ATSConfig> updateATSConfig(ATSConfig config) async {
+    await _atsConfigDoc.set({
+      'keywordWeight': config.keywordWeight,
+      'skillWeight': config.skillWeight,
+      'grammarWeight': config.grammarWeight,
+      'experienceWeight': config.experienceWeight,
+      'formattingWeight': config.formattingWeight,
+    });
+    return config;
   }
 
   // ========== Announcement Operations ==========
-  List<Announcement> getAllAnnouncements() => List.unmodifiable(announcements);
+  Future<List<Announcement>> getAllAnnouncements() async {
+    final snap = await _announcementsCol.get();
+    final announcements = snap.docs.map((doc) {
+      final d = doc.data();
+      return Announcement(
+        id: doc.id,
+        title: d['title'] ?? '',
+        message: d['message'] ?? '',
+        createdAt: (d['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+        isActive: d['isActive'] ?? true,
+      );
+    }).toList();
+    announcements.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return announcements;
+  }
 
-  Announcement addAnnouncement(Announcement announcement) {
-    final newAnnouncement = announcement.copyWith(
-      id: 'ann_${DateTime.now().millisecondsSinceEpoch}',
-      createdAt: DateTime.now(),
+  Future<Announcement> addAnnouncement(Announcement announcement) async {
+    final id = 'ann_${DateTime.now().millisecondsSinceEpoch}';
+    final now = DateTime.now();
+    await _announcementsCol.doc(id).set({
+      'title': announcement.title,
+      'message': announcement.message,
+      'createdAt': Timestamp.fromDate(now),
+      'isActive': announcement.isActive,
+    });
+    return announcement.copyWith(id: id, createdAt: now);
+  }
+
+  Future<Announcement> toggleAnnouncement(String id) async {
+    final doc = await _announcementsCol.doc(id).get();
+    if (!doc.exists) throw Exception('Announcement not found');
+    final currentActive = doc.data()?['isActive'] ?? true;
+    await _announcementsCol.doc(id).update({'isActive': !currentActive});
+    final updated = await _announcementsCol.doc(id).get();
+    final d = updated.data()!;
+    return Announcement(
+      id: id,
+      title: d['title'] ?? '',
+      message: d['message'] ?? '',
+      createdAt: (d['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      isActive: d['isActive'] ?? true,
     );
-    announcements.insert(0, newAnnouncement);
-    return newAnnouncement;
   }
 
-  Announcement toggleAnnouncement(String id) {
-    final index = announcements.indexWhere((a) => a.id == id);
-    if (index != -1) {
-      final ann = announcements[index];
-      final updated = ann.copyWith(isActive: !ann.isActive);
-      announcements[index] = updated;
-      return updated;
-    }
-    throw Exception('Announcement not found');
-  }
-
-  void deleteAnnouncement(String id) {
-    announcements.removeWhere((a) => a.id == id);
+  Future<void> deleteAnnouncement(String id) async {
+    await _announcementsCol.doc(id).delete();
   }
 }
