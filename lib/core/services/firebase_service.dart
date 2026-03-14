@@ -1,11 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:google_sign_in/google_sign_in.dart';
 
 class FirebaseService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    clientId: (kIsWeb || defaultTargetPlatform == TargetPlatform.windows)
+        ? '465329982315-bg09qe87n32c633q9ogubk32dhsrje82.apps.googleusercontent.com'
+        : null,
+  );
 
   Future<Map<String, dynamic>> _getUserData(User user) async {
     final doc = await _firestore.collection('users').doc(user.uid).get();
