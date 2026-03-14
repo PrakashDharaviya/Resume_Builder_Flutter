@@ -3,11 +3,17 @@ import 'package:intl/intl.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_routes.dart';
 import '../../domain/entities/resume.dart';
+import '../widgets/template_renderer_factory.dart';
 
 class ResumeEditorPage extends StatefulWidget {
   final Resume? resume;
+  final String templateType;
 
-  const ResumeEditorPage({super.key, this.resume});
+  const ResumeEditorPage({
+    super.key,
+    this.resume,
+    this.templateType = 'professional',
+  });
 
   @override
   State<ResumeEditorPage> createState() => ResumeEditorPageState();
@@ -866,6 +872,177 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
     if (confirmed == true) setState(() => list.removeAt(index));
   }
 
+  Resume _buildResumeFromForm() {
+    final dateFmt = DateFormat('MMM yyyy');
+    DateTime? tryParse(String? s) {
+      if (s == null || s.isEmpty || s == 'Present') return null;
+      try {
+        return dateFmt.parse(s);
+      } catch (_) {
+        return DateTime.now();
+      }
+    }
+
+    return Resume(
+      id: 'preview',
+      userId: 'user',
+      title: 'My Resume',
+      personalInfo: PersonalInfo(
+        firstName: firstNameCtrl.text.isNotEmpty ? firstNameCtrl.text : 'Your',
+        lastName: lastNameCtrl.text.isNotEmpty ? lastNameCtrl.text : 'Name',
+        email: emailCtrl.text.isNotEmpty ? emailCtrl.text : 'email@example.com',
+        phone: phoneCtrl.text.isNotEmpty ? phoneCtrl.text : null,
+        location: locationCtrl.text.isNotEmpty ? locationCtrl.text : null,
+        website: websiteCtrl.text.isNotEmpty ? websiteCtrl.text : null,
+        summary: summaryCtrl.text.isNotEmpty ? summaryCtrl.text : null,
+      ),
+      education: educations.map((e) {
+        return Education(
+          id: 'edu_${educations.indexOf(e)}',
+          degree: e['degree'] ?? '',
+          institution: e['institution'] ?? '',
+          fieldOfStudy: e['field']?.isNotEmpty == true ? e['field'] : null,
+          startDate: tryParse(e['start']) ?? DateTime.now(),
+          endDate: e['end'] == 'Present' ? null : tryParse(e['end']),
+          currentlyStudying: e['end'] == 'Present' || (e['current'] == true),
+          grade: e['grade']?.isNotEmpty == true ? e['grade'] : null,
+        );
+      }).toList(),
+      experience: experiences.map((e) {
+        return Experience(
+          id: 'exp_${experiences.indexOf(e)}',
+          jobTitle: e['title'] ?? '',
+          company: e['company'] ?? '',
+          startDate: tryParse(e['start']) ?? DateTime.now(),
+          endDate: e['end'] == 'Present' ? null : tryParse(e['end']),
+          currentlyWorking: e['end'] == 'Present' || (e['current'] == true),
+          location: e['location']?.isNotEmpty == true ? e['location'] : null,
+          description: e['desc']?.isNotEmpty == true ? e['desc'] : null,
+        );
+      }).toList(),
+      skills: skills.map((s) {
+        return Skill(
+          id: 'sk_${skills.indexOf(s)}',
+          name: s['name'] ?? '',
+          category: s['category']?.isNotEmpty == true ? s['category'] : null,
+          proficiency: s['level'] ?? 'Intermediate',
+        );
+      }).toList(),
+      projects: projects.map((p) {
+        return Project(
+          id: 'proj_${projects.indexOf(p)}',
+          name: p['name'] ?? '',
+          description: p['desc'] ?? '',
+          technologies: (p['tech'] as String?)?.split(',').map((t) => t.trim()).where((t) => t.isNotEmpty).toList() ?? [],
+          projectLink: p['link']?.isNotEmpty == true ? p['link'] : null,
+        );
+      }).toList(),
+      certifications: certifications.map((c) {
+        return Certification(
+          id: 'cert_${certifications.indexOf(c)}',
+          name: c['name'] ?? '',
+          issuingOrganization: c['org'] ?? '',
+          issueDate: tryParse(c['date']) ?? DateTime.now(),
+          credentialId: c['id']?.isNotEmpty == true ? c['id'] : null,
+        );
+      }).toList(),
+      achievements: achievements.map((a) {
+        return Achievement(
+          id: 'ach_${achievements.indexOf(a)}',
+          title: a['title'] ?? '',
+          description: a['desc'] ?? '',
+        );
+      }).toList(),
+      languages: languages.map((l) {
+        return Language(
+          id: 'lang_${languages.indexOf(l)}',
+          name: l['name'] ?? '',
+          proficiency: l['level'] ?? 'Fluent',
+        );
+      }).toList(),
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+  }
+
+  void _showLivePreview() {
+    final resume = _buildResumeFromForm();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        final isDark = Theme.of(ctx).brightness == Brightness.dark;
+        return Container(
+          height: MediaQuery.of(ctx).size.height * 0.85,
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF111827) : const Color(0xFFF3F4F6),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Column(
+            children: [
+              // Handle bar
+              const SizedBox(height: 12),
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF4B5563) : const Color(0xFFD1D5DB),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    const Icon(Icons.preview_rounded, size: 20),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'Live Preview',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    const Spacer(),
+                    TextButton.icon(
+                      onPressed: () => Navigator.pop(ctx),
+                      icon: const Icon(Icons.close, size: 18),
+                      label: const Text('Close'),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 800),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.12),
+                              blurRadius: 20,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: buildTemplateRenderer(widget.templateType, resume),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -895,6 +1072,13 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
           ),
           const SizedBox(width: 12),
         ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _showLivePreview,
+        backgroundColor: const Color(0xFF6366F1),
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.preview_rounded),
+        label: const Text('Preview'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),

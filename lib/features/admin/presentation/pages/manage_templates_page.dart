@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_routes.dart';
 import '../../../../core/utils/app_preferences.dart';
 import '../../domain/entities/resume_template.dart';
 import '../bloc/admin_bloc.dart';
@@ -158,6 +159,13 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
                         final template = state.templates[index];
                         return TemplateTile(
                           template: template,
+                          onPreview: () {
+                            Navigator.pushNamed(
+                              context,
+                              AppRoutes.templatePreview,
+                              arguments: template,
+                            );
+                          },
                           onEdit: () =>
                               showTemplateForm(context, template: template),
                           onDelete: () {
@@ -170,7 +178,7 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
                               ),
                             );
                           },
-                        ); // closes TemplateTile
+                        );
                       },
                     );
                   },
@@ -190,6 +198,7 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
     final nameController = TextEditingController(text: template?.name ?? '');
     bool isPremium = template?.isPremium ?? false;
     bool isActive = template?.isActive ?? true;
+    String selectedType = template?.templateType ?? 'professional';
 
     showModalBottomSheet(
       context: context,
@@ -252,6 +261,45 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
                       ),
                     ),
                     const SizedBox(height: 16),
+
+                    // Template Type Dropdown
+                    DropdownButtonFormField<String>(
+                      value: selectedType,
+                      decoration: InputDecoration(
+                        labelText: 'Template Type',
+                        filled: true,
+                        fillColor: isDark
+                            ? const Color(0xFF111827)
+                            : const Color(0xFFF3F4F6),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      items: ResumeTemplate.templateTypes.map((type) {
+                        return DropdownMenuItem(
+                          value: type,
+                          child: Row(
+                            children: [
+                              Icon(
+                                _typeIcon(type),
+                                size: 18,
+                                color: _typeColor(type),
+                              ),
+                              const SizedBox(width: 10),
+                              Text(ResumeTemplate.templateTypeLabel(type)),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        if (value != null) {
+                          setModalState(() => selectedType = value);
+                        }
+                      },
+                    ),
+
+                    const SizedBox(height: 16),
                     SwitchListTile(
                       title: const Text('Premium Template'),
                       subtitle: const Text('Only available to premium users'),
@@ -287,6 +335,7 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
                                   name: nameController.text.trim(),
                                   isPremium: isPremium,
                                   isActive: isActive,
+                                  templateType: selectedType,
                                 ),
                               ),
                             );
@@ -298,6 +347,7 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
                                   name: nameController.text.trim(),
                                   isActive: isActive,
                                   isPremium: isPremium,
+                                  templateType: selectedType,
                                   layoutJson: '{}',
                                   previewImage: '',
                                   createdAt: DateTime.now(),
@@ -370,5 +420,27 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
         ],
       ),
     );
+  }
+
+  IconData _typeIcon(String type) {
+    switch (type) {
+      case 'professional': return Icons.business_center_rounded;
+      case 'modern': return Icons.auto_awesome_rounded;
+      case 'minimal': return Icons.minimize_rounded;
+      case 'creative': return Icons.color_lens_rounded;
+      case 'classic': return Icons.article_rounded;
+      default: return Icons.article_outlined;
+    }
+  }
+
+  Color _typeColor(String type) {
+    switch (type) {
+      case 'professional': return const Color(0xFF2B6CB0);
+      case 'modern': return const Color(0xFF38BDF8);
+      case 'minimal': return const Color(0xFF6B7280);
+      case 'creative': return const Color(0xFF8B5CF6);
+      case 'classic': return const Color(0xFF1F2937);
+      default: return const Color(0xFF10B981);
+    }
   }
 }

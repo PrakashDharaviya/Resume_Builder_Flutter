@@ -83,6 +83,7 @@ class AdminMockDataSource {
         name: d['name'] ?? '',
         isActive: d['isActive'] ?? true,
         isPremium: d['isPremium'] ?? false,
+        templateType: d['templateType'] ?? 'professional',
         layoutJson: d['layoutJson'] ?? '{}',
         previewImage: d['previewImage'] ?? '',
         createdAt: (d['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
@@ -99,6 +100,7 @@ class AdminMockDataSource {
       'name': template.name,
       'isActive': template.isActive,
       'isPremium': template.isPremium,
+      'templateType': template.templateType,
       'layoutJson': template.layoutJson,
       'previewImage': template.previewImage,
       'createdAt': Timestamp.fromDate(now),
@@ -112,6 +114,7 @@ class AdminMockDataSource {
       'name': template.name,
       'isActive': template.isActive,
       'isPremium': template.isPremium,
+      'templateType': template.templateType,
       'layoutJson': template.layoutJson,
       'previewImage': template.previewImage,
     });

@@ -35,4 +35,5 @@ class AppRoutes {
   static const String atsSettings = '/admin/ats-settings';
   static const String analytics = '/admin/analytics';
   static const String announcements = '/admin/announcements';
+  static const String templatePreview = '/admin/template-preview';
 }

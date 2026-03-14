@@ -9,6 +9,8 @@ import 'auth/auth_check_screen.dart';
 import 'auth/login_page.dart';
 import 'auth/register_page.dart';
 import 'core/constants/app_routes.dart';
+import 'features/admin/domain/entities/resume_template.dart';
+import 'features/admin/presentation/pages/template_preview_page.dart';
 import 'features/ats_analysis/presentation/pages/ats_analysis_page.dart';
 import 'features/auth/domain/entities/user.dart' as auth_user;
 import 'features/auth/presentation/pages/splash_page.dart';
@@ -55,9 +57,20 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const CreateResumePage());
 
       case AppRoutes.resumeEditor:
-        final resumeArg = settings.arguments as Resume?;
+        Resume? resumeArg;
+        String templateType = 'professional';
+        if (settings.arguments is Resume) {
+          resumeArg = settings.arguments as Resume;
+        } else if (settings.arguments is Map<String, dynamic>) {
+          final args = settings.arguments as Map<String, dynamic>;
+          resumeArg = args['resume'] as Resume?;
+          templateType = args['templateType'] as String? ?? 'professional';
+        }
         return MaterialPageRoute(
-          builder: (_) => ResumeEditorPage(resume: resumeArg),
+          builder: (_) => ResumeEditorPage(
+            resume: resumeArg,
+            templateType: templateType,
+          ),
         );
 
       case AppRoutes.editResume:
@@ -114,6 +127,19 @@ class AppRouter {
 
       case AppRoutes.announcements:
         return MaterialPageRoute(builder: (_) => const AnnouncementsPage());
+
+      case AppRoutes.templatePreview:
+        final tmpl = settings.arguments as ResumeTemplate?;
+        if (tmpl == null) {
+          return MaterialPageRoute(
+            builder: (_) => const Scaffold(
+              body: Center(child: Text('No template data provided')),
+            ),
+          );
+        }
+        return MaterialPageRoute(
+          builder: (_) => TemplatePreviewPage(template: tmpl),
+        );
 
       case AppRoutes.forgotPassword:
         return MaterialPageRoute(builder: (_) => const ForgotPasswordPage());

@@ -5,11 +5,19 @@ import '../../../features/resume/presentation/pages/resume_editor_page.dart'
 
 class ResumeEditorPage extends StatelessWidget {
   final Resume? resume;
+  final String templateType;
 
-  const ResumeEditorPage({super.key, this.resume});
+  const ResumeEditorPage({
+    super.key,
+    this.resume,
+    this.templateType = 'professional',
+  });
 
   @override
   Widget build(BuildContext context) {
-    return legacy.ResumeEditorPage(resume: resume);
+    return legacy.ResumeEditorPage(
+      resume: resume,
+      templateType: templateType,
+    );
   }
 }

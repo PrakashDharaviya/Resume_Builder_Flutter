@@ -6,6 +6,7 @@ class TemplateTile extends StatelessWidget {
   final ResumeTemplate template;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
+  final VoidCallback? onPreview;
   final ValueChanged<bool> onToggleActive;
 
   const TemplateTile({
@@ -13,6 +14,7 @@ class TemplateTile extends StatelessWidget {
     required this.template,
     required this.onEdit,
     required this.onDelete,
+    this.onPreview,
     required this.onToggleActive,
   });
 
@@ -47,21 +49,21 @@ class TemplateTile extends StatelessWidget {
               width: 52,
               height: 64,
               decoration: BoxDecoration(
-                color: const Color(0xFF10B981).withValues(alpha: 0.08),
+                color: _templateTypeColor(template.templateType).withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                  color: _templateTypeColor(template.templateType).withValues(alpha: 0.15),
                 ),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    Icons.article_outlined,
+                    _templateTypeIcon(template.templateType),
                     size: 24,
                     color: isDark
-                        ? const Color(0xFF34D399)
-                        : const Color(0xFF10B981),
+                        ? _templateTypeColor(template.templateType).withValues(alpha: 0.8)
+                        : _templateTypeColor(template.templateType),
                   ),
                   const SizedBox(height: 2),
                   if (template.isPremium)
@@ -102,6 +104,25 @@ class TemplateTile extends StatelessWidget {
                     spacing: 4,
                     runSpacing: 4,
                     children: [
+                      // Template type badge
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 7,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _templateTypeColor(template.templateType).withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          ResumeTemplate.templateTypeLabel(template.templateType),
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: _templateTypeColor(template.templateType),
+                          ),
+                        ),
+                      ),
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 7,
@@ -182,10 +203,25 @@ class TemplateTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               onSelected: (value) {
+                if (value == 'preview' && onPreview != null) onPreview!();
                 if (value == 'edit') onEdit();
                 if (value == 'delete') onDelete();
               },
               itemBuilder: (_) => [
+                const PopupMenuItem(
+                  value: 'preview',
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.visibility_rounded,
+                        size: 18,
+                        color: Color(0xFF3B82F6),
+                      ),
+                      SizedBox(width: 8),
+                      Text('Preview'),
+                    ],
+                  ),
+                ),
                 const PopupMenuItem(
                   value: 'edit',
                   child: Row(
@@ -216,5 +252,39 @@ class TemplateTile extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Color _templateTypeColor(String type) {
+    switch (type) {
+      case 'professional':
+        return const Color(0xFF2B6CB0);
+      case 'modern':
+        return const Color(0xFF38BDF8);
+      case 'minimal':
+        return const Color(0xFF6B7280);
+      case 'creative':
+        return const Color(0xFF8B5CF6);
+      case 'classic':
+        return const Color(0xFF1F2937);
+      default:
+        return const Color(0xFF10B981);
+    }
+  }
+
+  IconData _templateTypeIcon(String type) {
+    switch (type) {
+      case 'professional':
+        return Icons.business_center_rounded;
+      case 'modern':
+        return Icons.auto_awesome_rounded;
+      case 'minimal':
+        return Icons.minimize_rounded;
+      case 'creative':
+        return Icons.color_lens_rounded;
+      case 'classic':
+        return Icons.article_rounded;
+      default:
+        return Icons.article_outlined;
+    }
   }
 }
