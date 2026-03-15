@@ -22,8 +22,9 @@ class ResumeLocalDataSourceImpl implements ResumeLocalDataSource {
     final uid = _auth.currentUser?.uid;
     if (uid == null) return [];
 
-    final snapshot =
-        await _resumesCollection.where('userId', isEqualTo: uid).get();
+    final snapshot = await _resumesCollection
+        .where('userId', isEqualTo: uid)
+        .get();
 
     return snapshot.docs
         .map((doc) => ResumeModel.fromJson(doc.data()))

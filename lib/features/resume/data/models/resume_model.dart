@@ -18,6 +18,7 @@ class ResumeModel extends Resume {
     required super.createdAt,
     required super.updatedAt,
     super.atsScore,
+    super.templateType,
   });
 
   factory ResumeModel.fromJson(Map<String, dynamic> json) {
@@ -69,6 +70,7 @@ class ResumeModel extends Resume {
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
       atsScore: json['atsScore'] as int?,
+      templateType: json['templateType'] as String?,
     );
   }
 
@@ -105,6 +107,7 @@ class ResumeModel extends Resume {
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       'atsScore': atsScore,
+      'templateType': templateType,
     };
   }
 
@@ -125,6 +128,7 @@ class ResumeModel extends Resume {
       createdAt: resume.createdAt,
       updatedAt: resume.updatedAt,
       atsScore: resume.atsScore,
+      templateType: resume.templateType,
     );
   }
 }

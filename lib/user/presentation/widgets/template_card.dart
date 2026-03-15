@@ -55,9 +55,9 @@ class TemplateCard extends StatelessWidget {
                       child: FittedBox(
                         fit: BoxFit.cover,
                         alignment: Alignment.topCenter,
-                        child: SizedBox(
+                        child: Container(
                           width: 600,
-                          height: 800,
+                          color: Colors.white,
                           child: buildTemplateRenderer(
                             template.templateType,
                             sampleResume,

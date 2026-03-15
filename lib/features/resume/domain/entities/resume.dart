@@ -15,6 +15,7 @@ class Resume {
   final DateTime createdAt;
   final DateTime updatedAt;
   final int? atsScore;
+  final String? templateType;
 
   const Resume({
     required this.id,
@@ -32,6 +33,7 @@ class Resume {
     required this.createdAt,
     required this.updatedAt,
     this.atsScore,
+    this.templateType,
   });
 
   Resume copyWith({
@@ -50,6 +52,7 @@ class Resume {
     DateTime? createdAt,
     DateTime? updatedAt,
     int? atsScore,
+    String? templateType,
   }) {
     return Resume(
       id: id ?? this.id,
@@ -67,6 +70,7 @@ class Resume {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       atsScore: atsScore ?? this.atsScore,
+      templateType: templateType ?? this.templateType,
     );
   }
 }

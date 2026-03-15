@@ -67,10 +67,8 @@ class AppRouter {
           templateType = args['templateType'] as String? ?? 'professional';
         }
         return MaterialPageRoute(
-          builder: (_) => ResumeEditorPage(
-            resume: resumeArg,
-            templateType: templateType,
-          ),
+          builder: (_) =>
+              ResumeEditorPage(resume: resumeArg, templateType: templateType),
         );
 
       case AppRoutes.editResume:
