@@ -1,6 +1,6 @@
-import '../core/services/firebase_service.dart';
-import '../features/auth/data/models/user_model.dart';
-import '../features/auth/domain/entities/user.dart';
+import 'package:resumebuilder/core/services/firebase_service.dart';
+import 'package:resumebuilder/features/auth/data/models/user_model.dart';
+import 'package:resumebuilder/features/auth/domain/entities/user.dart';
 
 class AuthService {
   final FirebaseService firebaseService;

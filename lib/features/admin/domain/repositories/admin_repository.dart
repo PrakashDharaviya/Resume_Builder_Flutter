@@ -1,10 +1,10 @@
 import 'package:dartz/dartz.dart';
-import '../../../../core/errors/failures.dart';
-import '../../domain/entities/admin_stats.dart';
-import '../../domain/entities/announcement.dart';
-import '../../domain/entities/ats_config.dart';
-import '../../domain/entities/resume_template.dart';
-import '../../../auth/domain/entities/user.dart';
+import 'package:resumebuilder/core/errors/failures.dart';
+import 'package:resumebuilder/features/admin/domain/entities/admin_stats.dart';
+import 'package:resumebuilder/features/admin/domain/entities/announcement.dart';
+import 'package:resumebuilder/features/admin/domain/entities/ats_config.dart';
+import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
+import 'package:resumebuilder/features/auth/domain/entities/user.dart';
 
 abstract class AdminRepository {
   // Dashboard

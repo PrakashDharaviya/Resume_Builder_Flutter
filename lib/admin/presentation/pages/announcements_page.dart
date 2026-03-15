@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../features/admin/presentation/pages/announcements_page.dart'
+import 'package:resumebuilder/features/admin/presentation/pages/announcements_page.dart'
     as legacy;
 
 class AnnouncementsPage extends StatelessWidget {

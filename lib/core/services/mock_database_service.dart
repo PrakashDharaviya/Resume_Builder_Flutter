@@ -1,12 +1,12 @@
-import '../../injection_container.dart' as di;
-import '../../features/admin/data/datasources/admin_mock_data_source.dart';
-import '../../features/resume/data/datasources/resume_local_data_source.dart';
-import '../../features/admin/domain/entities/admin_stats.dart';
-import '../../features/admin/domain/entities/announcement.dart';
-import '../../features/admin/domain/entities/ats_config.dart';
-import '../../features/admin/domain/entities/resume_template.dart';
-import '../../features/auth/domain/entities/user.dart';
-import '../../features/resume/domain/entities/resume.dart';
+import 'package:resumebuilder/injection_container.dart' as di;
+import 'package:resumebuilder/features/admin/data/datasources/admin_mock_data_source.dart';
+import 'package:resumebuilder/features/resume/data/datasources/resume_local_data_source.dart';
+import 'package:resumebuilder/features/admin/domain/entities/admin_stats.dart';
+import 'package:resumebuilder/features/admin/domain/entities/announcement.dart';
+import 'package:resumebuilder/features/admin/domain/entities/ats_config.dart';
+import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
+import 'package:resumebuilder/features/auth/domain/entities/user.dart';
+import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
 
 class MockDatabaseService {
   MockDatabaseService._();

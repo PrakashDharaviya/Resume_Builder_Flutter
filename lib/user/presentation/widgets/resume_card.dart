@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/app_routes.dart';
-import '../../../features/resume/domain/entities/resume.dart';
+import 'package:resumebuilder/core/constants/app_routes.dart';
+import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
 
 class ResumeCard extends StatelessWidget {
   final Resume resume;

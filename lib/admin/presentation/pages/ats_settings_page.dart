@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../features/admin/presentation/pages/ats_settings_page.dart'
+import 'package:resumebuilder/features/admin/presentation/pages/ats_settings_page.dart'
     as legacy;
 
 class ATSSettingsPage extends StatelessWidget {

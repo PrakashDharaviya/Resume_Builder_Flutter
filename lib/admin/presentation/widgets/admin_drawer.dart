@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../admin_routes.dart';
-import '../../../core/constants/app_routes.dart';
-import '../../../core/utils/app_preferences.dart';
+import 'package:resumebuilder/admin/admin_routes.dart';
+import 'package:resumebuilder/core/constants/app_routes.dart';
+import 'package:resumebuilder/core/utils/app_preferences.dart';
 
 class AdminDrawer extends StatelessWidget {
   final String currentRoute;

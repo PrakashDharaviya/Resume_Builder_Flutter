@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
-import '../../../../core/errors/failures.dart';
-import '../entities/ats_analysis.dart';
-import '../repositories/ats_repository.dart';
+import 'package:resumebuilder/core/errors/failures.dart';
+import 'package:resumebuilder/features/ats_analysis/domain/entities/ats_analysis.dart';
+import 'package:resumebuilder/features/ats_analysis/domain/repositories/ats_repository.dart';
 
 class AnalyzeResume {
   final ATSRepository repository;

@@ -1,10 +1,10 @@
 import 'package:dartz/dartz.dart';
-import '../../../../core/errors/exceptions.dart';
-import '../../../../core/errors/failures.dart';
-import '../../domain/entities/resume.dart';
-import '../../domain/repositories/resume_repository.dart';
-import '../datasources/resume_local_data_source.dart';
-import '../models/resume_model.dart';
+import 'package:resumebuilder/core/errors/exceptions.dart';
+import 'package:resumebuilder/core/errors/failures.dart';
+import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
+import 'package:resumebuilder/features/resume/domain/repositories/resume_repository.dart';
+import 'package:resumebuilder/features/resume/data/datasources/resume_local_data_source.dart';
+import 'package:resumebuilder/features/resume/data/models/resume_model.dart';
 
 class ResumeRepositoryImpl implements ResumeRepository {
   final ResumeLocalDataSource localDataSource;

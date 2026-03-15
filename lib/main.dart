@@ -1,16 +1,14 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'app_router.dart';
-import 'firebase_options.dart';
-import 'core/constants/app_routes.dart';
-import 'core/constants/app_theme.dart';
-import 'core/utils/app_preferences.dart';
-import 'features/ats_analysis/presentation/bloc/ats_bloc.dart';
-import 'features/auth/presentation/bloc/auth_bloc.dart';
-import 'features/resume/presentation/bloc/resume_bloc.dart';
-import 'features/admin/presentation/bloc/admin_bloc.dart';
-import 'injection_container.dart' as di;
+import 'package:resumebuilder/app_router.dart';
+import 'package:resumebuilder/firebase_options.dart';
+import 'package:resumebuilder/core/constants/app_routes.dart';
+import 'package:resumebuilder/core/constants/app_theme.dart';
+import 'package:resumebuilder/core/theme/theme_cubit.dart';
+import 'package:resumebuilder/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:resumebuilder/features/resume/presentation/bloc/resume_bloc.dart';
+import 'package:resumebuilder/injection_container.dart' as di;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,16 +22,14 @@ class ResumeIQApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: themeNotifier,
-      builder: (context, themeMode, child) => MultiBlocProvider(
-        providers: [
-          BlocProvider<AuthBloc>(create: (_) => di.sl<AuthBloc>()),
-          BlocProvider<ResumeBloc>(create: (_) => di.sl<ResumeBloc>()),
-          BlocProvider<ATSBloc>(create: (_) => di.sl<ATSBloc>()),
-          BlocProvider<AdminBloc>(create: (_) => di.sl<AdminBloc>()),
-        ],
-        child: MaterialApp(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<ThemeCubit>(create: (_) => di.sl<ThemeCubit>()),
+        BlocProvider<AuthBloc>(create: (_) => di.sl<AuthBloc>()),
+        BlocProvider<ResumeBloc>(create: (_) => di.sl<ResumeBloc>()),
+      ],
+      child: BlocBuilder<ThemeCubit, ThemeMode>(
+        builder: (context, themeMode) => MaterialApp(
           title: 'ResumeIQ',
           debugShowCheckedModeBanner: false,
           theme: AppTheme.lightTheme,

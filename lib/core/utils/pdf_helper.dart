@@ -7,7 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
-import '../../features/resume/domain/entities/resume.dart';
+import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
 
 class PDFHelper {
   static final dateFormat = DateFormat('MMM yyyy');

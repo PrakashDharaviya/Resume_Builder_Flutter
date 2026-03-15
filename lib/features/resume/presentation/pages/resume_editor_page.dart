@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_routes.dart';
-import '../../domain/entities/resume.dart';
-import '../bloc/resume_bloc.dart';
-import '../bloc/resume_event.dart';
-import '../widgets/template_renderer_factory.dart';
+import 'package:resumebuilder/core/constants/app_colors.dart';
+import 'package:resumebuilder/core/constants/app_routes.dart';
+import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
+import 'package:resumebuilder/features/resume/presentation/bloc/resume_bloc.dart';
+import 'package:resumebuilder/features/resume/presentation/bloc/resume_event.dart';
+import 'package:resumebuilder/features/resume/presentation/widgets/template_renderer_factory.dart';
 
 class ResumeEditorPage extends StatefulWidget {
   final Resume? resume;
@@ -887,7 +887,7 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
           'resume_${DateTime.now().millisecondsSinceEpoch}',
       userId: widget.resume?.userId ?? 'user',
       title: widget.resume?.title ?? 'My Resume',
-      templateType: widget.templateType,
+      templateType: widget.resume?.templateType ?? widget.templateType,
       personalInfo: PersonalInfo(
         firstName: firstNameCtrl.text.isNotEmpty ? firstNameCtrl.text : 'Your',
         lastName: lastNameCtrl.text.isNotEmpty ? lastNameCtrl.text : 'Name',
@@ -967,7 +967,7 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
           proficiency: l['level'] ?? 'Fluent',
         );
       }).toList(),
-      createdAt: DateTime.now(),
+      createdAt: widget.resume?.createdAt ?? DateTime.now(),
       updatedAt: DateTime.now(),
     );
   }
@@ -1071,6 +1071,7 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
         } else {
           context.read<ResumeBloc>().add(UpdateResumeEvent(newResume));
         }
+        context.read<ResumeBloc>().add(const LoadAllResumesEvent());
       },
       child: Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -1085,6 +1086,8 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
                 } else {
                   context.read<ResumeBloc>().add(UpdateResumeEvent(newResume));
                 }
+                context.read<ResumeBloc>().add(const LoadAllResumesEvent());
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('Resume saved successfully!'),

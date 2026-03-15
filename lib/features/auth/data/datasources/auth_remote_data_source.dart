@@ -1,5 +1,5 @@
-import '../../../../core/services/firebase_service.dart';
-import '../models/user_model.dart';
+import 'package:resumebuilder/core/services/firebase_service.dart';
+import 'package:resumebuilder/features/auth/data/models/user_model.dart';
 
 abstract class AuthRemoteDataSource {
   Future<UserModel> signInWithEmail({

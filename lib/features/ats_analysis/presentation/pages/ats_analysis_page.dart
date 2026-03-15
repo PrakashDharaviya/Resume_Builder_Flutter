@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:math' as math;
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_strings.dart';
-import '../../domain/entities/ats_analysis.dart';
-import '../bloc/ats_bloc.dart';
-import '../bloc/ats_event.dart';
-import '../bloc/ats_state.dart';
+import 'package:resumebuilder/core/constants/app_colors.dart';
+import 'package:resumebuilder/core/constants/app_strings.dart';
+import 'package:resumebuilder/features/ats_analysis/domain/entities/ats_analysis.dart';
+import 'package:resumebuilder/features/ats_analysis/presentation/bloc/ats_bloc.dart';
+import 'package:resumebuilder/features/ats_analysis/presentation/bloc/ats_event.dart';
+import 'package:resumebuilder/features/ats_analysis/presentation/bloc/ats_state.dart';
 
 class ATSAnalysisPage extends StatefulWidget {
   final Map<String, dynamic> resumeData;
@@ -50,7 +50,7 @@ class ATSAnalysisPageState extends State<ATSAnalysisPage>
           }
         },
         builder: (context, state) {
-          if (state is ATSAnalyzing) {
+          if (state is AtsAnalysisLoading) {
             return buildAnalyzingState();
           }
 
@@ -58,7 +58,13 @@ class ATSAnalysisPageState extends State<ATSAnalysisPage>
             return buildAnalysisResults(state.analysis);
           }
 
-          if (state is ATSError) {
+          if (state is AtsAnalysisTimeout) {
+            return buildErrorState(
+              state.message,
+            ); // or a custom buildTimeoutState(state.message)
+          }
+
+          if (state is AtsAnalysisError) {
             return buildErrorState(state.message);
           }
 

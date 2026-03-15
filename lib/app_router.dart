@@ -1,27 +1,32 @@
 import 'package:flutter/material.dart';
-import 'admin/presentation/pages/admin_dashboard.dart';
-import 'admin/presentation/pages/analytics_page.dart';
-import 'admin/presentation/pages/announcements_page.dart';
-import 'admin/presentation/pages/ats_settings_page.dart';
-import 'admin/presentation/pages/manage_templates_page.dart';
-import 'admin/presentation/pages/manage_users_page.dart';
-import 'auth/auth_check_screen.dart';
-import 'auth/login_page.dart';
-import 'auth/register_page.dart';
-import 'core/constants/app_routes.dart';
-import 'features/admin/domain/entities/resume_template.dart';
-import 'features/admin/presentation/pages/template_preview_page.dart';
-import 'features/ats_analysis/presentation/pages/ats_analysis_page.dart';
-import 'features/auth/domain/entities/user.dart' as auth_user;
-import 'features/auth/presentation/pages/splash_page.dart';
-import 'features/resume/domain/entities/resume.dart';
-import 'features/resume/presentation/pages/pdf_export_page.dart';
-import 'user/presentation/pages/ats_result_page.dart';
-import 'user/presentation/pages/resume_editor_page.dart';
-import 'user/presentation/pages/resume_preview_page.dart';
-import 'user/presentation/pages/template_selection_page.dart';
-import 'user/presentation/pages/user_dashboard.dart';
-import 'user/presentation/pages/user_profile_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:resumebuilder/admin/presentation/pages/admin_dashboard.dart';
+import 'package:resumebuilder/admin/presentation/pages/analytics_page.dart';
+import 'package:resumebuilder/admin/presentation/pages/announcements_page.dart';
+import 'package:resumebuilder/admin/presentation/pages/ats_settings_page.dart';
+import 'package:resumebuilder/admin/presentation/pages/manage_templates_page.dart';
+import 'package:resumebuilder/admin/presentation/pages/manage_users_page.dart';
+import 'package:resumebuilder/auth/auth_check_screen.dart';
+import 'package:resumebuilder/auth/login_page.dart';
+import 'package:resumebuilder/auth/register_page.dart';
+import 'package:resumebuilder/core/constants/app_routes.dart';
+import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
+import 'package:resumebuilder/features/admin/presentation/bloc/admin_bloc.dart';
+import 'package:resumebuilder/features/admin/presentation/pages/template_preview_page.dart';
+import 'package:resumebuilder/features/ats_analysis/presentation/bloc/ats_bloc.dart';
+import 'package:resumebuilder/features/ats_analysis/presentation/pages/ats_analysis_page.dart';
+import 'package:resumebuilder/features/auth/domain/entities/user.dart' as auth_user;
+import 'package:resumebuilder/features/auth/presentation/pages/splash_page.dart';
+import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
+import 'package:resumebuilder/features/resume/presentation/bloc/resume_bloc.dart';
+import 'package:resumebuilder/features/resume/presentation/pages/pdf_export_page.dart';
+import 'package:resumebuilder/injection_container.dart' as di;
+import 'package:resumebuilder/user/presentation/pages/ats_result_page.dart';
+import 'package:resumebuilder/user/presentation/pages/resume_editor_page.dart';
+import 'package:resumebuilder/user/presentation/pages/resume_preview_page.dart';
+import 'package:resumebuilder/user/presentation/pages/template_selection_page.dart';
+import 'package:resumebuilder/user/presentation/pages/user_dashboard.dart';
+import 'package:resumebuilder/user/presentation/pages/user_profile_page.dart';
 
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -44,13 +49,19 @@ class AppRouter {
       case AppRoutes.atsAnalysis:
         final resumeData = settings.arguments as Map<String, dynamic>?;
         return MaterialPageRoute(
-          builder: (_) => ATSAnalysisPage(resumeData: resumeData ?? {}),
+          builder: (_) => BlocProvider<ATSBloc>(
+            create: (_) => di.sl<ATSBloc>(),
+            child: ATSAnalysisPage(resumeData: resumeData ?? {}),
+          ),
         );
 
       case AppRoutes.atsResult:
         final score = settings.arguments as double?;
         return MaterialPageRoute(
-          builder: (_) => ATSResultPage(score: score ?? 78),
+          builder: (_) => BlocProvider<ATSBloc>(
+            create: (_) => di.sl<ATSBloc>(),
+            child: ATSResultPage(score: score ?? 78),
+          ),
         );
 
       case AppRoutes.createResume:
@@ -61,6 +72,7 @@ class AppRouter {
         String templateType = 'professional';
         if (settings.arguments is Resume) {
           resumeArg = settings.arguments as Resume;
+          templateType = resumeArg.templateType ?? 'professional';
         } else if (settings.arguments is Map<String, dynamic>) {
           final args = settings.arguments as Map<String, dynamic>;
           resumeArg = args['resume'] as Resume?;
@@ -109,22 +121,52 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => AuthCheckScreen(user: user));
 
       case AppRoutes.adminDashboard:
-        return MaterialPageRoute(builder: (_) => const AdminDashboard());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<AdminBloc>(
+            create: (_) => di.sl<AdminBloc>(),
+            child: const AdminDashboard(),
+          ),
+        );
 
       case AppRoutes.manageUsers:
-        return MaterialPageRoute(builder: (_) => const ManageUsersPage());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<AdminBloc>(
+            create: (_) => di.sl<AdminBloc>(),
+            child: const ManageUsersPage(),
+          ),
+        );
 
       case AppRoutes.manageTemplates:
-        return MaterialPageRoute(builder: (_) => const ManageTemplatesPage());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<AdminBloc>(
+            create: (_) => di.sl<AdminBloc>(),
+            child: const ManageTemplatesPage(),
+          ),
+        );
 
       case AppRoutes.atsSettings:
-        return MaterialPageRoute(builder: (_) => const ATSSettingsPage());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<AdminBloc>(
+            create: (_) => di.sl<AdminBloc>(),
+            child: const ATSSettingsPage(),
+          ),
+        );
 
       case AppRoutes.analytics:
-        return MaterialPageRoute(builder: (_) => const AnalyticsPage());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<AdminBloc>(
+            create: (_) => di.sl<AdminBloc>(),
+            child: const AnalyticsPage(),
+          ),
+        );
 
       case AppRoutes.announcements:
-        return MaterialPageRoute(builder: (_) => const AnnouncementsPage());
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<AdminBloc>(
+            create: (_) => di.sl<AdminBloc>(),
+            child: const AnnouncementsPage(),
+          ),
+        );
 
       case AppRoutes.templatePreview:
         final tmpl = settings.arguments as ResumeTemplate?;
@@ -136,7 +178,10 @@ class AppRouter {
           );
         }
         return MaterialPageRoute(
-          builder: (_) => TemplatePreviewPage(template: tmpl),
+          builder: (_) => BlocProvider<AdminBloc>(
+            create: (_) => di.sl<AdminBloc>(),
+            child: TemplatePreviewPage(template: tmpl),
+          ),
         );
 
       case AppRoutes.forgotPassword:

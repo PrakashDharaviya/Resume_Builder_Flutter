@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../features/resume/domain/entities/resume.dart';
-import '../../../features/resume/presentation/pages/resume_editor_page.dart'
+import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
+import 'package:resumebuilder/features/resume/presentation/pages/resume_editor_page.dart'
     as legacy;
 
 class ResumeEditorPage extends StatelessWidget {

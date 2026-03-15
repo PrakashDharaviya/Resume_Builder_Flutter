@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/utils/app_preferences.dart';
-import '../../../resume/presentation/widgets/template_renderers.dart';
-import '../../../resume/presentation/widgets/template_renderer_factory.dart';
-import '../../domain/entities/resume_template.dart';
+import 'package:resumebuilder/core/constants/app_colors.dart';
+import 'package:resumebuilder/core/utils/app_preferences.dart';
+import 'package:resumebuilder/features/resume/presentation/widgets/template_renderers.dart';
+import 'package:resumebuilder/features/resume/presentation/widgets/template_renderer_factory.dart';
+import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
 
 class TemplatePreviewPage extends StatelessWidget {
   final ResumeTemplate template;

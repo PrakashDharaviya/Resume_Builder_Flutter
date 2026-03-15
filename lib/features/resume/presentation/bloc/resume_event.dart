@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../domain/entities/resume.dart';
+import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
 
 abstract class ResumeEvent extends Equatable {
   const ResumeEvent();

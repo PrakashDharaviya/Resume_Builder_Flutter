@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_routes.dart';
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/utils/validators.dart';
-import '../bloc/auth_bloc.dart';
-import '../bloc/auth_event.dart';
-import '../bloc/auth_state.dart';
+import 'package:resumebuilder/core/constants/app_colors.dart';
+import 'package:resumebuilder/core/constants/app_routes.dart';
+import 'package:resumebuilder/core/constants/app_strings.dart';
+import 'package:resumebuilder/core/utils/validators.dart';
+import 'package:resumebuilder/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:resumebuilder/features/auth/presentation/bloc/auth_event.dart';
+import 'package:resumebuilder/features/auth/presentation/bloc/auth_state.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

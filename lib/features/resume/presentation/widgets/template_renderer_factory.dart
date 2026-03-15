@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../resume/domain/entities/resume.dart';
-import '../../../resume/presentation/widgets/template_renderers.dart';
+import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
+import 'package:resumebuilder/features/resume/presentation/widgets/template_renderers.dart';
 
 /// Returns the correct template renderer widget based on templateType string.
 Widget buildTemplateRenderer(String templateType, Resume resume) {

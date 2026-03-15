@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../core/constants/app_routes.dart';
-import '../../../core/services/mock_database_service.dart';
-import '../../../core/utils/app_preferences.dart';
-import '../../../features/auth/presentation/bloc/auth_bloc.dart';
-import '../../../features/auth/presentation/bloc/auth_state.dart';
-import '../../../features/resume/presentation/bloc/resume_bloc.dart';
-import '../../../features/resume/presentation/bloc/resume_event.dart';
-import '../../../features/resume/presentation/bloc/resume_state.dart';
-import '../widgets/resume_card.dart';
+import 'package:resumebuilder/core/constants/app_routes.dart';
+import 'package:resumebuilder/core/services/mock_database_service.dart';
+import 'package:resumebuilder/core/utils/app_preferences.dart';
+import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
+import 'package:resumebuilder/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:resumebuilder/features/auth/presentation/bloc/auth_state.dart';
+import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
+import 'package:resumebuilder/features/resume/presentation/bloc/resume_bloc.dart';
+import 'package:resumebuilder/features/resume/presentation/bloc/resume_event.dart';
+import 'package:resumebuilder/features/resume/presentation/bloc/resume_state.dart';
+import 'package:resumebuilder/user/presentation/widgets/resume_card.dart';
 
 class UserDashboard extends StatefulWidget {
   const UserDashboard({super.key});
@@ -72,8 +74,18 @@ class UserDashboardState extends State<UserDashboard> {
               IconButton(
                 icon: const Icon(Icons.style_rounded),
                 tooltip: 'Templates',
-                onPressed: () =>
-                    Navigator.pushNamed(context, AppRoutes.templateSelection),
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    AppRoutes.templateSelection,
+                  ).then((_) {
+                    if (mounted) {
+                      context.read<ResumeBloc>().add(
+                        const LoadAllResumesEvent(),
+                      );
+                    }
+                  });
+                },
               ),
             ],
           ),
@@ -168,6 +180,144 @@ class UserDashboardState extends State<UserDashboard> {
                           ),
                         ],
                         const SizedBox(height: 18),
+                        // Recently used templates (based on user's resumes)
+                        BlocBuilder<ResumeBloc, ResumeState>(
+                          builder: (context, state) {
+                            if (state is! ResumeListLoaded ||
+                                state.resumes.isEmpty) {
+                              return const SizedBox.shrink();
+                            }
+
+                            final resumes = [...state.resumes]
+                              ..sort(
+                                (a, b) => b.updatedAt.compareTo(a.updatedAt),
+                              );
+
+                            final seenTypes = <String>{};
+                            final recentResumes = <Resume>[];
+
+                            for (final resume in resumes) {
+                              final type =
+                                  (resume.templateType ?? 'professional')
+                                      .toLowerCase();
+                              if (seenTypes.add(type)) {
+                                recentResumes.add(resume);
+                                if (recentResumes.length == 3) break;
+                              }
+                            }
+
+                            if (recentResumes.isEmpty) {
+                              return const SizedBox.shrink();
+                            }
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Recently Used Templates',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children: recentResumes.map((resume) {
+                                      final type =
+                                          (resume.templateType ??
+                                                  'professional')
+                                              .toLowerCase();
+                                      final label =
+                                          ResumeTemplate.templateTypeLabel(
+                                            type,
+                                          );
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                          right: 8,
+                                        ),
+                                        child: InkWell(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          onTap: () {
+                                            Navigator.pushNamed(
+                                              context,
+                                              AppRoutes.resumePreview,
+                                              arguments: resume,
+                                            ).then((_) {
+                                              if (mounted) {
+                                                context.read<ResumeBloc>().add(
+                                                  const LoadAllResumesEvent(),
+                                                );
+                                              }
+                                            });
+                                          },
+                                          child: Container(
+                                            width: 220,
+                                            padding: const EdgeInsets.all(12),
+                                            decoration: BoxDecoration(
+                                              color: isDark
+                                                  ? const Color(0xFF111827)
+                                                  : const Color(0xFFF9FAFB),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              border: Border.all(
+                                                color: const Color(
+                                                  0xFF10B981,
+                                                ).withValues(alpha: 0.35),
+                                              ),
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  label,
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w700,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 4),
+                                                Text(
+                                                  resume.title,
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 6),
+                                                Text(
+                                                  'Updated ${resume.updatedAt.toLocal().toString().split(' ').first}',
+                                                  style: TextStyle(
+                                                    fontSize: 11,
+                                                    color: isDark
+                                                        ? const Color(
+                                                            0xFF9CA3AF,
+                                                          )
+                                                        : const Color(
+                                                            0xFF6B7280,
+                                                          ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                                const SizedBox(height: 18),
+                              ],
+                            );
+                          },
+                        ),
                         const Text(
                           'My Resumes',
                           style: TextStyle(
@@ -186,6 +336,23 @@ class UserDashboardState extends State<UserDashboard> {
                                 ),
                               );
                             }
+                            if (state is ResumeError) {
+                              return Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(14),
+                                  color: isDark
+                                      ? const Color(0xFF1F2937)
+                                      : const Color(0xFFFEE2E2),
+                                ),
+                                child: Text(
+                                  'Error loading resumes: ${state.message}',
+                                  style: const TextStyle(
+                                    color: Color(0xFFB91C1C),
+                                  ),
+                                ),
+                              );
+                            }
                             if (state is ResumeListLoaded &&
                                 state.resumes.isNotEmpty) {
                               return Column(
@@ -197,11 +364,19 @@ class UserDashboardState extends State<UserDashboard> {
                                         ),
                                         child: ResumeCard(
                                           resume: resume,
-                                          onTap: () => Navigator.pushNamed(
-                                            context,
-                                            AppRoutes.resumePreview,
-                                            arguments: resume,
-                                          ),
+                                          onTap: () {
+                                            Navigator.pushNamed(
+                                              context,
+                                              AppRoutes.resumePreview,
+                                              arguments: resume,
+                                            ).then((_) {
+                                              if (mounted) {
+                                                context.read<ResumeBloc>().add(
+                                                  const LoadAllResumesEvent(),
+                                                );
+                                              }
+                                            });
+                                          },
                                         ),
                                       ),
                                     )
@@ -230,8 +405,13 @@ class UserDashboardState extends State<UserDashboard> {
             },
           ),
           floatingActionButton: FloatingActionButton.extended(
-            onPressed: () =>
-                Navigator.pushNamed(context, AppRoutes.resumeEditor),
+            onPressed: () {
+              Navigator.pushNamed(context, AppRoutes.resumeEditor).then((_) {
+                if (mounted) {
+                  context.read<ResumeBloc>().add(const LoadAllResumesEvent());
+                }
+              });
+            },
             icon: const Icon(Icons.add_rounded),
             label: const Text('Create Resume'),
           ),

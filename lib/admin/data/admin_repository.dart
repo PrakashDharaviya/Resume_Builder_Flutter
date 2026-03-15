@@ -1,9 +1,9 @@
-import '../../features/admin/domain/entities/admin_stats.dart';
-import '../../features/admin/domain/entities/announcement.dart';
-import '../../features/admin/domain/entities/ats_config.dart';
-import '../../features/admin/domain/entities/resume_template.dart';
-import '../../features/auth/domain/entities/user.dart';
-import 'admin_firestore_service.dart';
+import 'package:resumebuilder/features/admin/domain/entities/admin_stats.dart';
+import 'package:resumebuilder/features/admin/domain/entities/announcement.dart';
+import 'package:resumebuilder/features/admin/domain/entities/ats_config.dart';
+import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
+import 'package:resumebuilder/features/auth/domain/entities/user.dart';
+import 'package:resumebuilder/admin/data/admin_firestore_service.dart';
 
 class AdminRepository {
   final AdminFirestoreService service;

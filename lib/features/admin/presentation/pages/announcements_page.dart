@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/utils/app_preferences.dart';
-import '../../domain/entities/announcement.dart';
-import '../bloc/admin_bloc.dart';
-import '../bloc/admin_event.dart';
-import '../bloc/admin_state.dart';
+import 'package:resumebuilder/core/constants/app_colors.dart';
+import 'package:resumebuilder/core/utils/app_preferences.dart';
+import 'package:resumebuilder/features/admin/domain/entities/announcement.dart';
+import 'package:resumebuilder/features/admin/presentation/bloc/admin_bloc.dart';
+import 'package:resumebuilder/features/admin/presentation/bloc/admin_event.dart';
+import 'package:resumebuilder/features/admin/presentation/bloc/admin_state.dart';
 
 class AnnouncementsPage extends StatefulWidget {
   const AnnouncementsPage({super.key});
@@ -100,7 +100,7 @@ class AnnouncementsPageState extends State<AnnouncementsPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.error_outline, size: 48, color: AppColors.error),
+                  const Icon(Icons.error_outline, size: 48, color: AppColors.error),
                   const SizedBox(height: 16),
                   Text(state.message),
                   const SizedBox(height: 16),

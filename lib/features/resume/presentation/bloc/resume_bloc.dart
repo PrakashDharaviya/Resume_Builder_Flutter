@@ -1,11 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/usecases/create_resume.dart';
-import '../../domain/usecases/delete_resume.dart';
-import '../../domain/usecases/get_all_resumes.dart';
-import '../../domain/usecases/get_resume_by_id.dart';
-import '../../domain/usecases/update_resume.dart';
-import 'resume_event.dart';
-import 'resume_state.dart';
+import 'package:resumebuilder/features/resume/domain/usecases/create_resume.dart';
+import 'package:resumebuilder/features/resume/domain/usecases/delete_resume.dart';
+import 'package:resumebuilder/features/resume/domain/usecases/get_all_resumes.dart';
+import 'package:resumebuilder/features/resume/domain/usecases/get_resume_by_id.dart';
+import 'package:resumebuilder/features/resume/domain/usecases/update_resume.dart';
+import 'package:resumebuilder/features/resume/presentation/bloc/resume_event.dart';
+import 'package:resumebuilder/features/resume/presentation/bloc/resume_state.dart';
 
 class ResumeBloc extends Bloc<ResumeEvent, ResumeState> {
   final GetAllResumes getAllResumes;

@@ -1,4 +1,4 @@
-import '../../domain/entities/ats_analysis.dart';
+import 'package:resumebuilder/features/ats_analysis/domain/entities/ats_analysis.dart';
 
 class ATSAnalysisModel extends ATSAnalysis {
   const ATSAnalysisModel({

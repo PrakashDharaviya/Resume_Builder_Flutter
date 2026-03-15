@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../models/resume_model.dart';
+import 'package:resumebuilder/core/errors/exceptions.dart';
+import 'package:resumebuilder/features/resume/data/models/resume_model.dart';
 
 abstract class ResumeLocalDataSource {
   Future<List<ResumeModel>> getAllResumes();
@@ -42,8 +43,14 @@ class ResumeLocalDataSourceImpl implements ResumeLocalDataSource {
 
   @override
   Future<ResumeModel> createResume(ResumeModel resume) async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) {
+      throw const AuthException('User must be signed in to create a resume');
+    }
+
     final now = DateTime.now();
     final data = resume.toJson();
+    data['userId'] = uid;
     data['createdAt'] = now.toIso8601String();
     data['updatedAt'] = now.toIso8601String();
 
@@ -54,11 +61,17 @@ class ResumeLocalDataSourceImpl implements ResumeLocalDataSource {
 
   @override
   Future<ResumeModel> updateResume(ResumeModel resume) async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) {
+      throw const AuthException('User must be signed in to update a resume');
+    }
+
     final now = DateTime.now();
     final data = resume.toJson();
+    data['userId'] = uid;
     data['updatedAt'] = now.toIso8601String();
 
-    await _resumesCollection.doc(resume.id).update(data);
+    await _resumesCollection.doc(resume.id).set(data, SetOptions(merge: true));
 
     return ResumeModel.fromJson(data);
   }

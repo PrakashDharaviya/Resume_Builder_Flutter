@@ -1,5 +1,5 @@
-import '../../../../core/services/ai_service.dart';
-import '../models/ats_analysis_model.dart';
+import 'package:resumebuilder/core/services/ai_service.dart';
+import 'package:resumebuilder/features/ats_analysis/data/models/ats_analysis_model.dart';
 
 abstract class ATSRemoteDataSource {
   Future<ATSAnalysisModel> analyzeResume(Map<String, dynamic> resumeData);

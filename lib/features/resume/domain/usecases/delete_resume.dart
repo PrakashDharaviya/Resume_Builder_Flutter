@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
-import '../../../../core/errors/failures.dart';
-import '../repositories/resume_repository.dart';
+import 'package:resumebuilder/core/errors/failures.dart';
+import 'package:resumebuilder/features/resume/domain/repositories/resume_repository.dart';
 
 class DeleteResume {
   final ResumeRepository repository;

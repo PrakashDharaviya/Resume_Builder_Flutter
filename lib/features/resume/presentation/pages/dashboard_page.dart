@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_routes.dart';
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/utils/date_formatter.dart';
-import '../../../auth/presentation/bloc/auth_bloc.dart';
-import '../../../auth/presentation/bloc/auth_state.dart';
-import '../bloc/resume_bloc.dart';
-import '../bloc/resume_event.dart';
-import '../bloc/resume_state.dart';
-import '../../domain/entities/resume.dart';
+import 'package:resumebuilder/core/constants/app_colors.dart';
+import 'package:resumebuilder/core/constants/app_routes.dart';
+import 'package:resumebuilder/core/constants/app_strings.dart';
+import 'package:resumebuilder/core/utils/date_formatter.dart';
+import 'package:resumebuilder/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:resumebuilder/features/auth/presentation/bloc/auth_state.dart';
+import 'package:resumebuilder/features/resume/presentation/bloc/resume_bloc.dart';
+import 'package:resumebuilder/features/resume/presentation/bloc/resume_event.dart';
+import 'package:resumebuilder/features/resume/presentation/bloc/resume_state.dart';
+import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -398,7 +398,7 @@ class DashboardPageState extends State<DashboardPage> {
       child: Column(
         children: [
           const SizedBox(height: 48),
-          Icon(Icons.description_outlined, size: 96, color: AppColors.grey300),
+          const Icon(Icons.description_outlined, size: 96, color: AppColors.grey300),
           const SizedBox(height: 16),
           Text(
             AppStrings.noResumes,

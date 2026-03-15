@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_routes.dart';
-import '../../../../core/utils/app_preferences.dart';
-import '../../domain/entities/resume_template.dart';
-import '../bloc/admin_bloc.dart';
-import '../bloc/admin_event.dart';
-import '../bloc/admin_state.dart';
-import '../widgets/template_tile.dart';
+import 'package:resumebuilder/core/constants/app_colors.dart';
+import 'package:resumebuilder/core/constants/app_routes.dart';
+import 'package:resumebuilder/core/utils/app_preferences.dart';
+import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
+import 'package:resumebuilder/features/admin/presentation/bloc/admin_bloc.dart';
+import 'package:resumebuilder/features/admin/presentation/bloc/admin_event.dart';
+import 'package:resumebuilder/features/admin/presentation/bloc/admin_state.dart';
+import 'package:resumebuilder/features/admin/presentation/widgets/template_tile.dart';
 
 class ManageTemplatesPage extends StatefulWidget {
   const ManageTemplatesPage({super.key});
@@ -100,7 +100,7 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.error_outline, size: 48, color: AppColors.error),
+                  const Icon(Icons.error_outline, size: 48, color: AppColors.error),
                   const SizedBox(height: 16),
                   Text(state.message),
                   const SizedBox(height: 16),
@@ -264,7 +264,7 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
 
                     // Template Type Dropdown
                     DropdownButtonFormField<String>(
-                      value: selectedType,
+                      initialValue: selectedType,
                       decoration: InputDecoration(
                         labelText: 'Template Type',
                         filled: true,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_routes.dart';
-import '../../../auth/domain/entities/user.dart';
+import 'package:resumebuilder/core/constants/app_colors.dart';
+import 'package:resumebuilder/core/constants/app_routes.dart';
+import 'package:resumebuilder/features/auth/domain/entities/user.dart';
 
 /// Screen that checks user role after successful authentication
 /// and routes them to the appropriate dashboard.

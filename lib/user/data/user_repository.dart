@@ -1,8 +1,8 @@
-import '../../features/admin/domain/entities/announcement.dart';
-import '../../features/admin/domain/entities/ats_config.dart';
-import '../../features/admin/domain/entities/resume_template.dart';
-import '../../features/resume/domain/entities/resume.dart';
-import 'resume_firestore_service.dart';
+import 'package:resumebuilder/features/admin/domain/entities/announcement.dart';
+import 'package:resumebuilder/features/admin/domain/entities/ats_config.dart';
+import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
+import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
+import 'package:resumebuilder/user/data/resume_firestore_service.dart';
 
 class UserRepository {
   final ResumeFirestoreService service;

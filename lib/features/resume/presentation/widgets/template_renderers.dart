@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/utils/date_formatter.dart';
-import '../../domain/entities/resume.dart';
+import 'package:resumebuilder/core/utils/date_formatter.dart';
+import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
 
 // ============================================================
 // SAMPLE DATA — used by admin preview
@@ -713,7 +713,7 @@ class CreativeTemplateRenderer extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(color: gradient1.withValues(alpha: 0.3)),
                       ),
-                      child: Text(s.name, style: TextStyle(fontSize: 12, color: gradient1, fontWeight: FontWeight.w500)),
+                      child: Text(s.name, style: const TextStyle(fontSize: 12, color: gradient1, fontWeight: FontWeight.w500)),
                     )).toList(),
                   ),
                   const SizedBox(height: 20),

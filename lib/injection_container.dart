@@ -1,42 +1,43 @@
 import 'package:get_it/get_it.dart';
-import 'core/network/network_info.dart';
-import 'core/services/ai_service.dart';
-import 'core/services/firebase_service.dart';
+import 'package:resumebuilder/core/network/network_info.dart';
+import 'package:resumebuilder/core/services/ai_service.dart';
+import 'package:resumebuilder/core/services/firebase_service.dart';
+import 'package:resumebuilder/core/theme/theme_cubit.dart';
 
 // Auth
-import 'features/auth/data/datasources/auth_remote_data_source.dart';
-import 'features/auth/data/repositories/auth_repository_impl.dart';
-import 'features/auth/domain/repositories/auth_repository.dart';
-import 'features/auth/domain/usecases/get_current_user.dart';
-import 'features/auth/domain/usecases/sign_in_with_email.dart';
-import 'features/auth/domain/usecases/sign_in_with_google.dart';
-import 'features/auth/domain/usecases/sign_out.dart';
-import 'features/auth/domain/usecases/sign_up_with_email.dart';
-import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:resumebuilder/features/auth/data/datasources/auth_remote_data_source.dart';
+import 'package:resumebuilder/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:resumebuilder/features/auth/domain/repositories/auth_repository.dart';
+import 'package:resumebuilder/features/auth/domain/usecases/get_current_user.dart';
+import 'package:resumebuilder/features/auth/domain/usecases/sign_in_with_email.dart';
+import 'package:resumebuilder/features/auth/domain/usecases/sign_in_with_google.dart';
+import 'package:resumebuilder/features/auth/domain/usecases/sign_out.dart';
+import 'package:resumebuilder/features/auth/domain/usecases/sign_up_with_email.dart';
+import 'package:resumebuilder/features/auth/presentation/bloc/auth_bloc.dart';
 
 // Resume
-import 'features/resume/data/datasources/resume_local_data_source.dart';
-import 'features/resume/data/repositories/resume_repository_impl.dart';
-import 'features/resume/domain/repositories/resume_repository.dart';
-import 'features/resume/domain/usecases/create_resume.dart';
-import 'features/resume/domain/usecases/delete_resume.dart';
-import 'features/resume/domain/usecases/get_all_resumes.dart';
-import 'features/resume/domain/usecases/get_resume_by_id.dart';
-import 'features/resume/domain/usecases/update_resume.dart';
-import 'features/resume/presentation/bloc/resume_bloc.dart';
+import 'package:resumebuilder/features/resume/data/datasources/resume_local_data_source.dart';
+import 'package:resumebuilder/features/resume/data/repositories/resume_repository_impl.dart';
+import 'package:resumebuilder/features/resume/domain/repositories/resume_repository.dart';
+import 'package:resumebuilder/features/resume/domain/usecases/create_resume.dart';
+import 'package:resumebuilder/features/resume/domain/usecases/delete_resume.dart';
+import 'package:resumebuilder/features/resume/domain/usecases/get_all_resumes.dart';
+import 'package:resumebuilder/features/resume/domain/usecases/get_resume_by_id.dart';
+import 'package:resumebuilder/features/resume/domain/usecases/update_resume.dart';
+import 'package:resumebuilder/features/resume/presentation/bloc/resume_bloc.dart';
 
 // ATS Analysis
-import 'features/ats_analysis/data/datasources/ats_remote_data_source.dart';
-import 'features/ats_analysis/data/repositories/ats_repository_impl.dart';
-import 'features/ats_analysis/domain/repositories/ats_repository.dart';
-import 'features/ats_analysis/domain/usecases/analyze_resume.dart';
-import 'features/ats_analysis/presentation/bloc/ats_bloc.dart';
+import 'package:resumebuilder/features/ats_analysis/data/datasources/ats_remote_data_source.dart';
+import 'package:resumebuilder/features/ats_analysis/data/repositories/ats_repository_impl.dart';
+import 'package:resumebuilder/features/ats_analysis/domain/repositories/ats_repository.dart';
+import 'package:resumebuilder/features/ats_analysis/domain/usecases/analyze_resume.dart';
+import 'package:resumebuilder/features/ats_analysis/presentation/bloc/ats_bloc.dart';
 
 // Admin
-import 'features/admin/data/datasources/admin_mock_data_source.dart';
-import 'features/admin/data/repositories/admin_repository_impl.dart';
-import 'features/admin/domain/repositories/admin_repository.dart';
-import 'features/admin/presentation/bloc/admin_bloc.dart';
+import 'package:resumebuilder/features/admin/data/datasources/admin_mock_data_source.dart';
+import 'package:resumebuilder/features/admin/data/repositories/admin_repository_impl.dart';
+import 'package:resumebuilder/features/admin/domain/repositories/admin_repository.dart';
+import 'package:resumebuilder/features/admin/presentation/bloc/admin_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -119,6 +120,10 @@ Future<void> init() async {
   );
 
   //! Core
+  // Bloc / Cubit
+  sl.registerFactory(() => ThemeCubit());
+
+  // Services
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl());
   sl.registerLazySingleton(() => FirebaseService());
   sl.registerLazySingleton(() => AIService());

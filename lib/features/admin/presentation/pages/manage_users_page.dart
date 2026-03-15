@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/utils/app_preferences.dart';
-import '../bloc/admin_bloc.dart';
-import '../bloc/admin_event.dart';
-import '../bloc/admin_state.dart';
-import '../widgets/user_tile.dart';
+import 'package:resumebuilder/core/constants/app_colors.dart';
+import 'package:resumebuilder/core/utils/app_preferences.dart';
+import 'package:resumebuilder/features/admin/presentation/bloc/admin_bloc.dart';
+import 'package:resumebuilder/features/admin/presentation/bloc/admin_event.dart';
+import 'package:resumebuilder/features/admin/presentation/bloc/admin_state.dart';
+import 'package:resumebuilder/features/admin/presentation/widgets/user_tile.dart';
 
 class ManageUsersPage extends StatefulWidget {
   const ManageUsersPage({super.key});
@@ -167,7 +167,7 @@ class ManageUsersPageState extends State<ManageUsersPage> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.error_outline,
                                   size: 48,
                                   color: AppColors.error,

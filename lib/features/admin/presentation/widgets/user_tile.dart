@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../auth/domain/entities/user.dart';
+import 'package:resumebuilder/features/auth/domain/entities/user.dart';
 
 class UserTile extends StatelessWidget {
   final User user;

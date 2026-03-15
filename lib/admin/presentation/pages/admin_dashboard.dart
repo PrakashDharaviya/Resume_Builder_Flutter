@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../features/admin/presentation/pages/admin_dashboard_page.dart'
+import 'package:resumebuilder/features/admin/presentation/pages/admin_dashboard_page.dart'
     as legacy;
 
 class AdminDashboard extends StatelessWidget {

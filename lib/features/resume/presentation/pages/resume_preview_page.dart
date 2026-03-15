@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_routes.dart';
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/utils/date_formatter.dart';
-import '../../domain/entities/resume.dart';
+import 'package:resumebuilder/core/constants/app_colors.dart';
+import 'package:resumebuilder/core/constants/app_routes.dart';
+import 'package:resumebuilder/core/constants/app_strings.dart';
+import 'package:resumebuilder/core/utils/date_formatter.dart';
+import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
 
 class ResumePreviewPage extends StatelessWidget {
   final Resume resume;

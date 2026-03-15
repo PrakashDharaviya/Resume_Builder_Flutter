@@ -1,11 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/usecases/get_current_user.dart';
-import '../../domain/usecases/sign_in_with_email.dart';
-import '../../domain/usecases/sign_in_with_google.dart';
-import '../../domain/usecases/sign_out.dart';
-import '../../domain/usecases/sign_up_with_email.dart';
-import 'auth_event.dart';
-import 'auth_state.dart';
+import 'package:resumebuilder/features/auth/domain/usecases/get_current_user.dart';
+import 'package:resumebuilder/features/auth/domain/usecases/sign_in_with_email.dart';
+import 'package:resumebuilder/features/auth/domain/usecases/sign_in_with_google.dart';
+import 'package:resumebuilder/features/auth/domain/usecases/sign_out.dart';
+import 'package:resumebuilder/features/auth/domain/usecases/sign_up_with_email.dart';
+import 'package:resumebuilder/features/auth/presentation/bloc/auth_event.dart';
+import 'package:resumebuilder/features/auth/presentation/bloc/auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final SignInWithEmail signInWithEmail;

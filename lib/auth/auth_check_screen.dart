@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../features/auth/domain/entities/user.dart';
-import '../features/admin/presentation/pages/auth_check_screen.dart' as legacy;
+import 'package:resumebuilder/features/auth/domain/entities/user.dart';
+import 'package:resumebuilder/features/admin/presentation/pages/auth_check_screen.dart' as legacy;
 
 class AuthCheckScreen extends StatelessWidget {
   final User user;

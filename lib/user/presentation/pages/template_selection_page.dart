@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_routes.dart';
-import '../../../core/services/mock_database_service.dart';
-import '../../../core/utils/app_preferences.dart';
-import '../../../features/admin/domain/entities/resume_template.dart';
-import '../../../features/auth/presentation/bloc/auth_bloc.dart';
-import '../../../features/auth/presentation/bloc/auth_state.dart';
-import '../widgets/template_card.dart';
+import 'package:resumebuilder/core/constants/app_colors.dart';
+import 'package:resumebuilder/core/constants/app_routes.dart';
+import 'package:resumebuilder/core/services/mock_database_service.dart';
+import 'package:resumebuilder/core/utils/app_preferences.dart';
+import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
+import 'package:resumebuilder/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:resumebuilder/features/auth/presentation/bloc/auth_state.dart';
+import 'package:resumebuilder/user/presentation/widgets/template_card.dart';
 
 class TemplateSelectionPage extends StatelessWidget {
   const TemplateSelectionPage({super.key});
@@ -17,7 +17,9 @@ class TemplateSelectionPage extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColors.backgroundDark
+          : AppColors.backgroundLight,
       appBar: AppBar(
         title: const Text(
           'Choose Template',
@@ -29,14 +31,22 @@ class TemplateSelectionPage extends StatelessWidget {
           ValueListenableBuilder<ThemeMode>(
             valueListenable: themeNotifier,
             builder: (context, themeMode, _) {
-              final isDarkMode = themeMode == ThemeMode.dark ||
+              final isDarkMode =
+                  themeMode == ThemeMode.dark ||
                   (themeMode == ThemeMode.system &&
-                      MediaQuery.platformBrightnessOf(context) == Brightness.dark);
+                      MediaQuery.platformBrightnessOf(context) ==
+                          Brightness.dark);
               return IconButton(
-                icon: Icon(isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded),
+                icon: Icon(
+                  isDarkMode
+                      ? Icons.light_mode_rounded
+                      : Icons.dark_mode_rounded,
+                ),
                 tooltip: isDarkMode ? 'Light Mode' : 'Dark Mode',
                 onPressed: () {
-                  themeNotifier.value = isDarkMode ? ThemeMode.light : ThemeMode.dark;
+                  themeNotifier.value = isDarkMode
+                      ? ThemeMode.light
+                      : ThemeMode.dark;
                 },
               );
             },
@@ -59,14 +69,18 @@ class TemplateSelectionPage extends StatelessWidget {
                   Icon(
                     Icons.style_outlined,
                     size: 56,
-                    color: isDark ? const Color(0xFF4B5563) : const Color(0xFFD1D5DB),
+                    color: isDark
+                        ? const Color(0xFF4B5563)
+                        : const Color(0xFFD1D5DB),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     'No templates available',
                     style: TextStyle(
                       fontSize: 16,
-                      color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
+                      color: isDark
+                          ? const Color(0xFF9CA3AF)
+                          : const Color(0xFF6B7280),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -74,7 +88,9 @@ class TemplateSelectionPage extends StatelessWidget {
                     'Templates will appear here once admin adds them',
                     style: TextStyle(
                       fontSize: 13,
-                      color: isDark ? const Color(0xFF6B7280) : const Color(0xFF9CA3AF),
+                      color: isDark
+                          ? const Color(0xFF6B7280)
+                          : const Color(0xFF9CA3AF),
                     ),
                   ),
                 ],
@@ -98,7 +114,9 @@ class TemplateSelectionPage extends StatelessWidget {
                       'Pick a template that fits your style',
                       style: TextStyle(
                         fontSize: 14,
-                        color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
+                        color: isDark
+                            ? const Color(0xFF9CA3AF)
+                            : const Color(0xFF6B7280),
                       ),
                     ),
                   ),
@@ -108,7 +126,9 @@ class TemplateSelectionPage extends StatelessWidget {
                       '${templates.length} template${templates.length == 1 ? '' : 's'} available',
                       style: TextStyle(
                         fontSize: 12,
-                        color: isDark ? const Color(0xFF6B7280) : const Color(0xFF9CA3AF),
+                        color: isDark
+                            ? const Color(0xFF6B7280)
+                            : const Color(0xFF9CA3AF),
                       ),
                     ),
                   ),
@@ -120,18 +140,19 @@ class TemplateSelectionPage extends StatelessWidget {
                         final crossAxisCount = constraints.maxWidth > 900
                             ? 4
                             : constraints.maxWidth > 600
-                                ? 3
-                                : 2;
+                            ? 3
+                            : 2;
                         final hPad = constraints.maxWidth > 600 ? 24.0 : 16.0;
 
                         return GridView.builder(
                           padding: EdgeInsets.fromLTRB(hPad, 4, hPad, 24),
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: crossAxisCount,
-                            crossAxisSpacing: 14,
-                            mainAxisSpacing: 14,
-                            childAspectRatio: 0.68,
-                          ),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: crossAxisCount,
+                                crossAxisSpacing: 14,
+                                mainAxisSpacing: 14,
+                                childAspectRatio: 0.68,
+                              ),
                           itemCount: templates.length,
                           itemBuilder: (context, index) {
                             final template = templates[index];
@@ -144,13 +165,15 @@ class TemplateSelectionPage extends StatelessWidget {
                                 if (locked) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                      content: Text('Premium template. Upgrade required.'),
+                                      content: Text(
+                                        'Premium template. Upgrade required.',
+                                      ),
                                       backgroundColor: AppColors.error,
                                     ),
                                   );
                                   return;
                                 }
-                                Navigator.pushNamed(
+                                Navigator.pushReplacementNamed(
                                   context,
                                   AppRoutes.resumeEditor,
                                   arguments: {

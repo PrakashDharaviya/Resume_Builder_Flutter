@@ -44,3 +44,10 @@ class PermissionFailure extends Failure {
 class UnknownFailure extends Failure {
   const UnknownFailure([super.message = 'An unknown error occurred']);
 }
+
+// Timeout failure
+class TimeoutFailure extends Failure {
+  const TimeoutFailure([
+    super.message = 'The request timed out. Please try again.',
+  ]);
+}

@@ -1,4 +1,4 @@
-import '../../domain/entities/resume.dart';
+import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
 
 // Resume Model
 class ResumeModel extends Resume {

@@ -1,9 +1,9 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/utils/pdf_helper.dart';
-import '../../domain/entities/resume.dart';
+import 'package:resumebuilder/core/constants/app_colors.dart';
+import 'package:resumebuilder/core/utils/pdf_helper.dart';
+import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
 
 class PDFExportPage extends StatefulWidget {
   final Resume resume;

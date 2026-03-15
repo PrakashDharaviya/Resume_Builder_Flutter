@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../core/services/mock_database_service.dart';
-import '../../../features/admin/domain/entities/ats_config.dart';
-import '../widgets/live_score_meter.dart';
+import 'package:resumebuilder/core/services/mock_database_service.dart';
+import 'package:resumebuilder/features/admin/domain/entities/ats_config.dart';
+import 'package:resumebuilder/user/presentation/widgets/live_score_meter.dart';
 
 class ATSResultPage extends StatelessWidget {
   final double score;
@@ -11,7 +11,7 @@ class ATSResultPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final suggestions = const [
+    const suggestions = [
       'Add more measurable impact in experience points',
       'Increase role-specific keywords in skills section',
       'Improve formatting consistency and heading hierarchy',
@@ -56,10 +56,10 @@ class ATSResultPage extends StatelessWidget {
                   card(
                     context,
                     title: 'Missing Keywords',
-                    child: Wrap(
+                    child: const Wrap(
                       spacing: 8,
                       runSpacing: 8,
-                      children: const [
+                      children: [
                         Chip(label: Text('Scalable APIs')),
                         Chip(label: Text('Leadership')),
                         Chip(label: Text('CI/CD')),

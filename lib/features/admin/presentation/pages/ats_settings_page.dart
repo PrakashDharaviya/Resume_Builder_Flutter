@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/utils/app_preferences.dart';
-import '../../domain/entities/ats_config.dart';
-import '../bloc/admin_bloc.dart';
-import '../bloc/admin_event.dart';
-import '../bloc/admin_state.dart';
+import 'package:resumebuilder/core/constants/app_colors.dart';
+import 'package:resumebuilder/core/utils/app_preferences.dart';
+import 'package:resumebuilder/features/admin/domain/entities/ats_config.dart';
+import 'package:resumebuilder/features/admin/presentation/bloc/admin_bloc.dart';
+import 'package:resumebuilder/features/admin/presentation/bloc/admin_event.dart';
+import 'package:resumebuilder/features/admin/presentation/bloc/admin_state.dart';
 
 class ATSSettingsPage extends StatefulWidget {
   const ATSSettingsPage({super.key});
@@ -186,7 +186,7 @@ class ATSSettingsPageState extends State<ATSSettingsPage> {
                                   ),
                                   child: Text(
                                     'Total: ${totalWeight.toStringAsFixed(0)}%',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w700,
                                       fontSize: 14,

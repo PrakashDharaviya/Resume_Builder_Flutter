@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
-import '../../domain/entities/ats_config.dart';
-import '../../domain/entities/resume_template.dart';
-import '../../domain/entities/announcement.dart';
+import 'package:resumebuilder/features/admin/domain/entities/ats_config.dart';
+import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
+import 'package:resumebuilder/features/admin/domain/entities/announcement.dart';
 
 // ========== Admin Dashboard Events ==========
 abstract class AdminEvent extends Equatable {

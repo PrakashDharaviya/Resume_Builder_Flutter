@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../features/admin/presentation/pages/manage_templates_page.dart'
+import 'package:resumebuilder/features/admin/presentation/pages/manage_templates_page.dart'
     as legacy;
 
 class ManageTemplatesPage extends StatelessWidget {

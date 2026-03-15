@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../domain/entities/resume_template.dart';
+import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
 import 'package:intl/intl.dart';
 
 class TemplateTile extends StatelessWidget {

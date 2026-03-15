@@ -1,8 +1,8 @@
-import '../../core/services/mock_database_service.dart';
-import '../../features/admin/domain/entities/announcement.dart';
-import '../../features/admin/domain/entities/ats_config.dart';
-import '../../features/admin/domain/entities/resume_template.dart';
-import '../../features/resume/domain/entities/resume.dart';
+import 'package:resumebuilder/core/services/mock_database_service.dart';
+import 'package:resumebuilder/features/admin/domain/entities/announcement.dart';
+import 'package:resumebuilder/features/admin/domain/entities/ats_config.dart';
+import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
+import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
 
 class ResumeFirestoreService {
   final MockDatabaseService db;

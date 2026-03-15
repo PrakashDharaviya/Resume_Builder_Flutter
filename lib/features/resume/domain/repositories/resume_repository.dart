@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
-import '../../../../core/errors/failures.dart';
-import '../entities/resume.dart';
+import 'package:resumebuilder/core/errors/failures.dart';
+import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
 
 abstract class ResumeRepository {
   Future<Either<Failure, List<Resume>>> getAllResumes();

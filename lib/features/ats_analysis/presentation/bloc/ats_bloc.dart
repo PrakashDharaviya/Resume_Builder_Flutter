@@ -1,7 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/usecases/analyze_resume.dart';
-import 'ats_event.dart';
-import 'ats_state.dart';
+import 'package:resumebuilder/core/errors/failures.dart';
+import 'package:resumebuilder/features/ats_analysis/domain/usecases/analyze_resume.dart';
+import 'package:resumebuilder/features/ats_analysis/presentation/bloc/ats_event.dart';
+import 'package:resumebuilder/features/ats_analysis/presentation/bloc/ats_state.dart';
 
 class ATSBloc extends Bloc<ATSEvent, ATSState> {
   final AnalyzeResume analyzeResume;
@@ -14,13 +15,16 @@ class ATSBloc extends Bloc<ATSEvent, ATSState> {
     AnalyzeResumeEvent event,
     Emitter<ATSState> emit,
   ) async {
-    emit(const ATSAnalyzing());
+    emit(const AtsAnalysisLoading());
 
     final result = await analyzeResume(event.resumeData);
 
-    result.fold(
-      (failure) => emit(ATSError(failure.message)),
-      (analysis) => emit(ATSAnalysisComplete(analysis)),
-    );
+    result.fold((failure) {
+      if (failure is TimeoutFailure) {
+        emit(AtsAnalysisTimeout(failure.message));
+      } else {
+        emit(AtsAnalysisError(failure.message));
+      }
+    }, (analysis) => emit(ATSAnalysisComplete(analysis)));
   }
 }

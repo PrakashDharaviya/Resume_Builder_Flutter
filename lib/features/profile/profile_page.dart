@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_routes.dart';
-import '../../core/constants/app_strings.dart';
-import '../../core/utils/app_preferences.dart';
-import '../auth/presentation/bloc/auth_bloc.dart';
-import '../auth/presentation/bloc/auth_event.dart';
-import '../auth/presentation/bloc/auth_state.dart';
+import 'package:resumebuilder/core/constants/app_colors.dart';
+import 'package:resumebuilder/core/constants/app_routes.dart';
+import 'package:resumebuilder/core/constants/app_strings.dart';
+import 'package:resumebuilder/core/utils/app_preferences.dart';
+import 'package:resumebuilder/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:resumebuilder/features/auth/presentation/bloc/auth_event.dart';
+import 'package:resumebuilder/features/auth/presentation/bloc/auth_state.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -276,7 +276,7 @@ class ProfilePageState extends State<ProfilePage> {
       ),
       subtitle: Text(
         subtitle,
-        style: TextStyle(fontSize: 12, color: AppColors.textSecondaryLight),
+        style: const TextStyle(fontSize: 12, color: AppColors.textSecondaryLight),
       ),
       trailing: Switch.adaptive(
         value: value,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../features/auth/presentation/pages/login_page.dart' as legacy;
+import 'package:resumebuilder/features/auth/presentation/pages/login_page.dart' as legacy;
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});

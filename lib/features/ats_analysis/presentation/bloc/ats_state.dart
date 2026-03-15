@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../domain/entities/ats_analysis.dart';
+import 'package:resumebuilder/features/ats_analysis/domain/entities/ats_analysis.dart';
 
 abstract class ATSState extends Equatable {
   const ATSState();
@@ -12,8 +12,8 @@ class ATSInitial extends ATSState {
   const ATSInitial();
 }
 
-class ATSAnalyzing extends ATSState {
-  const ATSAnalyzing();
+class AtsAnalysisLoading extends ATSState {
+  const AtsAnalysisLoading();
 }
 
 class ATSAnalysisComplete extends ATSState {
@@ -25,10 +25,19 @@ class ATSAnalysisComplete extends ATSState {
   List<Object?> get props => [analysis];
 }
 
-class ATSError extends ATSState {
+class AtsAnalysisTimeout extends ATSState {
   final String message;
 
-  const ATSError(this.message);
+  const AtsAnalysisTimeout(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class AtsAnalysisError extends ATSState {
+  final String message;
+
+  const AtsAnalysisError(this.message);
 
   @override
   List<Object?> get props => [message];

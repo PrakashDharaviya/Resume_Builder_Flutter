@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/repositories/admin_repository.dart';
-import '../../../auth/domain/entities/user.dart';
-import 'admin_event.dart';
-import 'admin_state.dart';
+import 'package:resumebuilder/features/admin/domain/repositories/admin_repository.dart';
+import 'package:resumebuilder/features/auth/domain/entities/user.dart';
+import 'package:resumebuilder/features/admin/presentation/bloc/admin_event.dart';
+import 'package:resumebuilder/features/admin/presentation/bloc/admin_state.dart';
 
 class AdminBloc extends Bloc<AdminEvent, AdminState> {
   final AdminRepository repository;
