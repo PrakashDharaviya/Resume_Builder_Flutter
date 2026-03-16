@@ -5,8 +5,14 @@ import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
 class ResumeCard extends StatelessWidget {
   final Resume resume;
   final VoidCallback? onTap;
+  final VoidCallback? onDelete;
 
-  const ResumeCard({super.key, required this.resume, this.onTap});
+  const ResumeCard({
+    super.key,
+    required this.resume,
+    this.onTap,
+    this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +56,11 @@ class ResumeCard extends StatelessWidget {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            IconButton(
+              icon: const Icon(Icons.delete_outline, color: Color(0xFFEF4444)),
+              tooltip: 'Delete Resume',
+              onPressed: onDelete,
+            ),
             IconButton(
               icon: const Icon(
                 Icons.download_rounded,

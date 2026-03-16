@@ -20,6 +20,32 @@ class UserDashboard extends StatefulWidget {
 }
 
 class UserDashboardState extends State<UserDashboard> {
+  Future<void> _confirmDeleteResume(Resume resume) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete Resume'),
+        content: const Text(
+          'Are you sure you want to permanently delete this resume?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      context.read<ResumeBloc>().add(DeleteResumeEvent(resume.id));
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -99,305 +125,323 @@ class UserDashboardState extends State<UserDashboard> {
                 onRefresh: () async {
                   context.read<ResumeBloc>().add(const LoadAllResumesEvent());
                 },
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: maxWidth),
-                    child: ListView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: EdgeInsets.all(sidePadding),
-                      children: [
-                        BlocBuilder<AuthBloc, AuthState>(
-                          builder: (_, state) {
-                            final name = state is AuthAuthenticated
-                                ? state.user.displayName
-                                : 'User';
-                            return Container(
-                              padding: const EdgeInsets.all(18),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16),
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    Color(0xFF10B981),
-                                    Color(0xFF34D399),
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                              ),
-                              child: Text(
-                                'Welcome, $name',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            );
-                          },
+                child: BlocListener<ResumeBloc, ResumeState>(
+                  listener: (context, state) {
+                    if (state is ResumeDeleted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Resume deleted successfully'),
                         ),
-                        if (announcement != null) ...[
-                          const SizedBox(height: 12),
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(14),
-                              color: isDark
-                                  ? const Color(0xFF1F2937)
-                                  : const Color(0xFFECFDF5),
-                              border: Border.all(
-                                color: const Color(
-                                  0xFF10B981,
-                                ).withValues(alpha: 0.35),
-                              ),
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Icon(
-                                  Icons.campaign_rounded,
-                                  color: Color(0xFF10B981),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        announcement.title,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 2),
-                                      Text(announcement.message),
+                      );
+                      context.read<ResumeBloc>().add(
+                        const LoadAllResumesEvent(),
+                      );
+                    }
+                  },
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: maxWidth),
+                      child: ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: EdgeInsets.all(sidePadding),
+                        children: [
+                          BlocBuilder<AuthBloc, AuthState>(
+                            builder: (_, state) {
+                              final name = state is AuthAuthenticated
+                                  ? state.user.displayName
+                                  : 'User';
+                              return Container(
+                                padding: const EdgeInsets.all(18),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(16),
+                                  gradient: const LinearGradient(
+                                    colors: [
+                                      Color(0xFF10B981),
+                                      Color(0xFF34D399),
                                     ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                        ],
-                        const SizedBox(height: 18),
-                        // Recently used templates (based on user's resumes)
-                        BlocBuilder<ResumeBloc, ResumeState>(
-                          builder: (context, state) {
-                            if (state is! ResumeListLoaded ||
-                                state.resumes.isEmpty) {
-                              return const SizedBox.shrink();
-                            }
-
-                            final resumes = [...state.resumes]
-                              ..sort(
-                                (a, b) => b.updatedAt.compareTo(a.updatedAt),
-                              );
-
-                            final seenTypes = <String>{};
-                            final recentResumes = <Resume>[];
-
-                            for (final resume in resumes) {
-                              final type =
-                                  (resume.templateType ?? 'professional')
-                                      .toLowerCase();
-                              if (seenTypes.add(type)) {
-                                recentResumes.add(resume);
-                                if (recentResumes.length == 3) break;
-                              }
-                            }
-
-                            if (recentResumes.isEmpty) {
-                              return const SizedBox.shrink();
-                            }
-
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Recently Used Templates',
-                                  style: TextStyle(
-                                    fontSize: 16,
+                                child: Text(
+                                  'Welcome, $name',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
-                                const SizedBox(height: 8),
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    children: recentResumes.map((resume) {
-                                      final type =
-                                          (resume.templateType ??
-                                                  'professional')
-                                              .toLowerCase();
-                                      final label =
-                                          ResumeTemplate.templateTypeLabel(
-                                            type,
-                                          );
-                                      return Padding(
-                                        padding: const EdgeInsets.only(
-                                          right: 8,
-                                        ),
-                                        child: InkWell(
-                                          borderRadius: BorderRadius.circular(
-                                            12,
+                              );
+                            },
+                          ),
+                          if (announcement != null) ...[
+                            const SizedBox(height: 12),
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(14),
+                                color: isDark
+                                    ? const Color(0xFF1F2937)
+                                    : const Color(0xFFECFDF5),
+                                border: Border.all(
+                                  color: const Color(
+                                    0xFF10B981,
+                                  ).withValues(alpha: 0.35),
+                                ),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Icon(
+                                    Icons.campaign_rounded,
+                                    color: Color(0xFF10B981),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          announcement.title,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w700,
                                           ),
-                                          onTap: () {
-                                            Navigator.pushNamed(
-                                              context,
-                                              AppRoutes.resumePreview,
-                                              arguments: resume,
-                                            ).then((_) {
-                                              if (mounted) {
-                                                context.read<ResumeBloc>().add(
-                                                  const LoadAllResumesEvent(),
-                                                );
-                                              }
-                                            });
-                                          },
-                                          child: Container(
-                                            width: 220,
-                                            padding: const EdgeInsets.all(12),
-                                            decoration: BoxDecoration(
-                                              color: isDark
-                                                  ? const Color(0xFF111827)
-                                                  : const Color(0xFFF9FAFB),
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              border: Border.all(
-                                                color: const Color(
-                                                  0xFF10B981,
-                                                ).withValues(alpha: 0.35),
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Text(announcement.message),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                          const SizedBox(height: 18),
+                          // Recently used templates (based on user's resumes)
+                          BlocBuilder<ResumeBloc, ResumeState>(
+                            builder: (context, state) {
+                              if (state is! ResumeListLoaded ||
+                                  state.resumes.isEmpty) {
+                                return const SizedBox.shrink();
+                              }
+
+                              final resumes = [...state.resumes]
+                                ..sort(
+                                  (a, b) => b.updatedAt.compareTo(a.updatedAt),
+                                );
+
+                              final seenTypes = <String>{};
+                              final recentResumes = <Resume>[];
+
+                              for (final resume in resumes) {
+                                final type =
+                                    (resume.templateType ?? 'professional')
+                                        .toLowerCase();
+                                if (seenTypes.add(type)) {
+                                  recentResumes.add(resume);
+                                  if (recentResumes.length == 3) break;
+                                }
+                              }
+
+                              if (recentResumes.isEmpty) {
+                                return const SizedBox.shrink();
+                              }
+
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Recently Used Templates',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      children: recentResumes.map((resume) {
+                                        final type =
+                                            (resume.templateType ??
+                                                    'professional')
+                                                .toLowerCase();
+                                        final label =
+                                            ResumeTemplate.templateTypeLabel(
+                                              type,
+                                            );
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                            right: 8,
+                                          ),
+                                          child: InkWell(
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                            onTap: () {
+                                              Navigator.pushNamed(
+                                                context,
+                                                AppRoutes.resumePreview,
+                                                arguments: resume,
+                                              ).then((_) {
+                                                if (mounted) {
+                                                  context.read<ResumeBloc>().add(
+                                                    const LoadAllResumesEvent(),
+                                                  );
+                                                }
+                                              });
+                                            },
+                                            child: Container(
+                                              width: 220,
+                                              padding: const EdgeInsets.all(12),
+                                              decoration: BoxDecoration(
+                                                color: isDark
+                                                    ? const Color(0xFF111827)
+                                                    : const Color(0xFFF9FAFB),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                border: Border.all(
+                                                  color: const Color(
+                                                    0xFF10B981,
+                                                  ).withValues(alpha: 0.35),
+                                                ),
+                                              ),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    label,
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  Text(
+                                                    resume.title,
+                                                    maxLines: 2,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 6),
+                                                  Text(
+                                                    'Updated ${resume.updatedAt.toLocal().toString().split(' ').first}',
+                                                    style: TextStyle(
+                                                      fontSize: 11,
+                                                      color: isDark
+                                                          ? const Color(
+                                                              0xFF9CA3AF,
+                                                            )
+                                                          : const Color(
+                                                              0xFF6B7280,
+                                                            ),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  label,
-                                                  style: const TextStyle(
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.w700,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  resume.title,
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: const TextStyle(
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 6),
-                                                Text(
-                                                  'Updated ${resume.updatedAt.toLocal().toString().split(' ').first}',
-                                                  style: TextStyle(
-                                                    fontSize: 11,
-                                                    color: isDark
-                                                        ? const Color(
-                                                            0xFF9CA3AF,
-                                                          )
-                                                        : const Color(
-                                                            0xFF6B7280,
-                                                          ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 18),
+                                ],
+                              );
+                            },
+                          ),
+                          const Text(
+                            'My Resumes',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          BlocBuilder<ResumeBloc, ResumeState>(
+                            builder: (_, state) {
+                              if (state is ResumeLoading) {
+                                return const Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(20),
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+                              }
+                              if (state is ResumeError) {
+                                return Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(14),
+                                    color: isDark
+                                        ? const Color(0xFF1F2937)
+                                        : const Color(0xFFFEE2E2),
+                                  ),
+                                  child: Text(
+                                    'Error loading resumes: ${state.message}',
+                                    style: const TextStyle(
+                                      color: Color(0xFFB91C1C),
+                                    ),
+                                  ),
+                                );
+                              }
+                              if (state is ResumeListLoaded &&
+                                  state.resumes.isNotEmpty) {
+                                return Column(
+                                  children: state.resumes
+                                      .map(
+                                        (resume) => Padding(
+                                          padding: const EdgeInsets.only(
+                                            bottom: 8,
+                                          ),
+                                          child: ResumeCard(
+                                            resume: resume,
+                                            onDelete: () =>
+                                                _confirmDeleteResume(resume),
+                                            onTap: () {
+                                              Navigator.pushNamed(
+                                                context,
+                                                AppRoutes.resumePreview,
+                                                arguments: resume,
+                                              ).then((_) {
+                                                if (mounted) {
+                                                  context.read<ResumeBloc>().add(
+                                                    const LoadAllResumesEvent(),
+                                                  );
+                                                }
+                                              });
+                                            },
                                           ),
                                         ),
-                                      );
-                                    }).toList(),
-                                  ),
-                                ),
-                                const SizedBox(height: 18),
-                              ],
-                            );
-                          },
-                        ),
-                        const Text(
-                          'My Resumes',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        BlocBuilder<ResumeBloc, ResumeState>(
-                          builder: (_, state) {
-                            if (state is ResumeLoading) {
-                              return const Center(
-                                child: Padding(
-                                  padding: EdgeInsets.all(20),
-                                  child: CircularProgressIndicator(),
-                                ),
-                              );
-                            }
-                            if (state is ResumeError) {
+                                      )
+                                      .toList(),
+                                );
+                              }
                               return Container(
                                 padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(14),
                                   color: isDark
                                       ? const Color(0xFF1F2937)
-                                      : const Color(0xFFFEE2E2),
+                                      : const Color(0xFFF9FAFB),
                                 ),
-                                child: Text(
-                                  'Error loading resumes: ${state.message}',
-                                  style: const TextStyle(
-                                    color: Color(0xFFB91C1C),
-                                  ),
+                                child: const Text(
+                                  'No resumes yet. Tap Create Resume to start.',
                                 ),
                               );
-                            }
-                            if (state is ResumeListLoaded &&
-                                state.resumes.isNotEmpty) {
-                              return Column(
-                                children: state.resumes
-                                    .map(
-                                      (resume) => Padding(
-                                        padding: const EdgeInsets.only(
-                                          bottom: 8,
-                                        ),
-                                        child: ResumeCard(
-                                          resume: resume,
-                                          onTap: () {
-                                            Navigator.pushNamed(
-                                              context,
-                                              AppRoutes.resumePreview,
-                                              arguments: resume,
-                                            ).then((_) {
-                                              if (mounted) {
-                                                context.read<ResumeBloc>().add(
-                                                  const LoadAllResumesEvent(),
-                                                );
-                                              }
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                    )
-                                    .toList(),
-                              );
-                            }
-                            return Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(14),
-                                color: isDark
-                                    ? const Color(0xFF1F2937)
-                                    : const Color(0xFFF9FAFB),
-                              ),
-                              child: const Text(
-                                'No resumes yet. Tap Create Resume to start.',
-                              ),
-                            );
-                          },
-                        ),
-                      ],
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
