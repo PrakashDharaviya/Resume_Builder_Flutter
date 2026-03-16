@@ -27,45 +27,51 @@ class ResumeModel extends Resume {
       userId: json['userId'] as String,
       title: json['title'] as String,
       personalInfo: json['personalInfo'] != null
-          ? PersonalInfoModel.fromJson(json['personalInfo'])
+          ? PersonalInfoModel.fromJson(
+              json['personalInfo'] as Map<String, dynamic>,
+            )
           : null,
       education:
           (json['education'] as List<dynamic>?)
-              ?.map((e) => EducationModel.fromJson(e))
+              ?.map((e) => EducationModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
       skills:
           (json['skills'] as List<dynamic>?)
-              ?.map((e) => SkillModel.fromJson(e))
+              ?.map((e) => SkillModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
       experience:
           (json['experience'] as List<dynamic>?)
-              ?.map((e) => ExperienceModel.fromJson(e))
+              ?.map((e) => ExperienceModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
       projects:
           (json['projects'] as List<dynamic>?)
-              ?.map((e) => ProjectModel.fromJson(e))
+              ?.map((e) => ProjectModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
       certifications:
           (json['certifications'] as List<dynamic>?)
-              ?.map((e) => CertificationModel.fromJson(e))
+              ?.map(
+                (e) => CertificationModel.fromJson(e as Map<String, dynamic>),
+              )
               .toList() ??
           [],
       achievements:
           (json['achievements'] as List<dynamic>?)
-              ?.map((e) => AchievementModel.fromJson(e))
+              ?.map((e) => AchievementModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
       languages:
           (json['languages'] as List<dynamic>?)
-              ?.map((e) => LanguageModel.fromJson(e))
+              ?.map((e) => LanguageModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
       socialLinks: json['socialLinks'] != null
-          ? SocialLinksModel.fromJson(json['socialLinks'])
+          ? SocialLinksModel.fromJson(
+              json['socialLinks'] as Map<String, dynamic>,
+            )
           : null,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),

@@ -100,7 +100,11 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.error_outline, size: 48, color: AppColors.error),
+                  const Icon(
+                    Icons.error_outline,
+                    size: 48,
+                    color: AppColors.error,
+                  ),
                   const SizedBox(height: 16),
                   Text(state.message),
                   const SizedBox(height: 16),
@@ -282,9 +286,9 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
                           child: Row(
                             children: [
                               Icon(
-                                _typeIcon(type),
+                                typeIcon(type),
                                 size: 18,
-                                color: _typeColor(type),
+                                color: typeColor(type),
                               ),
                               const SizedBox(width: 10),
                               Text(ResumeTemplate.templateTypeLabel(type)),
@@ -422,25 +426,37 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
     );
   }
 
-  IconData _typeIcon(String type) {
+  IconData typeIcon(String type) {
     switch (type) {
-      case 'professional': return Icons.business_center_rounded;
-      case 'modern': return Icons.auto_awesome_rounded;
-      case 'minimal': return Icons.minimize_rounded;
-      case 'creative': return Icons.color_lens_rounded;
-      case 'classic': return Icons.article_rounded;
-      default: return Icons.article_outlined;
+      case 'professional':
+        return Icons.business_center_rounded;
+      case 'modern':
+        return Icons.auto_awesome_rounded;
+      case 'minimal':
+        return Icons.minimize_rounded;
+      case 'creative':
+        return Icons.color_lens_rounded;
+      case 'classic':
+        return Icons.article_rounded;
+      default:
+        return Icons.article_outlined;
     }
   }
 
-  Color _typeColor(String type) {
+  Color typeColor(String type) {
     switch (type) {
-      case 'professional': return const Color(0xFF2B6CB0);
-      case 'modern': return const Color(0xFF38BDF8);
-      case 'minimal': return const Color(0xFF6B7280);
-      case 'creative': return const Color(0xFF8B5CF6);
-      case 'classic': return const Color(0xFF1F2937);
-      default: return const Color(0xFF10B981);
+      case 'professional':
+        return const Color(0xFF2B6CB0);
+      case 'modern':
+        return const Color(0xFF38BDF8);
+      case 'minimal':
+        return const Color(0xFF6B7280);
+      case 'creative':
+        return const Color(0xFF8B5CF6);
+      case 'classic':
+        return const Color(0xFF1F2937);
+      default:
+        return const Color(0xFF10B981);
     }
   }
 }

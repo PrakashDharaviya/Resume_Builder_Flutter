@@ -209,12 +209,10 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
     return Container(
       margin: const EdgeInsets.only(top: 8),
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.primary.withValues(alpha: 0.15)),
       ),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         title: Text(
           title,
           style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
@@ -326,15 +324,25 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
   // EDUCATION
   // ═══════════════════════════════════════════════════════════════════════════
   void addOrEditEducation({Map<String, dynamic>? existing, int? index}) {
-    final degreeCtrl = TextEditingController(text: existing?['degree'] ?? '');
-    final institutionCtrl = TextEditingController(
-      text: existing?['institution'] ?? '',
+    final degreeCtrl = TextEditingController(
+      text: (existing?['degree'] as String?) ?? '',
     );
-    final fieldCtrl = TextEditingController(text: existing?['field'] ?? '');
-    final gradeCtrl = TextEditingController(text: existing?['grade'] ?? '');
-    final startCtrl = TextEditingController(text: existing?['start'] ?? '');
-    final endCtrl = TextEditingController(text: existing?['end'] ?? '');
-    bool current = existing?['current'] ?? false;
+    final institutionCtrl = TextEditingController(
+      text: (existing?['institution'] as String?) ?? '',
+    );
+    final fieldCtrl = TextEditingController(
+      text: (existing?['field'] as String?) ?? '',
+    );
+    final gradeCtrl = TextEditingController(
+      text: (existing?['grade'] as String?) ?? '',
+    );
+    final startCtrl = TextEditingController(
+      text: (existing?['start'] as String?) ?? '',
+    );
+    final endCtrl = TextEditingController(
+      text: (existing?['end'] as String?) ?? '',
+    );
+    bool current = (existing?['current'] as bool?) ?? false;
 
     showSheet(
       StatefulBuilder(
@@ -418,15 +426,25 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
   // EXPERIENCE
   // ═══════════════════════════════════════════════════════════════════════════
   void addOrEditExperience({Map<String, dynamic>? existing, int? index}) {
-    final titleCtrl = TextEditingController(text: existing?['title'] ?? '');
-    final companyCtrl = TextEditingController(text: existing?['company'] ?? '');
-    final locationCtrl = TextEditingController(
-      text: existing?['location'] ?? '',
+    final titleCtrl = TextEditingController(
+      text: (existing?['title'] as String?) ?? '',
     );
-    final startCtrl = TextEditingController(text: existing?['start'] ?? '');
-    final endCtrl = TextEditingController(text: existing?['end'] ?? '');
-    final descCtrl = TextEditingController(text: existing?['desc'] ?? '');
-    bool current = existing?['current'] ?? false;
+    final companyCtrl = TextEditingController(
+      text: (existing?['company'] as String?) ?? '',
+    );
+    final locationCtrl = TextEditingController(
+      text: (existing?['location'] as String?) ?? '',
+    );
+    final startCtrl = TextEditingController(
+      text: (existing?['start'] as String?) ?? '',
+    );
+    final endCtrl = TextEditingController(
+      text: (existing?['end'] as String?) ?? '',
+    );
+    final descCtrl = TextEditingController(
+      text: (existing?['desc'] as String?) ?? '',
+    );
+    bool current = (existing?['current'] as bool?) ?? false;
 
     showSheet(
       StatefulBuilder(
@@ -442,9 +460,9 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
                 field('Job Title', titleCtrl, hint: 'e.g. Software Engineer'),
                 field('Company', companyCtrl, hint: 'e.g. Google'),
                 field(
-                  'Location',
+                  'Location (optional)',
                   locationCtrl,
-                  hint: 'e.g. San Francisco, CA (or Remote)',
+                  hint: 'e.g. Remote / Mumbai',
                 ),
                 Row(
                   children: [
@@ -456,7 +474,7 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
                       child: field(
                         'End',
                         endCtrl,
-                        hint: 'Dec 2024',
+                        hint: 'Present',
                         enabled: !current,
                       ),
                     ),
@@ -509,11 +527,13 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
   // SKILLS
   // ═══════════════════════════════════════════════════════════════════════════
   void addOrEditSkill({Map<String, dynamic>? existing, int? index}) {
-    final nameCtrl = TextEditingController(text: existing?['name'] ?? '');
-    final categoryCtrl = TextEditingController(
-      text: existing?['category'] ?? '',
+    final nameCtrl = TextEditingController(
+      text: (existing?['name'] as String?) ?? '',
     );
-    String level = existing?['level'] ?? 'Intermediate';
+    final categoryCtrl = TextEditingController(
+      text: (existing?['category'] as String?) ?? '',
+    );
+    String level = (existing?['level'] as String?) ?? 'Intermediate';
 
     showSheet(
       StatefulBuilder(
@@ -580,8 +600,10 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
   // LANGUAGES
   // ═══════════════════════════════════════════════════════════════════════════
   void addOrEditLanguage({Map<String, dynamic>? existing, int? index}) {
-    final nameCtrl = TextEditingController(text: existing?['name'] ?? '');
-    String level = existing?['level'] ?? 'Fluent';
+    final nameCtrl = TextEditingController(
+      text: (existing?['name'] as String?) ?? '',
+    );
+    String level = (existing?['level'] as String?) ?? 'Fluent';
 
     showSheet(
       StatefulBuilder(
@@ -640,10 +662,18 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
   // PROJECTS
   // ═══════════════════════════════════════════════════════════════════════════
   void addOrEditProject({Map<String, dynamic>? existing, int? index}) {
-    final nameCtrl = TextEditingController(text: existing?['name'] ?? '');
-    final descCtrl = TextEditingController(text: existing?['desc'] ?? '');
-    final techCtrl = TextEditingController(text: existing?['tech'] ?? '');
-    final linkCtrl = TextEditingController(text: existing?['link'] ?? '');
+    final nameCtrl = TextEditingController(
+      text: (existing?['name'] as String?) ?? '',
+    );
+    final descCtrl = TextEditingController(
+      text: (existing?['desc'] as String?) ?? '',
+    );
+    final techCtrl = TextEditingController(
+      text: (existing?['tech'] as String?) ?? '',
+    );
+    final linkCtrl = TextEditingController(
+      text: (existing?['link'] as String?) ?? '',
+    );
 
     showSheet(
       StatefulBuilder(
@@ -701,10 +731,18 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
   // CERTIFICATIONS
   // ═══════════════════════════════════════════════════════════════════════════
   void addOrEditCert({Map<String, dynamic>? existing, int? index}) {
-    final nameCtrl = TextEditingController(text: existing?['name'] ?? '');
-    final orgCtrl = TextEditingController(text: existing?['org'] ?? '');
-    final dateCtrl = TextEditingController(text: existing?['date'] ?? '');
-    final idCtrl = TextEditingController(text: existing?['id'] ?? '');
+    final nameCtrl = TextEditingController(
+      text: (existing?['name'] as String?) ?? '',
+    );
+    final orgCtrl = TextEditingController(
+      text: (existing?['org'] as String?) ?? '',
+    );
+    final dateCtrl = TextEditingController(
+      text: (existing?['date'] as String?) ?? '',
+    );
+    final idCtrl = TextEditingController(
+      text: (existing?['id'] as String?) ?? '',
+    );
 
     showSheet(
       StatefulBuilder(
@@ -763,9 +801,15 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
   // ACHIEVEMENTS
   // ═══════════════════════════════════════════════════════════════════════════
   void addOrEditAchievement({Map<String, dynamic>? existing, int? index}) {
-    final titleCtrl = TextEditingController(text: existing?['title'] ?? '');
-    final descCtrl = TextEditingController(text: existing?['desc'] ?? '');
-    final dateCtrl = TextEditingController(text: existing?['date'] ?? '');
+    final titleCtrl = TextEditingController(
+      text: (existing?['title'] as String?) ?? '',
+    );
+    final descCtrl = TextEditingController(
+      text: (existing?['desc'] as String?) ?? '',
+    );
+    final dateCtrl = TextEditingController(
+      text: (existing?['date'] as String?) ?? '',
+    );
 
     showSheet(
       StatefulBuilder(
@@ -870,7 +914,7 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
     if (confirmed == true) setState(() => list.removeAt(index));
   }
 
-  Resume _buildResumeFromForm() {
+  Resume buildResumeFromForm() {
     final dateFmt = DateFormat('MMM yyyy');
     DateTime? tryParse(String? s) {
       if (s == null || s.isEmpty || s == 'Present') return null;
@@ -898,73 +942,107 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
         summary: summaryCtrl.text.isNotEmpty ? summaryCtrl.text : null,
       ),
       education: educations.map((e) {
+        final degree = (e['degree'] as String?) ?? '';
+        final institution = (e['institution'] as String?) ?? '';
+        final field = (e['field'] as String?) ?? '';
+        final start = (e['start'] as String?) ?? '';
+        final end = (e['end'] as String?) ?? '';
+        final isCurrent = (e['current'] as bool?) ?? false;
+        final grade = (e['grade'] as String?) ?? '';
+
         return Education(
           id: 'edu_${educations.indexOf(e)}',
-          degree: e['degree'] ?? '',
-          institution: e['institution'] ?? '',
-          fieldOfStudy: e['field']?.isNotEmpty == true ? e['field'] : null,
-          startDate: tryParse(e['start']) ?? DateTime.now(),
-          endDate: e['end'] == 'Present' ? null : tryParse(e['end']),
-          currentlyStudying: e['end'] == 'Present' || (e['current'] == true),
-          grade: e['grade']?.isNotEmpty == true ? e['grade'] : null,
+          degree: degree,
+          institution: institution,
+          fieldOfStudy: field.isNotEmpty ? field : null,
+          startDate: tryParse(start) ?? DateTime.now(),
+          endDate: end == 'Present' ? null : tryParse(end),
+          currentlyStudying: end == 'Present' || isCurrent,
+          grade: grade.isNotEmpty ? grade : null,
         );
       }).toList(),
       experience: experiences.map((e) {
+        final title = (e['title'] as String?) ?? '';
+        final company = (e['company'] as String?) ?? '';
+        final start = (e['start'] as String?) ?? '';
+        final end = (e['end'] as String?) ?? '';
+        final isCurrent = (e['current'] as bool?) ?? false;
+        final location = (e['location'] as String?) ?? '';
+        final desc = (e['desc'] as String?) ?? '';
+
         return Experience(
           id: 'exp_${experiences.indexOf(e)}',
-          jobTitle: e['title'] ?? '',
-          company: e['company'] ?? '',
-          startDate: tryParse(e['start']) ?? DateTime.now(),
-          endDate: e['end'] == 'Present' ? null : tryParse(e['end']),
-          currentlyWorking: e['end'] == 'Present' || (e['current'] == true),
-          location: e['location']?.isNotEmpty == true ? e['location'] : null,
-          description: e['desc']?.isNotEmpty == true ? e['desc'] : null,
+          jobTitle: title,
+          company: company,
+          startDate: tryParse(start) ?? DateTime.now(),
+          endDate: end == 'Present' ? null : tryParse(end),
+          currentlyWorking: end == 'Present' || isCurrent,
+          location: location.isNotEmpty ? location : null,
+          description: desc.isNotEmpty ? desc : null,
         );
       }).toList(),
       skills: skills.map((s) {
+        final name = (s['name'] as String?) ?? '';
+        final category = (s['category'] as String?) ?? '';
+        final level = (s['level'] as String?) ?? 'Intermediate';
+
         return Skill(
           id: 'sk_${skills.indexOf(s)}',
-          name: s['name'] ?? '',
-          category: s['category']?.isNotEmpty == true ? s['category'] : null,
-          proficiency: s['level'] ?? 'Intermediate',
+          name: name,
+          category: category.isNotEmpty ? category : null,
+          proficiency: level,
         );
       }).toList(),
       projects: projects.map((p) {
+        final name = (p['name'] as String?) ?? '';
+        final desc = (p['desc'] as String?) ?? '';
+        final tech = (p['tech'] as String?) ?? '';
+        final link = (p['link'] as String?) ?? '';
+
         return Project(
           id: 'proj_${projects.indexOf(p)}',
-          name: p['name'] ?? '',
-          description: p['desc'] ?? '',
-          technologies:
-              (p['tech'] as String?)
-                  ?.split(',')
-                  .map((t) => t.trim())
-                  .where((t) => t.isNotEmpty)
-                  .toList() ??
-              [],
-          projectLink: p['link']?.isNotEmpty == true ? p['link'] : null,
+          name: name,
+          description: desc,
+          technologies: tech
+              .split(',')
+              .map((t) => t.trim())
+              .where((t) => t.isNotEmpty)
+              .toList(),
+          projectLink: link.isNotEmpty ? link : null,
         );
       }).toList(),
       certifications: certifications.map((c) {
+        final name = (c['name'] as String?) ?? '';
+        final org = (c['org'] as String?) ?? '';
+        final date = (c['date'] as String?) ?? '';
+        final id = (c['id'] as String?) ?? '';
+
         return Certification(
           id: 'cert_${certifications.indexOf(c)}',
-          name: c['name'] ?? '',
-          issuingOrganization: c['org'] ?? '',
-          issueDate: tryParse(c['date']) ?? DateTime.now(),
-          credentialId: c['id']?.isNotEmpty == true ? c['id'] : null,
+          name: name,
+          issuingOrganization: org,
+          issueDate: tryParse(date) ?? DateTime.now(),
+          credentialId: id.isNotEmpty ? id : null,
         );
       }).toList(),
       achievements: achievements.map((a) {
+        final title = (a['title'] as String?) ?? '';
+        final desc = (a['desc'] as String?) ?? '';
+
         return Achievement(
           id: 'ach_${achievements.indexOf(a)}',
-          title: a['title'] ?? '',
-          description: a['desc'] ?? '',
+          title: title,
+          description: desc,
         );
       }).toList(),
       languages: languages.map((l) {
+        final name = (l['name'] as String?) ?? '';
+        final level = (l['level'] as String?) ?? 'Fluent';
+
         return Language(
           id: 'lang_${languages.indexOf(l)}',
-          name: l['name'] ?? '',
-          proficiency: l['level'] ?? 'Fluent',
+          name: name,
+          proficiency: level,
         );
       }).toList(),
       createdAt: widget.resume?.createdAt ?? DateTime.now(),
@@ -972,8 +1050,8 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
     );
   }
 
-  void _showLivePreview() {
-    final resume = _buildResumeFromForm();
+  void showLivePreview() {
+    final resume = buildResumeFromForm();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -1065,7 +1143,7 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
     return PopScope(
       canPop: true,
       onPopInvokedWithResult: (bool didPop, Object? result) {
-        final newResume = _buildResumeFromForm();
+        final newResume = buildResumeFromForm();
         if (widget.resume == null) {
           context.read<ResumeBloc>().add(CreateResumeEvent(newResume));
         } else {
@@ -1080,7 +1158,7 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
           actions: [
             TextButton.icon(
               onPressed: () {
-                final newResume = _buildResumeFromForm();
+                final newResume = buildResumeFromForm();
                 if (widget.resume == null) {
                   context.read<ResumeBloc>().add(CreateResumeEvent(newResume));
                 } else {
@@ -1114,7 +1192,7 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
           ],
         ),
         floatingActionButton: FloatingActionButton.extended(
-          onPressed: _showLivePreview,
+          onPressed: showLivePreview,
           backgroundColor: const Color(0xFF6366F1),
           foregroundColor: Colors.white,
           icon: const Icon(Icons.preview_rounded),
@@ -1191,17 +1269,24 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
                     : '${educations.length} entr${educations.length == 1 ? 'y' : 'ies'}',
                 onAdd: () => addOrEditEducation(),
               ),
-              ...educations.asMap().entries.map(
-                (e) => itemCard(
-                  title: e.value['degree'],
+              ...educations.asMap().entries.map((e) {
+                final value = e.value;
+                final degree = (value['degree'] as String?) ?? '';
+                final institution = (value['institution'] as String?) ?? '';
+                final field = (value['field'] as String?) ?? '';
+                final start = (value['start'] as String?) ?? '';
+                final end = (value['end'] as String?) ?? '';
+
+                return itemCard(
+                  title: degree,
                   subtitle:
-                      '${e.value['institution']}${e.value['field'].isNotEmpty ? ' • ${e.value['field']}' : ''}',
-                  trailing: '${e.value['start']} – ${e.value['end']}',
+                      '$institution${field.isNotEmpty ? ' • $field' : ''}',
+                  trailing: '$start – $end',
                   onEdit: () =>
-                      addOrEditEducation(existing: e.value, index: e.key),
+                      addOrEditEducation(existing: value, index: e.key),
                   onDelete: () => confirmDelete(educations, e.key),
-                ),
-              ),
+                );
+              }),
               const SizedBox(height: 16),
 
               // ── Experience ────────────────────────────────────────────────
@@ -1213,17 +1298,24 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
                     : '${experiences.length} entr${experiences.length == 1 ? 'y' : 'ies'}',
                 onAdd: () => addOrEditExperience(),
               ),
-              ...experiences.asMap().entries.map(
-                (e) => itemCard(
-                  title: e.value['title'],
+              ...experiences.asMap().entries.map((e) {
+                final value = e.value;
+                final title = (value['title'] as String?) ?? '';
+                final company = (value['company'] as String?) ?? '';
+                final location = (value['location'] as String?) ?? '';
+                final start = (value['start'] as String?) ?? '';
+                final end = (value['end'] as String?) ?? '';
+
+                return itemCard(
+                  title: title,
                   subtitle:
-                      '${e.value['company']}${e.value['location'].isNotEmpty ? ' • ${e.value['location']}' : ''}',
-                  trailing: '${e.value['start']} – ${e.value['end']}',
+                      '$company${location.isNotEmpty ? ' • $location' : ''}',
+                  trailing: '$start – $end',
                   onEdit: () =>
-                      addOrEditExperience(existing: e.value, index: e.key),
+                      addOrEditExperience(existing: value, index: e.key),
                   onDelete: () => confirmDelete(experiences, e.key),
-                ),
-              ),
+                );
+              }),
               const SizedBox(height: 16),
 
               // ── Skills ────────────────────────────────────────────────────
@@ -1272,17 +1364,19 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
                     : '${projects.length} project${projects.length == 1 ? '' : 's'}',
                 onAdd: () => addOrEditProject(),
               ),
-              ...projects.asMap().entries.map(
-                (e) => itemCard(
-                  title: e.value['name'],
-                  subtitle: e.value['tech'].isNotEmpty
-                      ? e.value['tech']
-                      : e.value['desc'],
-                  onEdit: () =>
-                      addOrEditProject(existing: e.value, index: e.key),
+              ...projects.asMap().entries.map((e) {
+                final value = e.value;
+                final name = (value['name'] as String?) ?? '';
+                final tech = (value['tech'] as String?) ?? '';
+                final desc = (value['desc'] as String?) ?? '';
+
+                return itemCard(
+                  title: name,
+                  subtitle: tech.isNotEmpty ? tech : desc,
+                  onEdit: () => addOrEditProject(existing: value, index: e.key),
                   onDelete: () => confirmDelete(projects, e.key),
-                ),
-              ),
+                );
+              }),
               const SizedBox(height: 16),
 
               // ── Certifications ────────────────────────────────────────────
@@ -1294,15 +1388,20 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
                     : '${certifications.length} certification${certifications.length == 1 ? '' : 's'}',
                 onAdd: () => addOrEditCert(),
               ),
-              ...certifications.asMap().entries.map(
-                (e) => itemCard(
-                  title: e.value['name'],
-                  subtitle: e.value['org'],
-                  trailing: e.value['date'],
-                  onEdit: () => addOrEditCert(existing: e.value, index: e.key),
+              ...certifications.asMap().entries.map((e) {
+                final value = e.value;
+                final name = (value['name'] as String?) ?? '';
+                final org = (value['org'] as String?) ?? '';
+                final date = (value['date'] as String?) ?? '';
+
+                return itemCard(
+                  title: name,
+                  subtitle: org,
+                  trailing: date,
+                  onEdit: () => addOrEditCert(existing: value, index: e.key),
                   onDelete: () => confirmDelete(certifications, e.key),
-                ),
-              ),
+                );
+              }),
               const SizedBox(height: 16),
 
               // ── Achievements ──────────────────────────────────────────────
@@ -1314,16 +1413,21 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
                     : '${achievements.length} achievement${achievements.length == 1 ? '' : 's'}',
                 onAdd: () => addOrEditAchievement(),
               ),
-              ...achievements.asMap().entries.map(
-                (e) => itemCard(
-                  title: e.value['title'],
-                  subtitle: e.value['desc'],
-                  trailing: e.value['date'].isNotEmpty ? e.value['date'] : null,
+              ...achievements.asMap().entries.map((e) {
+                final value = e.value;
+                final title = (value['title'] as String?) ?? '';
+                final desc = (value['desc'] as String?) ?? '';
+                final date = (value['date'] as String?) ?? '';
+
+                return itemCard(
+                  title: title,
+                  subtitle: desc,
+                  trailing: date.isNotEmpty ? date : null,
                   onEdit: () =>
-                      addOrEditAchievement(existing: e.value, index: e.key),
+                      addOrEditAchievement(existing: value, index: e.key),
                   onDelete: () => confirmDelete(achievements, e.key),
-                ),
-              ),
+                );
+              }),
               const SizedBox(height: 16),
 
               // ── Languages ───────────────────────────────────────────────
@@ -1335,15 +1439,19 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
                     : '${languages.length} language${languages.length == 1 ? '' : 's'}',
                 onAdd: () => addOrEditLanguage(),
               ),
-              ...languages.asMap().entries.map(
-                (e) => itemCard(
-                  title: e.value['name'],
-                  subtitle: 'Proficiency: ${e.value['level']}',
+              ...languages.asMap().entries.map((e) {
+                final value = e.value;
+                final name = (value['name'] as String?) ?? '';
+                final level = (value['level'] as String?) ?? '';
+
+                return itemCard(
+                  title: name,
+                  subtitle: 'Proficiency: $level',
                   onEdit: () =>
-                      addOrEditLanguage(existing: e.value, index: e.key),
+                      addOrEditLanguage(existing: value, index: e.key),
                   onDelete: () => confirmDelete(languages, e.key),
-                ),
-              ),
+                );
+              }),
 
               const SizedBox(height: 32),
 

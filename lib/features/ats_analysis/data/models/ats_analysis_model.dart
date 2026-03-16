@@ -14,20 +14,24 @@ class ATSAnalysisModel extends ATSAnalysis {
 
   factory ATSAnalysisModel.fromJson(Map<String, dynamic> json) {
     return ATSAnalysisModel(
-      id: json['id'] ?? DateTime.now().millisecondsSinceEpoch.toString(),
-      resumeId: json['resumeId'] ?? '',
+      id:
+          (json['id'] as String?) ??
+          DateTime.now().millisecondsSinceEpoch.toString(),
+      resumeId: (json['resumeId'] as String?) ?? '',
       overallScore: json['overallScore'] as int,
-      scoreBreakdown: Map<String, int>.from(json['scoreBreakdown']),
+      scoreBreakdown: Map<String, int>.from(
+        json['scoreBreakdown'] as Map<dynamic, dynamic>,
+      ),
       matchedKeywords: (json['matchedKeywords'] as List)
-          .map((e) => KeywordMatchModel.fromJson(e))
+          .map((e) => KeywordMatchModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       missingKeywords: (json['missingKeywords'] as List)
-          .map((e) => MissingKeywordModel.fromJson(e))
+          .map((e) => MissingKeywordModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       suggestions: (json['suggestions'] as List)
-          .map((e) => SuggestionModel.fromJson(e))
+          .map((e) => SuggestionModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      analyzedAt: DateTime.parse(json['analyzedAt']),
+      analyzedAt: DateTime.parse(json['analyzedAt'] as String),
     );
   }
 }

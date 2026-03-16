@@ -4,6 +4,7 @@ import 'package:resumebuilder/core/constants/app_routes.dart';
 import 'package:resumebuilder/core/services/mock_database_service.dart';
 import 'package:resumebuilder/core/utils/app_preferences.dart';
 import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
+import 'package:resumebuilder/features/admin/domain/entities/announcement.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_state.dart';
 import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
@@ -20,7 +21,7 @@ class UserDashboard extends StatefulWidget {
 }
 
 class UserDashboardState extends State<UserDashboard> {
-  Future<void> _confirmDeleteResume(Resume resume) async {
+  Future<void> confirmDeleteResume(Resume resume) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -56,10 +57,10 @@ class UserDashboardState extends State<UserDashboard> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return FutureBuilder<List<dynamic>>(
+    return FutureBuilder<List<Announcement>>(
       future: MockDatabaseService.instance.getActiveAnnouncements(),
       builder: (context, snapshot) {
-        final announcements = snapshot.data ?? [];
+        final announcements = snapshot.data ?? const <Announcement>[];
         final announcement = announcements.isNotEmpty
             ? announcements.first
             : null;
@@ -406,7 +407,7 @@ class UserDashboardState extends State<UserDashboard> {
                                           child: ResumeCard(
                                             resume: resume,
                                             onDelete: () =>
-                                                _confirmDeleteResume(resume),
+                                                confirmDeleteResume(resume),
                                             onTap: () {
                                               Navigator.pushNamed(
                                                 context,

@@ -80,12 +80,12 @@ class AdminMockDataSource {
       final d = doc.data();
       return ResumeTemplate(
         id: doc.id,
-        name: d['name'] ?? '',
-        isActive: d['isActive'] ?? true,
-        isPremium: d['isPremium'] ?? false,
-        templateType: d['templateType'] ?? 'professional',
-        layoutJson: d['layoutJson'] ?? '{}',
-        previewImage: d['previewImage'] ?? '',
+        name: (d['name'] as String?) ?? '',
+        isActive: (d['isActive'] as bool?) ?? true,
+        isPremium: (d['isPremium'] as bool?) ?? false,
+        templateType: (d['templateType'] as String?) ?? 'professional',
+        layoutJson: (d['layoutJson'] as String?) ?? '{}',
+        previewImage: (d['previewImage'] as String?) ?? '',
         createdAt: (d['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       );
     }).toList();
@@ -132,12 +132,12 @@ class AdminMockDataSource {
       final d = doc.data();
       return User(
         uid: doc.id,
-        email: d['email'] ?? '',
-        displayName: d['displayName'] ?? '',
-        photoURL: d['photoURL'],
-        role: d['role'] ?? 'user',
-        isBlocked: d['isBlocked'] ?? false,
-        isPremium: d['isPremium'] ?? false,
+        email: (d['email'] as String?) ?? '',
+        displayName: (d['displayName'] as String?) ?? '',
+        photoURL: d['photoURL'] as String?,
+        role: (d['role'] as String?) ?? 'user',
+        isBlocked: (d['isBlocked'] as bool?) ?? false,
+        isPremium: (d['isPremium'] as bool?) ?? false,
       );
     }).toList();
   }
@@ -145,36 +145,36 @@ class AdminMockDataSource {
   Future<User> toggleBlockUser(String uid) async {
     final doc = await _usersCol.doc(uid).get();
     if (!doc.exists) throw Exception('User not found');
-    final currentBlocked = doc.data()?['isBlocked'] ?? false;
+    final currentBlocked = (doc.data()?['isBlocked'] as bool?) ?? false;
     await _usersCol.doc(uid).update({'isBlocked': !currentBlocked});
     final updated = await _usersCol.doc(uid).get();
     final d = updated.data()!;
     return User(
       uid: uid,
-      email: d['email'] ?? '',
-      displayName: d['displayName'] ?? '',
-      photoURL: d['photoURL'],
-      role: d['role'] ?? 'user',
-      isBlocked: d['isBlocked'] ?? false,
-      isPremium: d['isPremium'] ?? false,
+      email: (d['email'] as String?) ?? '',
+      displayName: (d['displayName'] as String?) ?? '',
+      photoURL: d['photoURL'] as String?,
+      role: (d['role'] as String?) ?? 'user',
+      isBlocked: (d['isBlocked'] as bool?) ?? false,
+      isPremium: (d['isPremium'] as bool?) ?? false,
     );
   }
 
   Future<User> togglePremiumUser(String uid) async {
     final doc = await _usersCol.doc(uid).get();
     if (!doc.exists) throw Exception('User not found');
-    final currentPremium = doc.data()?['isPremium'] ?? false;
+    final currentPremium = (doc.data()?['isPremium'] as bool?) ?? false;
     await _usersCol.doc(uid).update({'isPremium': !currentPremium});
     final updated = await _usersCol.doc(uid).get();
     final d = updated.data()!;
     return User(
       uid: uid,
-      email: d['email'] ?? '',
-      displayName: d['displayName'] ?? '',
-      photoURL: d['photoURL'],
-      role: d['role'] ?? 'user',
-      isBlocked: d['isBlocked'] ?? false,
-      isPremium: d['isPremium'] ?? false,
+      email: (d['email'] as String?) ?? '',
+      displayName: (d['displayName'] as String?) ?? '',
+      photoURL: d['photoURL'] as String?,
+      role: (d['role'] as String?) ?? 'user',
+      isBlocked: (d['isBlocked'] as bool?) ?? false,
+      isPremium: (d['isPremium'] as bool?) ?? false,
     );
   }
 
@@ -185,12 +185,19 @@ class AdminMockDataSource {
       return const ATSConfig();
     }
     final d = doc.data()!;
+
+    double readWeight(String key, double fallback) {
+      final value = d[key];
+      if (value is num) return value.toDouble();
+      return fallback;
+    }
+
     return ATSConfig(
-      keywordWeight: (d['keywordWeight'] ?? 30).toDouble(),
-      skillWeight: (d['skillWeight'] ?? 25).toDouble(),
-      grammarWeight: (d['grammarWeight'] ?? 15).toDouble(),
-      experienceWeight: (d['experienceWeight'] ?? 20).toDouble(),
-      formattingWeight: (d['formattingWeight'] ?? 10).toDouble(),
+      keywordWeight: readWeight('keywordWeight', 30),
+      skillWeight: readWeight('skillWeight', 25),
+      grammarWeight: readWeight('grammarWeight', 15),
+      experienceWeight: readWeight('experienceWeight', 20),
+      formattingWeight: readWeight('formattingWeight', 10),
     );
   }
 
@@ -212,10 +219,10 @@ class AdminMockDataSource {
       final d = doc.data();
       return Announcement(
         id: doc.id,
-        title: d['title'] ?? '',
-        message: d['message'] ?? '',
+        title: (d['title'] as String?) ?? '',
+        message: (d['message'] as String?) ?? '',
         createdAt: (d['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
-        isActive: d['isActive'] ?? true,
+        isActive: (d['isActive'] as bool?) ?? true,
       );
     }).toList();
     announcements.sort((a, b) => b.createdAt.compareTo(a.createdAt));
@@ -237,16 +244,16 @@ class AdminMockDataSource {
   Future<Announcement> toggleAnnouncement(String id) async {
     final doc = await _announcementsCol.doc(id).get();
     if (!doc.exists) throw Exception('Announcement not found');
-    final currentActive = doc.data()?['isActive'] ?? true;
+    final currentActive = (doc.data()?['isActive'] as bool?) ?? true;
     await _announcementsCol.doc(id).update({'isActive': !currentActive});
     final updated = await _announcementsCol.doc(id).get();
     final d = updated.data()!;
     return Announcement(
       id: id,
-      title: d['title'] ?? '',
-      message: d['message'] ?? '',
+      title: (d['title'] as String?) ?? '',
+      message: (d['message'] as String?) ?? '',
       createdAt: (d['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
-      isActive: d['isActive'] ?? true,
+      isActive: (d['isActive'] as bool?) ?? true,
     );
   }
 
