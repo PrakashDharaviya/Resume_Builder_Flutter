@@ -65,10 +65,15 @@ class ResumeBloc extends Bloc<ResumeEvent, ResumeState> {
 
     final result = await createResume(event.resume);
 
-    result.fold(
-      (failure) => emit(ResumeError(failure.message)),
-      (resume) => emit(ResumeCreated(resume)),
-    );
+    await result.fold((failure) async => emit(ResumeError(failure.message)), (
+      _,
+    ) async {
+      final listResult = await getAllResumes();
+      listResult.fold(
+        (failure) => emit(ResumeError(failure.message)),
+        (resumes) => emit(ResumeListLoaded(resumes)),
+      );
+    });
   }
 
   Future<void> onUpdateResume(
@@ -79,10 +84,15 @@ class ResumeBloc extends Bloc<ResumeEvent, ResumeState> {
 
     final result = await updateResume(event.resume);
 
-    result.fold(
-      (failure) => emit(ResumeError(failure.message)),
-      (resume) => emit(ResumeUpdated(resume)),
-    );
+    await result.fold((failure) async => emit(ResumeError(failure.message)), (
+      _,
+    ) async {
+      final listResult = await getAllResumes();
+      listResult.fold(
+        (failure) => emit(ResumeError(failure.message)),
+        (resumes) => emit(ResumeListLoaded(resumes)),
+      );
+    });
   }
 
   Future<void> onDeleteResume(
@@ -93,10 +103,17 @@ class ResumeBloc extends Bloc<ResumeEvent, ResumeState> {
 
     final result = await deleteResume(event.id);
 
-    result.fold(
-      (failure) => emit(ResumeError(failure.message)),
-      (_) => emit(const ResumeDeleted()),
-    );
+    await result.fold((failure) async => emit(ResumeError(failure.message)), (
+      _,
+    ) async {
+      // Keep emitting ResumeDeleted for listeners, then refresh list.
+      emit(const ResumeDeleted());
+      final listResult = await getAllResumes();
+      listResult.fold(
+        (failure) => emit(ResumeError(failure.message)),
+        (resumes) => emit(ResumeListLoaded(resumes)),
+      );
+    });
   }
 
   void onSelectResume(SelectResumeEvent event, Emitter<ResumeState> emit) {

@@ -1,95 +1,214 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-
-// Replace with your actual Gemini API key
-const String _geminiApiKey = 'AIzaSyCw1Sz5MjUzbX5umEtwYBKyCf-xuq52Rsc';
-const String _geminiEndpoint =
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
-
 class AIService {
   Future<Map<String, dynamic>> analyzeResume({
     required Map<String, dynamic> resumeData,
   }) async {
-    final prompt =
-        '''
-Analyze this resume for ATS (Applicant Tracking System) compatibility. Return a JSON object with these exact keys and value types:
-- overallScore (integer 0-100)
-- scoreBreakdown: {formatting: int, keywordMatch: int, skills: int, experience: int, grammar: int}
-- matchedKeywords: list of {keyword: string, count: int, weight: string (high/medium/low)}
-- missingKeywords: list of {keyword: string, importance: string, category: string}
-- suggestions: list of {title: string, description: string, priority: string, category: string}
-- analyzedAt: ISO date string
+    // Local, heuristic ATS scoring – no external API calls.
+    // Expected input (from resume editor):
+    //   {
+    //     'firstName': String,
+    //     'skills': List<String>,
+    //     'experience': int (number of roles)
+    //   }
 
-Resume data: ${jsonEncode(resumeData)}
+    final firstName = (resumeData['firstName'] ?? '').toString();
+    final skills =
+        (resumeData['skills'] as List?)
+            ?.whereType<String>()
+            .where((s) => s.trim().isNotEmpty)
+            .map((s) => s.trim())
+            .toList() ??
+        <String>[];
+    final experienceCount = (resumeData['experience'] as num?)?.toInt() ?? 0;
 
-Return ONLY valid JSON, no markdown, no explanation.''';
-
-    try {
-      final uri = Uri.parse('$_geminiEndpoint?key=$_geminiApiKey');
-      final response = await http.post(
-        uri,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'contents': [
-            {
-              'parts': [
-                {'text': prompt},
-              ],
-            },
-          ],
-          'generationConfig': {'temperature': 0.2, 'maxOutputTokens': 2048},
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        final body = jsonDecode(response.body) as Map<String, dynamic>;
-        final text =
-            body['candidates'][0]['content']['parts'][0]['text'] as String;
-        final jsonStr = _extractJson(text);
-        final result = jsonDecode(jsonStr) as Map<String, dynamic>;
-        return result;
-      } else {
-        return _fallbackError(
-          'Gemini API returned status ${response.statusCode}',
-        );
-      }
-    } catch (e) {
-      return _fallbackError(e.toString());
+    int _scoreSkills(int count) {
+      if (count >= 10) return 90;
+      if (count >= 6) return 75;
+      if (count >= 3) return 60;
+      if (count >= 1) return 45;
+      return 30;
     }
-  }
 
-  /// Extracts a JSON object from text that may contain markdown fences.
-  String _extractJson(String text) {
-    var cleaned = text.trim();
-    // Strip ```json ... ``` or ``` ... ```
-    final fencePattern = RegExp(r'^```(?:json)?\s*', multiLine: true);
-    cleaned = cleaned.replaceAll(fencePattern, '');
-    cleaned = cleaned.replaceAll(RegExp(r'```\s*$', multiLine: true), '');
-    return cleaned.trim();
-  }
+    int _scoreExperience(int roles) {
+      if (roles >= 4) return 90;
+      if (roles >= 2) return 75;
+      if (roles >= 1) return 60;
+      return 40;
+    }
 
-  Map<String, dynamic> _fallbackError(String error) {
+    int _scoreKeywordMatch(List<String> userSkills) {
+      const coreKeywords = <String>{
+        'communication',
+        'teamwork',
+        'leadership',
+        'problem solving',
+        'project management',
+        'sql',
+        'python',
+        'java',
+        'flutter',
+        'dart',
+        'react',
+        'aws',
+        'docker',
+      };
+
+      if (userSkills.isEmpty) return 30;
+
+      final lowerSkills = userSkills.map((s) => s.toLowerCase()).toList();
+      final matched = coreKeywords
+          .where((kw) => lowerSkills.any((s) => s.contains(kw)))
+          .length;
+      final coverage = matched / coreKeywords.length;
+
+      if (coverage >= 0.7) return 90;
+      if (coverage >= 0.4) return 75;
+      if (coverage >= 0.2) return 60;
+      return 45;
+    }
+
+    int _scoreFormatting(List<String> userSkills, int roles) {
+      // Rough proxy: having both skills and experience suggests basic structure.
+      if (userSkills.length >= 6 && roles >= 2) return 85;
+      if (userSkills.length >= 3 && roles >= 1) return 75;
+      if (userSkills.isNotEmpty) return 65;
+      return 55;
+    }
+
+    int _scoreGrammar(String name, List<String> userSkills) {
+      // Very naive: presence of basic fields -> assume acceptable grammar.
+      final hasName = name.trim().isNotEmpty;
+      final hasSkillsText = userSkills.isNotEmpty;
+      if (hasName && hasSkillsText) return 80;
+      if (hasName || hasSkillsText) return 70;
+      return 60;
+    }
+
+    final skillsScore = _scoreSkills(skills.length);
+    final experienceScore = _scoreExperience(experienceCount);
+    final keywordScore = _scoreKeywordMatch(skills);
+    final formattingScore = _scoreFormatting(skills, experienceCount);
+    final grammarScore = _scoreGrammar(firstName, skills);
+
+    final overallScore =
+        ((skillsScore +
+                    experienceScore +
+                    keywordScore +
+                    formattingScore +
+                    grammarScore) /
+                5)
+            .round();
+
+    // Matched keywords: treat each skill as a matched keyword.
+    final matchedKeywords = skills
+        .map((s) => {'keyword': s, 'count': 1, 'weight': 'medium'})
+        .toList();
+
+    // Missing keywords: suggest a few common ones that are not present.
+    const recommendedTechnical = <String>{
+      'git',
+      'rest api',
+      'unit testing',
+      'oop',
+      'clean architecture',
+    };
+    const recommendedSoft = <String>{'communication', 'teamwork', 'leadership'};
+
+    final lowerSkills = skills.map((s) => s.toLowerCase()).toList();
+    final missingKeywords = <Map<String, dynamic>>[];
+
+    void _addMissing(
+      Iterable<String> source,
+      String category, {
+      String importance = 'medium',
+    }) {
+      for (final kw in source) {
+        if (!lowerSkills.any((s) => s.contains(kw))) {
+          missingKeywords.add({
+            'keyword': kw,
+            'importance': importance,
+            'category': category,
+          });
+        }
+      }
+    }
+
+    _addMissing(recommendedTechnical, 'Technical');
+    _addMissing(recommendedSoft, 'Soft Skill', importance: 'high');
+
+    // Suggestions based on simple rules.
+    final suggestions = <Map<String, dynamic>>[];
+
+    if (skills.length < 5) {
+      suggestions.add({
+        'title': 'Add more relevant skills',
+        'description':
+            'Include at least 5–10 hard and soft skills that match your target role.',
+        'priority': 'high',
+        'category': 'Skills',
+      });
+    }
+
+    if (experienceCount == 0) {
+      suggestions.add({
+        'title': 'Add work experience',
+        'description':
+            'ATS systems expect at least one experience entry. Add internships, projects, or freelance work.',
+        'priority': 'high',
+        'category': 'Experience',
+      });
+    } else if (experienceCount < 2) {
+      suggestions.add({
+        'title': 'Expand experience section',
+        'description':
+            'Consider adding more roles or breaking down responsibilities with bullet points to highlight impact.',
+        'priority': 'medium',
+        'category': 'Experience',
+      });
+    }
+
+    if (keywordScore < 60) {
+      suggestions.add({
+        'title': 'Improve keyword match',
+        'description':
+            'Use more role-specific keywords from the job description in your skills and experience sections.',
+        'priority': 'high',
+        'category': 'Keywords',
+      });
+    }
+
+    if (formattingScore < 70) {
+      suggestions.add({
+        'title': 'Polish formatting',
+        'description':
+            'Use clear section headings and consistent bullet points so ATS parsers can easily read your resume.',
+        'priority': 'medium',
+        'category': 'Formatting',
+      });
+    }
+
+    if (grammarScore < 75) {
+      suggestions.add({
+        'title': 'Review grammar and clarity',
+        'description':
+            'Read your resume aloud or use a spell-check tool to fix typos and awkward phrasing.',
+        'priority': 'low',
+        'category': 'Grammar',
+      });
+    }
+
     return {
-      'overallScore': 0,
+      'overallScore': overallScore,
       'scoreBreakdown': {
-        'formatting': 0,
-        'keywordMatch': 0,
-        'skills': 0,
-        'experience': 0,
-        'grammar': 0,
+        'formatting': formattingScore,
+        'keywordMatch': keywordScore,
+        'skills': skillsScore,
+        'experience': experienceScore,
+        'grammar': grammarScore,
       },
-      'matchedKeywords': <Map<String, dynamic>>[],
-      'missingKeywords': <Map<String, dynamic>>[],
-      'suggestions': [
-        {
-          'title': 'Analysis error',
-          'description': 'ATS analysis failed: $error',
-          'priority': 'high',
-          'category': 'Error',
-        },
-      ],
+      'matchedKeywords': matchedKeywords,
+      'missingKeywords': missingKeywords,
+      'suggestions': suggestions,
       'analyzedAt': DateTime.now().toIso8601String(),
-      'error': error,
     };
   }
 
