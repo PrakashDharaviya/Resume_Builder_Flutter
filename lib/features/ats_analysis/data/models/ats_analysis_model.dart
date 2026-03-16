@@ -13,25 +13,65 @@ class ATSAnalysisModel extends ATSAnalysis {
   });
 
   factory ATSAnalysisModel.fromJson(Map<String, dynamic> json) {
+    int _intFromDynamic(dynamic value, {int fallback = 0}) {
+      if (value is int) return value;
+      if (value is num) return value.toInt();
+      if (value is String) {
+        final parsed = int.tryParse(value);
+        if (parsed != null) return parsed;
+      }
+      return fallback;
+    }
+
+    Map<String, int> _parseScoreBreakdown(dynamic raw) {
+      final result = <String, int>{};
+      if (raw is Map) {
+        raw.forEach((key, value) {
+          final k = key.toString();
+          result[k] = _intFromDynamic(value);
+        });
+      }
+      return result;
+    }
+
+    DateTime _parseDate(dynamic value) {
+      if (value is String) {
+        try {
+          return DateTime.parse(value);
+        } catch (_) {}
+      }
+      return DateTime.now();
+    }
+
     return ATSAnalysisModel(
       id:
           (json['id'] as String?) ??
           DateTime.now().millisecondsSinceEpoch.toString(),
       resumeId: (json['resumeId'] as String?) ?? '',
-      overallScore: json['overallScore'] as int,
-      scoreBreakdown: Map<String, int>.from(
-        json['scoreBreakdown'] as Map<dynamic, dynamic>,
-      ),
-      matchedKeywords: (json['matchedKeywords'] as List)
-          .map((e) => KeywordMatchModel.fromJson(e as Map<String, dynamic>))
+      overallScore: _intFromDynamic(json['overallScore']),
+      scoreBreakdown: _parseScoreBreakdown(json['scoreBreakdown']),
+      matchedKeywords: (json['matchedKeywords'] as List? ?? const [])
+          .where((e) => e is Map)
+          .map(
+            (e) =>
+                KeywordMatchModel.fromJson((e as Map).cast<String, dynamic>()),
+          )
           .toList(),
-      missingKeywords: (json['missingKeywords'] as List)
-          .map((e) => MissingKeywordModel.fromJson(e as Map<String, dynamic>))
+      missingKeywords: (json['missingKeywords'] as List? ?? const [])
+          .where((e) => e is Map)
+          .map(
+            (e) => MissingKeywordModel.fromJson(
+              (e as Map).cast<String, dynamic>(),
+            ),
+          )
           .toList(),
-      suggestions: (json['suggestions'] as List)
-          .map((e) => SuggestionModel.fromJson(e as Map<String, dynamic>))
+      suggestions: (json['suggestions'] as List? ?? const [])
+          .where((e) => e is Map)
+          .map(
+            (e) => SuggestionModel.fromJson((e as Map).cast<String, dynamic>()),
+          )
           .toList(),
-      analyzedAt: DateTime.parse(json['analyzedAt'] as String),
+      analyzedAt: _parseDate(json['analyzedAt']),
     );
   }
 }
@@ -44,10 +84,20 @@ class KeywordMatchModel extends KeywordMatch {
   });
 
   factory KeywordMatchModel.fromJson(Map<String, dynamic> json) {
+    int _intFromDynamic(dynamic value, {int fallback = 0}) {
+      if (value is int) return value;
+      if (value is num) return value.toInt();
+      if (value is String) {
+        final parsed = int.tryParse(value);
+        if (parsed != null) return parsed;
+      }
+      return fallback;
+    }
+
     return KeywordMatchModel(
-      keyword: json['keyword'] as String,
-      count: json['count'] as int,
-      weight: json['weight'] as String,
+      keyword: (json['keyword'] ?? '').toString(),
+      count: _intFromDynamic(json['count']),
+      weight: (json['weight'] ?? 'medium').toString(),
     );
   }
 }
@@ -61,9 +111,9 @@ class MissingKeywordModel extends MissingKeyword {
 
   factory MissingKeywordModel.fromJson(Map<String, dynamic> json) {
     return MissingKeywordModel(
-      keyword: json['keyword'] as String,
-      importance: json['importance'] as String,
-      category: json['category'] as String,
+      keyword: (json['keyword'] ?? '').toString(),
+      importance: (json['importance'] ?? 'medium').toString(),
+      category: (json['category'] ?? '').toString(),
     );
   }
 }
@@ -77,11 +127,17 @@ class SuggestionModel extends Suggestion {
   });
 
   factory SuggestionModel.fromJson(Map<String, dynamic> json) {
+    final dynamic rawTitle = json['title'] ?? json['category'] ?? 'Suggestion';
+    final dynamic rawDescription =
+        json['description'] ?? json['suggestion'] ?? '';
+    final dynamic rawPriority = json['priority'] ?? 'medium';
+    final dynamic rawCategory = json['category'] ?? json['title'] ?? 'General';
+
     return SuggestionModel(
-      title: json['title'] as String,
-      description: json['description'] as String,
-      priority: json['priority'] as String,
-      category: json['category'] as String,
+      title: rawTitle?.toString() ?? 'Suggestion',
+      description: rawDescription?.toString() ?? '',
+      priority: rawPriority?.toString() ?? 'medium',
+      category: rawCategory?.toString() ?? 'General',
     );
   }
 }

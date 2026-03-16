@@ -12,12 +12,12 @@ class AIService {
   }) async {
     final prompt =
         '''
-Analyze this resume for ATS (Applicant Tracking System) compatibility. Return a JSON object with these exact keys:
+Analyze this resume for ATS (Applicant Tracking System) compatibility. Return a JSON object with these exact keys and value types:
 - overallScore (integer 0-100)
 - scoreBreakdown: {formatting: int, keywordMatch: int, skills: int, experience: int, grammar: int}
 - matchedKeywords: list of {keyword: string, count: int, weight: string (high/medium/low)}
-- missingKeywords: list of {keyword: string, importance: string}
-- suggestions: list of {category: string, suggestion: string, priority: string}
+- missingKeywords: list of {keyword: string, importance: string, category: string}
+- suggestions: list of {title: string, description: string, priority: string, category: string}
 - analyzedAt: ISO date string
 
 Resume data: ${jsonEncode(resumeData)}
@@ -82,9 +82,10 @@ Return ONLY valid JSON, no markdown, no explanation.''';
       'missingKeywords': <Map<String, dynamic>>[],
       'suggestions': [
         {
-          'category': 'Error',
-          'suggestion': 'ATS analysis failed: $error',
+          'title': 'Analysis error',
+          'description': 'ATS analysis failed: $error',
           'priority': 'high',
+          'category': 'Error',
         },
       ],
       'analyzedAt': DateTime.now().toIso8601String(),

@@ -117,6 +117,12 @@ class ATSAnalysisPageState extends State<ATSAnalysisPage>
           buildMissingKeywords(analysis.missingKeywords),
           const SizedBox(height: 24),
 
+          // Improvement Suggestions
+          if (analysis.suggestions.isNotEmpty) ...[
+            buildSuggestions(analysis.suggestions),
+            const SizedBox(height: 24),
+          ],
+
           // Action Button
           ElevatedButton.icon(
             onPressed: () {
@@ -285,6 +291,89 @@ class ATSAnalysisPageState extends State<ATSAnalysisPage>
                   backgroundColor: getImportanceColor(
                     keyword.importance,
                   ).withValues(alpha: 0.1),
+                ),
+              );
+            }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildSuggestions(List<Suggestion> suggestions) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              AppStrings.suggestions,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 16),
+            ...suggestions.map((s) {
+              final priority = s.priority.toLowerCase();
+              Color chipColor;
+              switch (priority) {
+                case 'high':
+                  chipColor = AppColors.error;
+                  break;
+                case 'medium':
+                  chipColor = AppColors.warning;
+                  break;
+                default:
+                  chipColor = AppColors.info;
+              }
+
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('• '),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  s.title,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Chip(
+                                label: Text(priority.toUpperCase()),
+                                backgroundColor: chipColor.withValues(
+                                  alpha: 0.08,
+                                ),
+                                side: BorderSide(color: chipColor),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          if (s.category.isNotEmpty)
+                            Text(
+                              s.category,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: AppColors.textSecondaryLight,
+                              ),
+                            ),
+                          if (s.description.isNotEmpty) ...[
+                            const SizedBox(height: 4),
+                            Text(s.description),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               );
             }),

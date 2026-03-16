@@ -41,9 +41,14 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
   final List<Map<String, dynamic>> certifications = [];
   final List<Map<String, dynamic>> achievements = [];
 
+  late final String _resumeId;
+  bool _hasSavedOrAutoSaved = false;
+
   @override
   void initState() {
     super.initState();
+    _resumeId =
+        widget.resume?.id ?? 'resume_${DateTime.now().millisecondsSinceEpoch}';
     populateFromResume(widget.resume);
   }
 
@@ -926,9 +931,7 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
     }
 
     return Resume(
-      id:
-          widget.resume?.id ??
-          'resume_${DateTime.now().millisecondsSinceEpoch}',
+      id: _resumeId,
       userId: widget.resume?.userId ?? 'user',
       title: widget.resume?.title ?? 'My Resume',
       templateType: widget.resume?.templateType ?? widget.templateType,
@@ -1143,6 +1146,8 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
     return PopScope(
       canPop: true,
       onPopInvokedWithResult: (bool didPop, Object? result) {
+        if (!didPop || _hasSavedOrAutoSaved) return;
+
         final newResume = buildResumeFromForm();
         if (widget.resume == null) {
           context.read<ResumeBloc>().add(CreateResumeEvent(newResume));
@@ -1150,6 +1155,7 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
           context.read<ResumeBloc>().add(UpdateResumeEvent(newResume));
         }
         context.read<ResumeBloc>().add(const LoadAllResumesEvent());
+        _hasSavedOrAutoSaved = true;
       },
       child: Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -1165,6 +1171,8 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
                   context.read<ResumeBloc>().add(UpdateResumeEvent(newResume));
                 }
                 context.read<ResumeBloc>().add(const LoadAllResumesEvent());
+
+                _hasSavedOrAutoSaved = true;
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
