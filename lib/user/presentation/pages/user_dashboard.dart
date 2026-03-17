@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:resumebuilder/core/constants/app_routes.dart';
 import 'package:resumebuilder/core/services/mock_database_service.dart';
 import 'package:resumebuilder/core/utils/app_preferences.dart';
-import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
 import 'package:resumebuilder/features/admin/domain/entities/announcement.dart';
+import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_state.dart';
 import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
@@ -43,6 +43,7 @@ class UserDashboardState extends State<UserDashboard> {
     );
 
     if (confirmed == true) {
+      if (!mounted) return;
       context.read<ResumeBloc>().add(DeleteResumeEvent(resume.id));
     }
   }
@@ -106,11 +107,10 @@ class UserDashboardState extends State<UserDashboard> {
                     context,
                     AppRoutes.templateSelection,
                   ).then((_) {
-                    if (mounted) {
-                      context.read<ResumeBloc>().add(
-                        const LoadAllResumesEvent(),
-                      );
-                    }
+                    if (!context.mounted) return;
+                    context.read<ResumeBloc>().add(
+                      const LoadAllResumesEvent(),
+                    );
                   });
                 },
               ),
@@ -287,11 +287,10 @@ class UserDashboardState extends State<UserDashboard> {
                                                 AppRoutes.resumePreview,
                                                 arguments: resume,
                                               ).then((_) {
-                                                if (mounted) {
-                                                  context.read<ResumeBloc>().add(
-                                                    const LoadAllResumesEvent(),
-                                                  );
-                                                }
+                                                if (!context.mounted) return;
+                                                context.read<ResumeBloc>().add(
+                                                  const LoadAllResumesEvent(),
+                                                );
                                               });
                                             },
                                             child: Container(
@@ -414,11 +413,10 @@ class UserDashboardState extends State<UserDashboard> {
                                                 AppRoutes.resumePreview,
                                                 arguments: resume,
                                               ).then((_) {
-                                                if (mounted) {
-                                                  context.read<ResumeBloc>().add(
-                                                    const LoadAllResumesEvent(),
-                                                  );
-                                                }
+                                                if (!context.mounted) return;
+                                                context.read<ResumeBloc>().add(
+                                                  const LoadAllResumesEvent(),
+                                                );
                                               });
                                             },
                                           ),
@@ -452,9 +450,8 @@ class UserDashboardState extends State<UserDashboard> {
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () {
               Navigator.pushNamed(context, AppRoutes.resumeEditor).then((_) {
-                if (mounted) {
-                  context.read<ResumeBloc>().add(const LoadAllResumesEvent());
-                }
+                if (!context.mounted) return;
+                context.read<ResumeBloc>().add(const LoadAllResumesEvent());
               });
             },
             icon: const Icon(Icons.add_rounded),

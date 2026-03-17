@@ -276,7 +276,7 @@ class ManageUsersPageState extends State<ManageUsersPage> {
     required Color confirmColor,
     required VoidCallback onConfirm,
   }) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),

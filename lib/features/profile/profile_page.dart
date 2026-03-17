@@ -23,7 +23,7 @@ class ProfilePageState extends State<ProfilePage> {
   bool jobAlerts = false;
 
   void openNotifications(BuildContext context) {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -112,7 +112,7 @@ class ProfilePageState extends State<ProfilePage> {
         'flag': '🇮🇳',
       },
     ];
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -302,7 +302,7 @@ class ProfilePageState extends State<ProfilePage> {
     bool obscureConfirm = true;
     bool isSaving = false;
 
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -521,7 +521,7 @@ class ProfilePageState extends State<ProfilePage> {
                                       }
                                       setSheet(() => isSaving = true);
                                       // Simulate save delay
-                                      await Future.delayed(
+                                      await Future<void>.delayed(
                                         const Duration(milliseconds: 900),
                                       );
                                       setSheet(() => isSaving = false);
@@ -736,7 +736,7 @@ class ProfilePageState extends State<ProfilePage> {
                           style: TextStyle(color: AppColors.error),
                         ),
                         onTap: () {
-                          showDialog(
+                          showDialog<void>(
                             context: context,
                             builder: (context) => AlertDialog(
                               title: const Text('Logout'),

@@ -6,10 +6,10 @@ import 'package:resumebuilder/core/constants/app_strings.dart';
 import 'package:resumebuilder/core/utils/date_formatter.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_state.dart';
+import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
 import 'package:resumebuilder/features/resume/presentation/bloc/resume_bloc.dart';
 import 'package:resumebuilder/features/resume/presentation/bloc/resume_event.dart';
 import 'package:resumebuilder/features/resume/presentation/bloc/resume_state.dart';
-import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});

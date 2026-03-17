@@ -18,7 +18,6 @@ import 'package:resumebuilder/features/ats_analysis/presentation/pages/ats_analy
 import 'package:resumebuilder/features/auth/domain/entities/user.dart' as auth_user;
 import 'package:resumebuilder/features/auth/presentation/pages/splash_page.dart';
 import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
-import 'package:resumebuilder/features/resume/presentation/bloc/resume_bloc.dart';
 import 'package:resumebuilder/features/resume/presentation/pages/pdf_export_page.dart';
 import 'package:resumebuilder/injection_container.dart' as di;
 import 'package:resumebuilder/user/presentation/pages/ats_result_page.dart';
@@ -349,7 +348,7 @@ class PrivacyPage extends StatelessWidget {
             ),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
-              showDialog(
+              showDialog<void>(
                 context: context,
                 builder: (ctx) => AlertDialog(
                   title: const Text('Delete Account?'),

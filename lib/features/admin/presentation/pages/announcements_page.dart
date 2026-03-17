@@ -210,7 +210,7 @@ class AnnouncementsPageState extends State<AnnouncementsPage> {
     );
     bool isActive = announcement?.isActive ?? true;
 
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -368,7 +368,7 @@ class AnnouncementsPageState extends State<AnnouncementsPage> {
   }
 
   void showDeleteConfirm(BuildContext context, Announcement item) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),

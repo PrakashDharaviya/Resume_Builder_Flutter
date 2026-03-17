@@ -20,7 +20,7 @@ class AIService {
         <String>[];
     final experienceCount = (resumeData['experience'] as num?)?.toInt() ?? 0;
 
-    int _scoreSkills(int count) {
+    int scoreSkills(int count) {
       if (count >= 10) return 90;
       if (count >= 6) return 75;
       if (count >= 3) return 60;
@@ -28,14 +28,14 @@ class AIService {
       return 30;
     }
 
-    int _scoreExperience(int roles) {
+    int scoreExperience(int roles) {
       if (roles >= 4) return 90;
       if (roles >= 2) return 75;
       if (roles >= 1) return 60;
       return 40;
     }
 
-    int _scoreKeywordMatch(List<String> userSkills) {
+    int scoreKeywordMatch(List<String> userSkills) {
       const coreKeywords = <String>{
         'communication',
         'teamwork',
@@ -66,7 +66,7 @@ class AIService {
       return 45;
     }
 
-    int _scoreFormatting(List<String> userSkills, int roles) {
+    int scoreFormatting(List<String> userSkills, int roles) {
       // Rough proxy: having both skills and experience suggests basic structure.
       if (userSkills.length >= 6 && roles >= 2) return 85;
       if (userSkills.length >= 3 && roles >= 1) return 75;
@@ -74,7 +74,7 @@ class AIService {
       return 55;
     }
 
-    int _scoreGrammar(String name, List<String> userSkills) {
+    int scoreGrammar(String name, List<String> userSkills) {
       // Very naive: presence of basic fields -> assume acceptable grammar.
       final hasName = name.trim().isNotEmpty;
       final hasSkillsText = userSkills.isNotEmpty;
@@ -83,11 +83,11 @@ class AIService {
       return 60;
     }
 
-    final skillsScore = _scoreSkills(skills.length);
-    final experienceScore = _scoreExperience(experienceCount);
-    final keywordScore = _scoreKeywordMatch(skills);
-    final formattingScore = _scoreFormatting(skills, experienceCount);
-    final grammarScore = _scoreGrammar(firstName, skills);
+    final skillsScore = scoreSkills(skills.length);
+    final experienceScore = scoreExperience(experienceCount);
+    final keywordScore = scoreKeywordMatch(skills);
+    final formattingScore = scoreFormatting(skills, experienceCount);
+    final grammarScore = scoreGrammar(firstName, skills);
 
     final overallScore =
         ((skillsScore +
@@ -116,7 +116,7 @@ class AIService {
     final lowerSkills = skills.map((s) => s.toLowerCase()).toList();
     final missingKeywords = <Map<String, dynamic>>[];
 
-    void _addMissing(
+    void addMissing(
       Iterable<String> source,
       String category, {
       String importance = 'medium',
@@ -132,8 +132,8 @@ class AIService {
       }
     }
 
-    _addMissing(recommendedTechnical, 'Technical');
-    _addMissing(recommendedSoft, 'Soft Skill', importance: 'high');
+    addMissing(recommendedTechnical, 'Technical');
+    addMissing(recommendedSoft, 'Soft Skill', importance: 'high');
 
     // Suggestions based on simple rules.
     final suggestions = <Map<String, dynamic>>[];

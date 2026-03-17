@@ -63,7 +63,7 @@ class AuthCheckScreenState extends State<AuthCheckScreen>
   }
 
   void showBlockedDialog() {
-    showDialog(
+    showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(

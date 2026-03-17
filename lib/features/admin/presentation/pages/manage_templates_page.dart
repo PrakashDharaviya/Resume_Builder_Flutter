@@ -204,7 +204,7 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
     bool isActive = template?.isActive ?? true;
     String selectedType = template?.templateType ?? 'professional';
 
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -389,7 +389,7 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
   }
 
   void showDeleteConfirm(BuildContext context, ResumeTemplate template) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),

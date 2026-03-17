@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
-import 'package:resumebuilder/features/resume/presentation/widgets/template_renderers.dart';
 import 'package:resumebuilder/features/resume/presentation/widgets/template_renderer_factory.dart';
+import 'package:resumebuilder/features/resume/presentation/widgets/template_renderers.dart';
 
 class TemplateCard extends StatelessWidget {
   final ResumeTemplate template;

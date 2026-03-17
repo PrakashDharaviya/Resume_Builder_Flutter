@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:resumebuilder/admin/admin_routes.dart';
+import 'package:resumebuilder/admin/presentation/widgets/admin_drawer.dart';
 import 'package:resumebuilder/core/constants/app_colors.dart';
 import 'package:resumebuilder/core/services/mock_database_service.dart';
 import 'package:resumebuilder/core/utils/app_preferences.dart';
 import 'package:resumebuilder/features/admin/domain/entities/admin_stats.dart';
 import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
-import 'package:resumebuilder/admin/presentation/widgets/admin_drawer.dart';
 
 class AnalyticsPage extends StatelessWidget {
   const AnalyticsPage({super.key});

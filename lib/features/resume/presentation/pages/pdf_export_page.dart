@@ -55,7 +55,7 @@ class PDFExportPageState extends State<PDFExportPage> {
 
     // Simulate PDF generation progress
     for (int i = 0; i <= 100; i += 10) {
-      await Future.delayed(const Duration(milliseconds: 200));
+      await Future<void>.delayed(const Duration(milliseconds: 200));
       if (mounted) {
         setState(() {
           progress = i / 100;

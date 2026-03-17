@@ -1,6 +1,7 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'dart:math' as math;
 import 'package:resumebuilder/core/constants/app_colors.dart';
 import 'package:resumebuilder/core/constants/app_strings.dart';
 import 'package:resumebuilder/features/ats_analysis/domain/entities/ats_analysis.dart';

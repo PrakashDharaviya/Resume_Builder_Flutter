@@ -278,7 +278,7 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
 
   // ─── Bottom-sheet helper ─────────────────────────────────────────────────
   Future<void> showSheet(Widget form) async {
-    await showModalBottomSheet(
+    await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -1055,7 +1055,7 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
 
   void showLivePreview() {
     final resume = buildResumeFromForm();
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,

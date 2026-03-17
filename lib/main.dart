@@ -2,12 +2,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:resumebuilder/app_router.dart';
-import 'package:resumebuilder/firebase_options.dart';
 import 'package:resumebuilder/core/constants/app_routes.dart';
 import 'package:resumebuilder/core/constants/app_theme.dart';
 import 'package:resumebuilder/core/theme/theme_cubit.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:resumebuilder/features/resume/presentation/bloc/resume_bloc.dart';
+import 'package:resumebuilder/firebase_options.dart';
 import 'package:resumebuilder/injection_container.dart' as di;
 
 void main() async {

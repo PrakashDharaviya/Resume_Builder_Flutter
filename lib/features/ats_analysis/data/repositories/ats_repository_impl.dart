@@ -1,9 +1,10 @@
 import 'dart:async';
+
 import 'package:dartz/dartz.dart';
 import 'package:resumebuilder/core/errors/failures.dart';
+import 'package:resumebuilder/features/ats_analysis/data/datasources/ats_remote_data_source.dart';
 import 'package:resumebuilder/features/ats_analysis/domain/entities/ats_analysis.dart';
 import 'package:resumebuilder/features/ats_analysis/domain/repositories/ats_repository.dart';
-import 'package:resumebuilder/features/ats_analysis/data/datasources/ats_remote_data_source.dart';
 
 class ATSRepositoryImpl implements ATSRepository {
   final ATSRemoteDataSource remoteDataSource;
