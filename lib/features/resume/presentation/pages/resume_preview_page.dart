@@ -3,6 +3,7 @@ import 'package:resumebuilder/core/constants/app_colors.dart';
 import 'package:resumebuilder/core/constants/app_routes.dart';
 import 'package:resumebuilder/core/constants/app_strings.dart';
 import 'package:resumebuilder/core/utils/date_formatter.dart';
+import 'package:resumebuilder/core/utils/pdf_helper.dart';
 import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
 
 class ResumePreviewPage extends StatelessWidget {
@@ -31,10 +32,26 @@ class ResumePreviewPage extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.share),
-            onPressed: () {
+            onPressed: () async {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Share functionality - UI only')),
+                const SnackBar(content: Text('Generating PDF for sharing...')),
               );
+              try {
+                final pdfBytes = await PDFHelper.generateResumePDF(resume);
+                final fileName =
+                    '${resume.title.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_')}.pdf';
+                await PDFHelper.sharePDF(pdfBytes, fileName);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Failed to share: $e')),
+                  );
+                }
+              }
             },
             tooltip: 'Share',
           ),

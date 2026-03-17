@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'dart:typed_data';
-
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
-
+import 'package:share_plus/share_plus.dart';
 import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
 
 class PDFHelper {
@@ -329,7 +329,14 @@ class PDFHelper {
 
   /// Opens the platform share sheet with the PDF attached.
   static Future<void> sharePDF(Uint8List pdfBytes, String fileName) async {
-    await Printing.sharePdf(bytes: pdfBytes, filename: fileName);
+    if (kIsWeb) {
+      await Printing.sharePdf(bytes: pdfBytes, filename: fileName);
+    } else {
+      final tempDir = await getTemporaryDirectory();
+      final file = File('${tempDir.path}/$fileName');
+      await file.writeAsBytes(pdfBytes);
+      await Share.shareXFiles([XFile(file.path)], text: 'Check out my resume - $fileName');
+    }
   }
 
   // ── helpers ──────────────────────────────────────────────
