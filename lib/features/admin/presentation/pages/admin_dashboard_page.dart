@@ -350,6 +350,17 @@ class AdminDashboardPageState extends State<AdminDashboardPage>
                                   ),
                                   isDark: isDark,
                                 ),
+                                quickActionTile(
+                                  context,
+                                  icon: Icons.notifications_active_outlined,
+                                  title: 'Push Notifications',
+                                  subtitle: 'Send broadcasts to users',
+                                  color: const Color(0xFF3B82F6),
+                                  onTap: () => navigateAndReload(
+                                    AppRoutes.sendNotification,
+                                  ),
+                                  isDark: isDark,
+                                ),
                                 const SizedBox(height: 20),
                               ],
                             ),
@@ -560,6 +571,16 @@ class AdminDashboardPageState extends State<AdminDashboardPage>
             onTap: () {
               Navigator.pop(context);
               navigateAndReload(AppRoutes.announcements);
+            },
+            isDark: isDark,
+          ),
+          drawerItem(
+            context,
+            icon: Icons.notifications_active_rounded,
+            title: 'Push Notifications',
+            onTap: () {
+              Navigator.pop(context);
+              navigateAndReload(AppRoutes.sendNotification);
             },
             isDark: isDark,
           ),

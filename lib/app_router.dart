@@ -6,6 +6,7 @@ import 'package:resumebuilder/admin/presentation/pages/announcements_page.dart';
 import 'package:resumebuilder/admin/presentation/pages/ats_settings_page.dart';
 import 'package:resumebuilder/admin/presentation/pages/manage_templates_page.dart';
 import 'package:resumebuilder/admin/presentation/pages/manage_users_page.dart';
+import 'package:resumebuilder/features/admin/presentation/pages/send_notification_page.dart';
 import 'package:resumebuilder/auth/auth_check_screen.dart';
 import 'package:resumebuilder/auth/login_page.dart';
 import 'package:resumebuilder/auth/register_page.dart';
@@ -164,6 +165,14 @@ class AppRouter {
           builder: (_) => BlocProvider<AdminBloc>(
             create: (_) => di.sl<AdminBloc>(),
             child: const AnnouncementsPage(),
+          ),
+        );
+
+      case AppRoutes.sendNotification:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<AdminBloc>(
+            create: (_) => di.sl<AdminBloc>(),
+            child: const SendNotificationPage(),
           ),
         );
 

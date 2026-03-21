@@ -9,11 +9,13 @@ import 'package:resumebuilder/core/utils/app_preferences.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:resumebuilder/features/resume/presentation/bloc/resume_bloc.dart';
 import 'package:resumebuilder/firebase_options.dart';
+import 'package:resumebuilder/core/services/notification_service.dart';
 import 'package:resumebuilder/injection_container.dart' as di;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await NotificationService.initialize();
   await di.init();
   runApp(const ResumeIQApp());
 }

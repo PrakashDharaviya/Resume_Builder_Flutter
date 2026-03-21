@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:resumebuilder/core/constants/app_colors.dart';
 import 'package:resumebuilder/core/constants/app_routes.dart';
 import 'package:resumebuilder/core/constants/app_strings.dart';
+import 'package:resumebuilder/core/services/notification_service.dart';
 import 'package:resumebuilder/core/utils/app_preferences.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_event.dart';
@@ -17,10 +19,68 @@ class ProfilePage extends StatefulWidget {
 
 class ProfilePageState extends State<ProfilePage> {
   // Notification prefs
-  bool pushNotif = true;
+  bool pushNotif = false;
   bool emailNotif = true;
   bool resumeAlerts = true;
   bool jobAlerts = false;
+  bool _isLoadingPrefs = false;
+  bool _prefsLoaded = false;
+  String? _cachedUid;
+
+  Future<void> _loadNotificationPrefs(String uid) async {
+    if (_prefsLoaded || _isLoadingPrefs) return;
+    _isLoadingPrefs = true;
+    _cachedUid = uid;
+    try {
+      final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      if (doc.exists && doc.data()!.containsKey('notificationsEnabled')) {
+        setState(() {
+          pushNotif = doc.data()!['notificationsEnabled'] ?? false;
+          _prefsLoaded = true;
+        });
+      } else {
+        setState(() {
+          _prefsLoaded = true;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading prefs: $e');
+      _prefsLoaded = true;
+    }
+  }
+
+  Future<void> _updatePushNotificationConfig(bool value, StateSetter setSheet) async {
+    if (_cachedUid == null) return;
+    
+    // Optimistic UI update
+    setState(() => pushNotif = value);
+    setSheet(() {});
+
+    try {
+      String? fcmToken;
+      if (value) {
+        final authorized = await NotificationService.requestPermission();
+        if (authorized) {
+          fcmToken = await NotificationService.getToken();
+        } else {
+          // Revert if denied
+          setState(() => pushNotif = false);
+          setSheet(() {});
+          return;
+        }
+      }
+
+      await FirebaseFirestore.instance.collection('users').doc(_cachedUid).set({
+        'notificationsEnabled': value,
+        if (fcmToken != null) 'fcmToken': fcmToken,
+      }, SetOptions(merge: true));
+    } catch (e) {
+      debugPrint('Error updating push config: $e');
+      // Revert on error
+      setState(() => pushNotif = !value);
+      setSheet(() {});
+    }
+  }
 
   void openNotifications(BuildContext context) {
     showModalBottomSheet<void>(
@@ -44,10 +104,7 @@ class ProfilePageState extends State<ProfilePage> {
                 title: 'Push Notifications',
                 subtitle: 'Receive alerts on your device',
                 value: pushNotif,
-                onChanged: (v) {
-                  setState(() => pushNotif = v);
-                  setSheet(() {});
-                },
+                onChanged: (v) => _updatePushNotificationConfig(v, setSheet),
               ),
               const Divider(height: 1, indent: 16),
               switchTile(
@@ -604,6 +661,7 @@ class ProfilePageState extends State<ProfilePage> {
           }
 
           final user = state.user;
+          _loadNotificationPrefs(user.uid);
 
           return SingleChildScrollView(
             padding: const EdgeInsets.only(top: 24, left: 16, right: 16),

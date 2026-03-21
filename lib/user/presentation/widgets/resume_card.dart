@@ -6,12 +6,14 @@ class ResumeCard extends StatelessWidget {
   final Resume resume;
   final VoidCallback? onTap;
   final VoidCallback? onDelete;
+  final VoidCallback? onEdit;
 
   const ResumeCard({
     super.key,
     required this.resume,
     this.onTap,
     this.onDelete,
+    this.onEdit,
   });
 
   @override
@@ -56,6 +58,12 @@ class ResumeCard extends StatelessWidget {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (onEdit != null)
+              IconButton(
+                icon: const Icon(Icons.edit_outlined, color: Color(0xFF10B981)),
+                tooltip: 'Edit Resume',
+                onPressed: onEdit,
+              ),
             IconButton(
               icon: const Icon(Icons.delete_outline, color: Color(0xFFEF4444)),
               tooltip: 'Delete Resume',

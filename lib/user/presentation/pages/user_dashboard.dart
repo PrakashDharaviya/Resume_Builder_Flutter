@@ -407,6 +407,18 @@ class UserDashboardState extends State<UserDashboard> {
                                             resume: resume,
                                             onDelete: () =>
                                                 confirmDeleteResume(resume),
+                                            onEdit: () {
+                                              Navigator.pushNamed(
+                                                context,
+                                                AppRoutes.resumeEditor,
+                                                arguments: resume,
+                                              ).then((_) {
+                                                if (!context.mounted) return;
+                                                context.read<ResumeBloc>().add(
+                                                  const LoadAllResumesEvent(),
+                                                );
+                                              });
+                                            },
                                             onTap: () {
                                               Navigator.pushNamed(
                                                 context,

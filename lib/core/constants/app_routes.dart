@@ -36,4 +36,5 @@ class AppRoutes {
   static const String analytics = '/admin/analytics';
   static const String announcements = '/admin/announcements';
   static const String templatePreview = '/admin/template-preview';
+  static const String sendNotification = '/admin/send-notification';
 }
