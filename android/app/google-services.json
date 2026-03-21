@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "465329982315-tmsh4ug65bvv4ib2pava9voj33o8fvm7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.resumebuilder",
+            "certificate_hash": "55933f036c2d5f3450835dc181411264a3bc10a5"
+          }
+        },
+        {
           "client_id": "465329982315-bg09qe87n32c633q9ogubk32dhsrje82.apps.googleusercontent.com",
           "client_type": 3
         }

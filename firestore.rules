@@ -1,0 +1,29 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ── Global Collections ──────────────────────────────────────
+    // Anyone can read templates, announcements, and config
+    match /templates/{document=**} {
+      allow read: if true;
+    }
+    match /announcements/{document=**} {
+      allow read: if true;
+    }
+    match /config/{document=**} {
+      allow read: if true;
+    }
+
+    // ── Users Collection ────────────────────────────────────────
+    // Each user can read/write ONLY their own profile document.
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      // ── Resumes Sub-collection ────────────────────────────────
+      // Each user can CRUD only their own resumes.
+      match /resumes/{resumeId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+  }
+}

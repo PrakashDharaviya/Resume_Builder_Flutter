@@ -758,7 +758,7 @@ class ProfilePageState extends State<ProfilePage> {
                                     Navigator.of(context).pop();
                                     Navigator.of(
                                       context,
-                                    ).pushReplacementNamed(AppRoutes.login);
+                                    ).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.error,

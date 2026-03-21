@@ -5,6 +5,7 @@ import 'package:resumebuilder/app_router.dart';
 import 'package:resumebuilder/core/constants/app_routes.dart';
 import 'package:resumebuilder/core/constants/app_theme.dart';
 import 'package:resumebuilder/core/theme/theme_cubit.dart';
+import 'package:resumebuilder/core/utils/app_preferences.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:resumebuilder/features/resume/presentation/bloc/resume_bloc.dart';
 import 'package:resumebuilder/firebase_options.dart';
@@ -28,8 +29,9 @@ class ResumeIQApp extends StatelessWidget {
         BlocProvider<AuthBloc>(create: (_) => di.sl<AuthBloc>()),
         BlocProvider<ResumeBloc>(create: (_) => di.sl<ResumeBloc>()),
       ],
-      child: BlocBuilder<ThemeCubit, ThemeMode>(
-        builder: (context, themeMode) => MaterialApp(
+      child: ValueListenableBuilder<ThemeMode>(
+        valueListenable: themeNotifier,
+        builder: (context, themeMode, _) => MaterialApp(
           title: 'ResumeIQ',
           debugShowCheckedModeBanner: false,
           theme: AppTheme.lightTheme,

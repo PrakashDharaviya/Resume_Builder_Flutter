@@ -156,6 +156,7 @@ class AuthCheckScreenState extends State<AuthCheckScreen>
               const SizedBox(height: 24),
               Text(
                 'Welcome, ${widget.user.displayName}!',
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
@@ -167,6 +168,7 @@ class AuthCheckScreenState extends State<AuthCheckScreen>
                 widget.user.isAdmin
                     ? 'Redirecting to Admin Panel...'
                     : 'Setting up your workspace...',
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
                   color: isDark

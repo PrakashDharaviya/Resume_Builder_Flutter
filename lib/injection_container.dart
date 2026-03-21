@@ -1,7 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart'
+    show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:get_it/get_it.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:resumebuilder/api_keys.dart';
 import 'package:resumebuilder/core/network/network_info.dart';
-import 'package:resumebuilder/core/services/ai_service.dart';
 import 'package:resumebuilder/core/services/firebase_service.dart';
+import 'package:resumebuilder/core/services/gemini_ai_service.dart';
 import 'package:resumebuilder/core/theme/theme_cubit.dart';
 // Admin
 import 'package:resumebuilder/features/admin/data/datasources/admin_mock_data_source.dart';
@@ -25,7 +31,7 @@ import 'package:resumebuilder/features/auth/domain/usecases/sign_out.dart';
 import 'package:resumebuilder/features/auth/domain/usecases/sign_up_with_email.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_bloc.dart';
 // Resume
-import 'package:resumebuilder/features/resume/data/datasources/resume_local_data_source.dart';
+import 'package:resumebuilder/features/resume/data/datasources/resume_remote_data_source.dart';
 import 'package:resumebuilder/features/resume/data/repositories/resume_repository_impl.dart';
 import 'package:resumebuilder/features/resume/domain/repositories/resume_repository.dart';
 import 'package:resumebuilder/features/resume/domain/usecases/create_resume.dart';
@@ -66,7 +72,16 @@ Future<void> init() async {
 
   // Data sources
   sl.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(firebaseService: sl()),
+    () => AuthRemoteDataSourceImpl(
+      firebaseAuth: FirebaseAuth.instance,
+      firebaseFirestore: FirebaseFirestore.instance,
+      googleSignIn: GoogleSignIn(
+        clientId:
+            (kIsWeb || defaultTargetPlatform == TargetPlatform.windows)
+                ? '465329982315-bg09qe87n32c633q9ogubk32dhsrje82.apps.googleusercontent.com'
+                : null,
+      ),
+    ),
   );
 
   // ============ Resume ============
@@ -90,12 +105,15 @@ Future<void> init() async {
 
   // Repository
   sl.registerLazySingleton<ResumeRepository>(
-    () => ResumeRepositoryImpl(localDataSource: sl()),
+    () => ResumeRepositoryImpl(remoteDataSource: sl()),
   );
 
   // Data sources
-  sl.registerLazySingleton<ResumeLocalDataSource>(
-    () => ResumeLocalDataSourceImpl(),
+  sl.registerLazySingleton<ResumeRemoteDataSource>(
+    () => ResumeRemoteDataSourceImpl(
+      firebaseFirestore: FirebaseFirestore.instance,
+      firebaseAuth: FirebaseAuth.instance,
+    ),
   );
 
   // ============ ATS Analysis ============
@@ -112,7 +130,7 @@ Future<void> init() async {
 
   // Data sources
   sl.registerLazySingleton<ATSRemoteDataSource>(
-    () => ATSRemoteDataSourceImpl(aiService: sl()),
+    () => ATSRemoteDataSourceImpl(geminiAIService: sl()),
   );
 
   //! Core
@@ -122,7 +140,9 @@ Future<void> init() async {
   // Services
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl());
   sl.registerLazySingleton(() => FirebaseService());
-  sl.registerLazySingleton(() => AIService());
+  sl.registerLazySingleton(() => GeminiAIService(
+    apiKey: geminiApiKey,
+  ));
 
   // ============ Admin ============
   // Bloc

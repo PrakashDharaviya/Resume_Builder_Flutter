@@ -1,4 +1,4 @@
-import 'package:resumebuilder/core/services/ai_service.dart';
+import 'package:resumebuilder/core/services/gemini_ai_service.dart';
 import 'package:resumebuilder/features/ats_analysis/data/models/ats_analysis_model.dart';
 
 abstract class ATSRemoteDataSource {
@@ -6,15 +6,16 @@ abstract class ATSRemoteDataSource {
 }
 
 class ATSRemoteDataSourceImpl implements ATSRemoteDataSource {
-  final AIService aiService;
+  final GeminiAIService geminiAIService;
 
-  ATSRemoteDataSourceImpl({required this.aiService});
+  ATSRemoteDataSourceImpl({required this.geminiAIService});
 
   @override
   Future<ATSAnalysisModel> analyzeResume(
     Map<String, dynamic> resumeData,
   ) async {
-    final result = await aiService.analyzeResume(resumeData: resumeData);
+    final result =
+        await geminiAIService.analyzeResume(resumeData: resumeData);
     return ATSAnalysisModel.fromJson(result);
   }
 }
