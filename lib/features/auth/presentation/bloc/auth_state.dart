@@ -37,3 +37,22 @@ class AuthError extends AuthState {
   @override
   List<Object?> get props => [message];
 }
+
+class ProfileUpdateSuccess extends AuthState {
+  final User user;
+  final String message;
+
+  const ProfileUpdateSuccess({required this.user, required this.message});
+
+  @override
+  List<Object?> get props => [user, message];
+}
+
+class PasswordChangeSuccess extends AuthState {
+  final String message;
+
+  const PasswordChangeSuccess({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}

@@ -25,6 +25,17 @@ abstract class AuthRemoteDataSource {
 
   Future<void> resetPassword(String email);
 
+  Future<UserModel> updateProfile({
+    required String displayName,
+    required String email,
+    String? currentPassword,
+  });
+
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  });
+
   UserModel? getCurrentUser();
 
   bool isSignedIn();
@@ -274,6 +285,86 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       _handleFirebaseAuthError(e);
     } catch (e) {
       throw AuthException('Password reset failed: ${e.toString()}');
+    }
+  }
+
+  // ── Update Profile ──────────────────────────────────────────────────────
+
+  @override
+  Future<UserModel> updateProfile({
+    required String displayName,
+    required String email,
+    String? currentPassword,
+  }) async {
+    try {
+      final user = firebaseAuth.currentUser;
+      if (user == null) {
+        throw const AuthException('No authenticated user found.');
+      }
+
+      // Update display name in Firebase Auth
+      await user.updateDisplayName(displayName);
+
+      // If email changed, re-authenticate first then update
+      if (email != user.email) {
+        if (currentPassword == null || currentPassword.isEmpty) {
+          throw const AuthException(
+            'Current password is required to change email.',
+          );
+        }
+        // Re-authenticate
+        final credential = firebase_auth.EmailAuthProvider.credential(
+          email: user.email!,
+          password: currentPassword,
+        );
+        await user.reauthenticateWithCredential(credential);
+        await user.verifyBeforeUpdateEmail(email);
+      }
+
+      // Update Firestore document
+      await firebaseFirestore.collection('users').doc(user.uid).set({
+        'displayName': displayName,
+        'email': email,
+      }, SetOptions(merge: true));
+
+      return _userModelFromFirebaseUser(user);
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      _handleFirebaseAuthError(e);
+    } on AuthException {
+      rethrow;
+    } catch (e) {
+      throw AuthException('Profile update failed: ${e.toString()}');
+    }
+  }
+
+  // ── Change Password ─────────────────────────────────────────────────────
+
+  @override
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    try {
+      final user = firebaseAuth.currentUser;
+      if (user == null) {
+        throw const AuthException('No authenticated user found.');
+      }
+
+      // Re-authenticate with current password
+      final credential = firebase_auth.EmailAuthProvider.credential(
+        email: user.email!,
+        password: currentPassword,
+      );
+      await user.reauthenticateWithCredential(credential);
+
+      // Update to new password
+      await user.updatePassword(newPassword);
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      _handleFirebaseAuthError(e);
+    } on AuthException {
+      rethrow;
+    } catch (e) {
+      throw AuthException('Password change failed: ${e.toString()}');
     }
   }
 

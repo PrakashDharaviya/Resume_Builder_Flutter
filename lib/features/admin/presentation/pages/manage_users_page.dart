@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:resumebuilder/core/constants/app_colors.dart';
+import 'package:resumebuilder/core/constants/app_routes.dart';
 import 'package:resumebuilder/core/utils/app_preferences.dart';
+import 'package:resumebuilder/admin/presentation/widgets/admin_drawer.dart';
 import 'package:resumebuilder/features/admin/presentation/bloc/admin_bloc.dart';
 import 'package:resumebuilder/features/admin/presentation/bloc/admin_event.dart';
 import 'package:resumebuilder/features/admin/presentation/bloc/admin_state.dart';
@@ -70,6 +72,7 @@ class ManageUsersPageState extends State<ManageUsersPage> {
           ),
         ],
       ),
+      drawer: const AdminDrawer(currentRoute: AppRoutes.manageUsers),
       body: LayoutBuilder(
         builder: (ctx, lc) {
           final isNarrow = lc.maxWidth < 400;

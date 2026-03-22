@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:resumebuilder/core/constants/app_colors.dart';
+import 'package:resumebuilder/core/constants/app_routes.dart';
 import 'package:resumebuilder/core/utils/app_preferences.dart';
+import 'package:resumebuilder/admin/presentation/widgets/admin_drawer.dart';
 import 'package:resumebuilder/features/admin/presentation/bloc/admin_bloc.dart';
 import 'package:resumebuilder/features/admin/presentation/bloc/admin_event.dart';
 
@@ -87,6 +89,7 @@ class _SendNotificationPageState extends State<SendNotificationPage> {
         centerTitle: true,
         elevation: 0,
       ),
+      drawer: const AdminDrawer(currentRoute: AppRoutes.sendNotification),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Center(

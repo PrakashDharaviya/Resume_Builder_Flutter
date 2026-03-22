@@ -2,28 +2,42 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    
+    // Check if the current user is an admin
+    function isAdmin() {
+      return request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
     // ── Global Collections ──────────────────────────────────────
     // Anyone can read templates, announcements, and config
     match /templates/{document=**} {
       allow read: if true;
+      allow write: if isAdmin();
     }
     match /announcements/{document=**} {
       allow read: if true;
+      allow write: if isAdmin();
     }
     match /config/{document=**} {
       allow read: if true;
+      allow write: if isAdmin();
     }
 
     // ── Users Collection ────────────────────────────────────────
-    // Each user can read/write ONLY their own profile document.
+    // Admins can read all users. Regular users can only read/write their own profile.
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read, write: if request.auth != null && (request.auth.uid == userId || isAdmin());
 
       // ── Resumes Sub-collection ────────────────────────────────
-      // Each user can CRUD only their own resumes.
       match /resumes/{resumeId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
+        allow read, write: if request.auth != null && (request.auth.uid == userId || isAdmin());
       }
+    }
+    
+    // ── Collection Group Queries ────────────────────────────────
+    // Required for the Admin Dashboard to count all resumes globally
+    match /{path=**}/resumes/{resumeId} {
+      allow read: if isAdmin();
     }
   }
 }

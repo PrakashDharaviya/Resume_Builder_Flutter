@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:resumebuilder/admin/admin_routes.dart';
 import 'package:resumebuilder/core/constants/app_routes.dart';
 import 'package:resumebuilder/core/utils/app_preferences.dart';
 
@@ -38,37 +37,37 @@ class AdminDrawer extends StatelessWidget {
             context,
             Icons.dashboard_rounded,
             'Dashboard',
-            AdminRoutes.dashboard,
+            AppRoutes.adminDashboard,
           ),
           item(
             context,
             Icons.people_rounded,
             'Users',
-            AdminRoutes.manageUsers,
+            AppRoutes.manageUsers,
           ),
           item(
             context,
             Icons.style_rounded,
             'Templates',
-            AdminRoutes.manageTemplates,
+            AppRoutes.manageTemplates,
           ),
           item(
             context,
             Icons.tune_rounded,
             'ATS Settings',
-            AdminRoutes.atsSettings,
+            AppRoutes.atsSettings,
           ),
           item(
             context,
             Icons.insights_rounded,
             'Analytics',
-            AdminRoutes.analytics,
+            AppRoutes.analytics,
           ),
           item(
             context,
             Icons.campaign_rounded,
             'Announcements',
-            AdminRoutes.announcements,
+            AppRoutes.announcements,
           ),
           const Divider(height: 24),
           ValueListenableBuilder<ThemeMode>(

@@ -1,9 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:resumebuilder/features/auth/domain/usecases/change_password.dart';
 import 'package:resumebuilder/features/auth/domain/usecases/get_current_user.dart';
 import 'package:resumebuilder/features/auth/domain/usecases/sign_in_with_email.dart';
 import 'package:resumebuilder/features/auth/domain/usecases/sign_in_with_google.dart';
 import 'package:resumebuilder/features/auth/domain/usecases/sign_out.dart';
 import 'package:resumebuilder/features/auth/domain/usecases/sign_up_with_email.dart';
+import 'package:resumebuilder/features/auth/domain/usecases/update_profile.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_event.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_state.dart';
 
@@ -13,6 +15,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final SignInWithGoogle signInWithGoogle;
   final SignOut signOut;
   final GetCurrentUser getCurrentUser;
+  final UpdateProfile updateProfile;
+  final ChangePassword changePassword;
 
   AuthBloc({
     required this.signInWithEmail,
@@ -20,12 +24,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.signInWithGoogle,
     required this.signOut,
     required this.getCurrentUser,
+    required this.updateProfile,
+    required this.changePassword,
   }) : super(const AuthInitial()) {
     on<SignInWithEmailEvent>(onSignInWithEmail);
     on<SignUpWithEmailEvent>(onSignUpWithEmail);
     on<SignInWithGoogleEvent>(onSignInWithGoogle);
     on<SignOutEvent>(onSignOut);
     on<CheckAuthStatusEvent>(onCheckAuthStatus);
+    on<UpdateProfileEvent>(onUpdateProfile);
+    on<ChangePasswordEvent>(onChangePassword);
   }
 
   Future<void> onSignInWithEmail(
@@ -98,5 +106,45 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(const AuthUnauthenticated());
       }
     });
+  }
+
+  Future<void> onUpdateProfile(
+    UpdateProfileEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthLoading());
+
+    final result = await updateProfile(
+      displayName: event.displayName,
+      email: event.email,
+      currentPassword: event.currentPassword,
+    );
+
+    result.fold(
+      (failure) => emit(AuthError(message: failure.message)),
+      (user) => emit(ProfileUpdateSuccess(
+        user: user,
+        message: 'Profile updated successfully!',
+      )),
+    );
+  }
+
+  Future<void> onChangePassword(
+    ChangePasswordEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthLoading());
+
+    final result = await changePassword(
+      currentPassword: event.currentPassword,
+      newPassword: event.newPassword,
+    );
+
+    result.fold(
+      (failure) => emit(AuthError(message: failure.message)),
+      (_) => emit(const PasswordChangeSuccess(
+        message: 'Password changed successfully!',
+      )),
+    );
   }
 }

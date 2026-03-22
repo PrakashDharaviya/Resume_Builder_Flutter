@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:resumebuilder/admin/admin_routes.dart';
 import 'package:resumebuilder/admin/presentation/widgets/admin_drawer.dart';
 import 'package:resumebuilder/core/constants/app_colors.dart';
+import 'package:resumebuilder/core/constants/app_routes.dart';
 import 'package:resumebuilder/core/services/mock_database_service.dart';
 import 'package:resumebuilder/core/utils/app_preferences.dart';
+import 'package:resumebuilder/features/admin/presentation/bloc/admin_bloc.dart';
 import 'package:resumebuilder/features/admin/domain/entities/admin_stats.dart';
 import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
 
@@ -22,7 +23,7 @@ class AnalyticsPage extends StatelessWidget {
         if (!snapshot.hasData) {
           return Scaffold(
             backgroundColor: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
-            drawer: const AdminDrawer(currentRoute: AdminRoutes.analytics),
+            drawer: const AdminDrawer(currentRoute: AppRoutes.analytics),
             appBar: AppBar(title: const Text('Analytics', style: TextStyle(fontWeight: FontWeight.w700)), centerTitle: true),
             body: const Center(child: CircularProgressIndicator()),
           );
@@ -44,7 +45,7 @@ class AnalyticsPage extends StatelessWidget {
       backgroundColor: isDark
           ? AppColors.backgroundDark
           : AppColors.backgroundLight,
-      drawer: const AdminDrawer(currentRoute: AdminRoutes.analytics),
+      drawer: const AdminDrawer(currentRoute: AppRoutes.analytics),
       appBar: AppBar(
         title: const Text(
           'Analytics',

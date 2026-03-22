@@ -43,3 +43,31 @@ class SignOutEvent extends AuthEvent {
 class CheckAuthStatusEvent extends AuthEvent {
   const CheckAuthStatusEvent();
 }
+
+class UpdateProfileEvent extends AuthEvent {
+  final String displayName;
+  final String email;
+  final String? currentPassword;
+
+  const UpdateProfileEvent({
+    required this.displayName,
+    required this.email,
+    this.currentPassword,
+  });
+
+  @override
+  List<Object?> get props => [displayName, email, currentPassword];
+}
+
+class ChangePasswordEvent extends AuthEvent {
+  final String currentPassword;
+  final String newPassword;
+
+  const ChangePasswordEvent({
+    required this.currentPassword,
+    required this.newPassword,
+  });
+
+  @override
+  List<Object?> get props => [currentPassword, newPassword];
+}

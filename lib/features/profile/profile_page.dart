@@ -20,9 +20,6 @@ class ProfilePage extends StatefulWidget {
 class ProfilePageState extends State<ProfilePage> {
   // Notification prefs
   bool pushNotif = false;
-  bool emailNotif = true;
-  bool resumeAlerts = true;
-  bool jobAlerts = false;
   bool _isLoadingPrefs = false;
   bool _prefsLoaded = false;
   String? _cachedUid;
@@ -35,7 +32,7 @@ class ProfilePageState extends State<ProfilePage> {
       final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
       if (doc.exists && doc.data()!.containsKey('notificationsEnabled')) {
         setState(() {
-          pushNotif = doc.data()!['notificationsEnabled'] ?? false;
+          pushNotif = (doc.data()!['notificationsEnabled'] as bool?) ?? false;
           _prefsLoaded = true;
         });
       } else {
@@ -105,45 +102,6 @@ class ProfilePageState extends State<ProfilePage> {
                 subtitle: 'Receive alerts on your device',
                 value: pushNotif,
                 onChanged: (v) => _updatePushNotificationConfig(v, setSheet),
-              ),
-              const Divider(height: 1, indent: 16),
-              switchTile(
-                ctx,
-                setSheet,
-                icon: Icons.email_outlined,
-                title: 'Email Notifications',
-                subtitle: 'Get updates in your inbox',
-                value: emailNotif,
-                onChanged: (v) {
-                  setState(() => emailNotif = v);
-                  setSheet(() {});
-                },
-              ),
-              const Divider(height: 1, indent: 16),
-              switchTile(
-                ctx,
-                setSheet,
-                icon: Icons.description_outlined,
-                title: 'Resume Alerts',
-                subtitle: 'Notify when resume is viewed',
-                value: resumeAlerts,
-                onChanged: (v) {
-                  setState(() => resumeAlerts = v);
-                  setSheet(() {});
-                },
-              ),
-              const Divider(height: 1, indent: 16),
-              switchTile(
-                ctx,
-                setSheet,
-                icon: Icons.work_outline,
-                title: 'Job Match Alerts',
-                subtitle: 'Get notified of matching jobs',
-                value: jobAlerts,
-                onChanged: (v) {
-                  setState(() => jobAlerts = v);
-                  setSheet(() {});
-                },
               ),
               const SizedBox(height: 24),
             ],
@@ -335,7 +293,7 @@ class ProfilePageState extends State<ProfilePage> {
         subtitle,
         style: const TextStyle(fontSize: 12, color: AppColors.textSecondaryLight),
       ),
-      trailing: Switch.adaptive(
+      trailing: Switch(
         value: value,
         onChanged: onChanged,
         activeTrackColor: AppColors.primary,
@@ -365,283 +323,390 @@ class ProfilePageState extends State<ProfilePage> {
       backgroundColor: Colors.transparent,
       builder: (_) => StatefulBuilder(
         builder: (ctx, setSheet) {
-          return Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(ctx).viewInsets.bottom,
-            ),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Theme.of(ctx).scaffoldBackgroundColor,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(20),
-                ),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Handle
-                  Container(
-                    margin: const EdgeInsets.only(top: 12, bottom: 4),
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 8,
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.edit_outlined,
-                          color: AppColors.primary,
+          return BlocListener<AuthBloc, AuthState>(
+            listener: (blocCtx, state) {
+              if (state is ProfileUpdateSuccess) {
+                setSheet(() => isSaving = false);
+                if (ctx.mounted) {
+                  // Check if password also needs changing
+                  if (newPassCtrl.text.isNotEmpty && oldPassCtrl.text.isNotEmpty) {
+                    // Dispatch password change after profile update
+                    blocCtx.read<AuthBloc>().add(
+                      ChangePasswordEvent(
+                        currentPassword: oldPassCtrl.text,
+                        newPassword: newPassCtrl.text,
+                      ),
+                    );
+                  } else {
+                    Navigator.of(ctx).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Row(
+                          children: [
+                            const Icon(Icons.check_circle, color: Colors.white),
+                            const SizedBox(width: 10),
+                            Expanded(child: Text(state.message)),
+                          ],
                         ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Edit Profile',
-                          style: Theme.of(ctx).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
+                        backgroundColor: AppColors.success,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    );
+                    // Re-emit authenticated state so profile page updates
+                    blocCtx.read<AuthBloc>().add(const CheckAuthStatusEvent());
+                  }
+                }
+              } else if (state is PasswordChangeSuccess) {
+                setSheet(() => isSaving = false);
+                if (ctx.mounted) {
+                  Navigator.of(ctx).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: [
+                          const Icon(Icons.check_circle, color: Colors.white),
+                          const SizedBox(width: 10),
+                          Expanded(child: Text(state.message)),
+                        ],
+                      ),
+                      backgroundColor: AppColors.success,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  );
+                  // Re-emit authenticated state so profile page updates
+                  blocCtx.read<AuthBloc>().add(const CheckAuthStatusEvent());
+                }
+              } else if (state is AuthError) {
+                setSheet(() => isSaving = false);
+                if (ctx.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: [
+                          const Icon(Icons.error_outline, color: Colors.white),
+                          const SizedBox(width: 10),
+                          Expanded(child: Text(state.message)),
+                        ],
+                      ),
+                      backgroundColor: AppColors.error,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  );
+                }
+              }
+            },
+            child: Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(ctx).viewInsets.bottom,
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(ctx).scaffoldBackgroundColor,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(20),
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Handle
+                    Container(
+                      margin: const EdgeInsets.only(top: 12, bottom: 4),
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 8,
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.edit_outlined,
                             color: AppColors.primary,
                           ),
-                        ),
-                        const Spacer(),
-                        IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () => Navigator.of(ctx).pop(),
-                        ),
-                      ],
+                          const SizedBox(width: 8),
+                          Text(
+                            'Edit Profile',
+                            style: Theme.of(ctx).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                          const Spacer(),
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => Navigator.of(ctx).pop(),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const Divider(height: 1),
-                  Flexible(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
-                      child: Form(
-                        key: formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            // Username
-                            TextFormField(
-                              controller: nameCtrl,
-                              decoration: InputDecoration(
-                                labelText: 'Username',
-                                prefixIcon: const Icon(Icons.person_outlined),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                filled: true,
-                              ),
-                              validator: (v) => (v == null || v.trim().isEmpty)
-                                  ? 'Username cannot be empty'
-                                  : null,
-                            ),
-                            const SizedBox(height: 14),
-                            // Email
-                            TextFormField(
-                              controller: emailCtrl,
-                              keyboardType: TextInputType.emailAddress,
-                              decoration: InputDecoration(
-                                labelText: 'Email',
-                                prefixIcon: const Icon(Icons.email_outlined),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                filled: true,
-                              ),
-                              validator: (v) {
-                                if (v == null || v.trim().isEmpty) {
-                                  return 'Email cannot be empty';
-                                }
-                                if (!RegExp(
-                                  r'^[\w.-]+@[\w.-]+\.[a-z]{2,}$',
-                                ).hasMatch(v.trim())) {
-                                  return 'Enter a valid email';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 20),
-                            Text(
-                              'Change Password',
-                              style: Theme.of(ctx).textTheme.titleSmall
-                                  ?.copyWith(
-                                    color: AppColors.textSecondaryLight,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 0.5,
+                    const Divider(height: 1),
+                    Flexible(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+                        child: Form(
+                          key: formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              // Username
+                              TextFormField(
+                                controller: nameCtrl,
+                                decoration: InputDecoration(
+                                  labelText: 'Username',
+                                  prefixIcon: const Icon(Icons.person_outlined),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
-                            ),
-                            const SizedBox(height: 10),
-                            // Old Password
-                            TextFormField(
-                              controller: oldPassCtrl,
-                              obscureText: obscureOld,
-                              decoration: InputDecoration(
-                                labelText: 'Old Password',
-                                prefixIcon: const Icon(Icons.lock_outlined),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  filled: true,
                                 ),
-                                filled: true,
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    obscureOld
-                                        ? Icons.visibility_off_outlined
-                                        : Icons.visibility_outlined,
-                                  ),
-                                  onPressed: () =>
-                                      setSheet(() => obscureOld = !obscureOld),
-                                ),
+                                validator: (v) => (v == null || v.trim().isEmpty)
+                                    ? 'Username cannot be empty'
+                                    : null,
                               ),
-                              validator: (v) {
-                                if (newPassCtrl.text.isNotEmpty &&
-                                    (v == null || v.isEmpty)) {
-                                  return 'Enter your current password to change it';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 14),
-                            // New Password
-                            TextFormField(
-                              controller: newPassCtrl,
-                              obscureText: obscureNew,
-                              decoration: InputDecoration(
-                                labelText: 'New Password',
-                                prefixIcon: const Icon(
-                                  Icons.lock_open_outlined,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                filled: true,
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    obscureNew
-                                        ? Icons.visibility_off_outlined
-                                        : Icons.visibility_outlined,
+                              const SizedBox(height: 14),
+                              // Email
+                              TextFormField(
+                                controller: emailCtrl,
+                                keyboardType: TextInputType.emailAddress,
+                                decoration: InputDecoration(
+                                  labelText: 'Email',
+                                  prefixIcon: const Icon(Icons.email_outlined),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
-                                  onPressed: () =>
-                                      setSheet(() => obscureNew = !obscureNew),
+                                  filled: true,
                                 ),
+                                validator: (v) {
+                                  if (v == null || v.trim().isEmpty) {
+                                    return 'Email cannot be empty';
+                                  }
+                                  if (!RegExp(
+                                    r'^[\w.-]+@[\w.-]+\.[a-z]{2,}$',
+                                  ).hasMatch(v.trim())) {
+                                    return 'Enter a valid email';
+                                  }
+                                  return null;
+                                },
                               ),
-                              validator: (v) {
-                                if (v != null && v.isNotEmpty && v.length < 6) {
-                                  return 'Password must be at least 6 characters';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 14),
-                            // Confirm Password
-                            TextFormField(
-                              controller: confirmPassCtrl,
-                              obscureText: obscureConfirm,
-                              decoration: InputDecoration(
-                                labelText: 'Confirm New Password',
-                                prefixIcon: const Icon(Icons.lock_outlined),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                filled: true,
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    obscureConfirm
-                                        ? Icons.visibility_off_outlined
-                                        : Icons.visibility_outlined,
-                                  ),
-                                  onPressed: () => setSheet(
-                                    () => obscureConfirm = !obscureConfirm,
-                                  ),
-                                ),
-                              ),
-                              validator: (v) {
-                                if (newPassCtrl.text.isNotEmpty &&
-                                    v != newPassCtrl.text) {
-                                  return 'Passwords do not match';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 24),
-                            // Save Button
-                            ElevatedButton(
-                              onPressed: isSaving
-                                  ? null
-                                  : () async {
-                                      if (!formKey.currentState!.validate()) {
-                                        return;
-                                      }
-                                      setSheet(() => isSaving = true);
-                                      // Simulate save delay
-                                      await Future<void>.delayed(
-                                        const Duration(milliseconds: 900),
-                                      );
-                                      setSheet(() => isSaving = false);
-                                      if (ctx.mounted) {
-                                        Navigator.of(ctx).pop();
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          SnackBar(
-                                            content: const Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.check_circle,
-                                                  color: Colors.white,
-                                                ),
-                                                SizedBox(width: 10),
-                                                Text(
-                                                  'Profile updated successfully!',
-                                                ),
-                                              ],
-                                            ),
-                                            backgroundColor: AppColors.success,
-                                            behavior: SnackBarBehavior.floating,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                    },
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 14,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              child: isSaving
-                                  ? const SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: Colors.white,
-                                      ),
-                                    )
-                                  : const Text(
-                                      'Save Changes',
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                              const SizedBox(height: 20),
+                              Text(
+                                'Change Password',
+                                style: Theme.of(ctx).textTheme.titleSmall
+                                    ?.copyWith(
+                                      color: AppColors.textSecondaryLight,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.5,
                                     ),
-                            ),
-                            const SizedBox(height: 16),
-                          ],
+                              ),
+                              const SizedBox(height: 10),
+                              // Old Password
+                              TextFormField(
+                                controller: oldPassCtrl,
+                                obscureText: obscureOld,
+                                decoration: InputDecoration(
+                                  labelText: 'Old Password',
+                                  prefixIcon: const Icon(Icons.lock_outlined),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  filled: true,
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      obscureOld
+                                          ? Icons.visibility_off_outlined
+                                          : Icons.visibility_outlined,
+                                    ),
+                                    onPressed: () =>
+                                        setSheet(() => obscureOld = !obscureOld),
+                                  ),
+                                ),
+                                validator: (v) {
+                                  if (newPassCtrl.text.isNotEmpty &&
+                                      (v == null || v.isEmpty)) {
+                                    return 'Enter your current password to change it';
+                                  }
+                                  // If email changed, old password is required for re-auth
+                                  if (emailCtrl.text.trim() != currentEmail &&
+                                      (v == null || v.isEmpty)) {
+                                    return 'Current password is required to change email';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 14),
+                              // New Password
+                              TextFormField(
+                                controller: newPassCtrl,
+                                obscureText: obscureNew,
+                                decoration: InputDecoration(
+                                  labelText: 'New Password',
+                                  prefixIcon: const Icon(
+                                    Icons.lock_open_outlined,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  filled: true,
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      obscureNew
+                                          ? Icons.visibility_off_outlined
+                                          : Icons.visibility_outlined,
+                                    ),
+                                    onPressed: () =>
+                                        setSheet(() => obscureNew = !obscureNew),
+                                  ),
+                                ),
+                                validator: (v) {
+                                  if (v != null && v.isNotEmpty && v.length < 6) {
+                                    return 'Password must be at least 6 characters';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 14),
+                              // Confirm Password
+                              TextFormField(
+                                controller: confirmPassCtrl,
+                                obscureText: obscureConfirm,
+                                decoration: InputDecoration(
+                                  labelText: 'Confirm New Password',
+                                  prefixIcon: const Icon(Icons.lock_outlined),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  filled: true,
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      obscureConfirm
+                                          ? Icons.visibility_off_outlined
+                                          : Icons.visibility_outlined,
+                                    ),
+                                    onPressed: () => setSheet(
+                                      () => obscureConfirm = !obscureConfirm,
+                                    ),
+                                  ),
+                                ),
+                                validator: (v) {
+                                  if (newPassCtrl.text.isNotEmpty &&
+                                      v != newPassCtrl.text) {
+                                    return 'Passwords do not match';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 24),
+                              // Save Button
+                              ElevatedButton(
+                                onPressed: isSaving
+                                    ? null
+                                    : () {
+                                        if (!formKey.currentState!.validate()) {
+                                          return;
+                                        }
+                                        setSheet(() => isSaving = true);
+
+                                        final newName = nameCtrl.text.trim();
+                                        final newEmail = emailCtrl.text.trim();
+                                        final oldPass = oldPassCtrl.text;
+                                        final newPass = newPassCtrl.text;
+                                        final hasProfileChanges =
+                                            newName != currentName ||
+                                            newEmail != currentEmail;
+                                        final hasPasswordChange =
+                                            newPass.isNotEmpty &&
+                                            oldPass.isNotEmpty;
+
+                                        if (!hasProfileChanges && !hasPasswordChange) {
+                                          setSheet(() => isSaving = false);
+                                          Navigator.of(ctx).pop();
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: const Row(
+                                                children: [
+                                                  Icon(Icons.info_outline, color: Colors.white),
+                                                  SizedBox(width: 10),
+                                                  Text('No changes to save.'),
+                                                ],
+                                              ),
+                                              backgroundColor: Colors.grey.shade600,
+                                              behavior: SnackBarBehavior.floating,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(10),
+                                              ),
+                                            ),
+                                          );
+                                          return;
+                                        }
+
+                                        if (hasProfileChanges) {
+                                          // Dispatch profile update (password change will chain after if needed)
+                                          context.read<AuthBloc>().add(
+                                            UpdateProfileEvent(
+                                              displayName: newName,
+                                              email: newEmail,
+                                              currentPassword: oldPass.isNotEmpty ? oldPass : null,
+                                            ),
+                                          );
+                                        } else if (hasPasswordChange) {
+                                          // Only password change
+                                          context.read<AuthBloc>().add(
+                                            ChangePasswordEvent(
+                                              currentPassword: oldPass,
+                                              newPassword: newPass,
+                                            ),
+                                          );
+                                        }
+                                      },
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                child: isSaving
+                                    ? const SizedBox(
+                                        height: 20,
+                                        width: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : const Text(
+                                        'Save Changes',
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                              ),
+                              const SizedBox(height: 16),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           );

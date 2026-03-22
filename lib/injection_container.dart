@@ -10,7 +10,7 @@ import 'package:resumebuilder/core/services/firebase_service.dart';
 import 'package:resumebuilder/core/services/gemini_ai_service.dart';
 import 'package:resumebuilder/core/theme/theme_cubit.dart';
 // Admin
-import 'package:resumebuilder/features/admin/data/datasources/admin_mock_data_source.dart';
+import 'package:resumebuilder/features/admin/data/datasources/admin_remote_data_source.dart';
 import 'package:resumebuilder/features/admin/data/repositories/admin_repository_impl.dart';
 import 'package:resumebuilder/features/admin/domain/repositories/admin_repository.dart';
 import 'package:resumebuilder/features/admin/presentation/bloc/admin_bloc.dart';
@@ -24,11 +24,13 @@ import 'package:resumebuilder/features/ats_analysis/presentation/bloc/ats_bloc.d
 import 'package:resumebuilder/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:resumebuilder/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:resumebuilder/features/auth/domain/repositories/auth_repository.dart';
+import 'package:resumebuilder/features/auth/domain/usecases/change_password.dart';
 import 'package:resumebuilder/features/auth/domain/usecases/get_current_user.dart';
 import 'package:resumebuilder/features/auth/domain/usecases/sign_in_with_email.dart';
 import 'package:resumebuilder/features/auth/domain/usecases/sign_in_with_google.dart';
 import 'package:resumebuilder/features/auth/domain/usecases/sign_out.dart';
 import 'package:resumebuilder/features/auth/domain/usecases/sign_up_with_email.dart';
+import 'package:resumebuilder/features/auth/domain/usecases/update_profile.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_bloc.dart';
 // Resume
 import 'package:resumebuilder/features/resume/data/datasources/resume_remote_data_source.dart';
@@ -55,6 +57,8 @@ Future<void> init() async {
       signInWithGoogle: sl(),
       signOut: sl(),
       getCurrentUser: sl(),
+      updateProfile: sl(),
+      changePassword: sl(),
     ),
   );
 
@@ -64,6 +68,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SignInWithGoogle(sl()));
   sl.registerLazySingleton(() => SignOut(sl()));
   sl.registerLazySingleton(() => GetCurrentUser(sl()));
+  sl.registerLazySingleton(() => UpdateProfile(sl()));
+  sl.registerLazySingleton(() => ChangePassword(sl()));
 
   // Repository
   sl.registerLazySingleton<AuthRepository>(
@@ -154,5 +160,5 @@ Future<void> init() async {
   );
 
   // Data sources
-  sl.registerLazySingleton(() => AdminMockDataSource());
+  sl.registerLazySingleton<AdminRemoteDataSource>(() => AdminRemoteDataSourceImpl(firestore: FirebaseFirestore.instance));
 }

@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:resumebuilder/core/errors/failures.dart';
-import 'package:resumebuilder/features/admin/data/datasources/admin_mock_data_source.dart';
+import 'package:resumebuilder/features/admin/data/datasources/admin_remote_data_source.dart';
 import 'package:resumebuilder/features/admin/domain/entities/admin_stats.dart';
 import 'package:resumebuilder/features/admin/domain/entities/announcement.dart';
 import 'package:resumebuilder/features/admin/domain/entities/ats_config.dart';
@@ -9,7 +9,7 @@ import 'package:resumebuilder/features/admin/domain/repositories/admin_repositor
 import 'package:resumebuilder/features/auth/domain/entities/user.dart';
 
 class AdminRepositoryImpl implements AdminRepository {
-  final AdminMockDataSource dataSource;
+  final AdminRemoteDataSource dataSource;
 
   AdminRepositoryImpl({required this.dataSource});
 

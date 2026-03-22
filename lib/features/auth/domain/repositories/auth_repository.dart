@@ -20,6 +20,17 @@ abstract class AuthRepository {
 
   Future<Either<Failure, void>> resetPassword(String email);
 
+  Future<Either<Failure, User>> updateProfile({
+    required String displayName,
+    required String email,
+    String? currentPassword,
+  });
+
+  Future<Either<Failure, void>> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  });
+
   Either<Failure, User?> getCurrentUser();
 
   bool isSignedIn();
