@@ -360,7 +360,7 @@ This project is for educational purposes. Use freely for learning and portfolio 
 ## 👨‍💻 Author
 
 MCA Student - SEM 2 Project
-Contact: [Your Email/GitHub]
+Contact: [prakashdharaviya2005@gmail.com]
 
 ---
 
