@@ -103,7 +103,11 @@ class AnnouncementsPageState extends State<AnnouncementsPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.error_outline, size: 48, color: AppColors.error),
+                  const Icon(
+                    Icons.error_outline,
+                    size: 48,
+                    color: AppColors.error,
+                  ),
                   const SizedBox(height: 16),
                   Text(state.message),
                   const SizedBox(height: 16),
@@ -340,7 +344,13 @@ class AnnouncementsPageState extends State<AnnouncementsPage> {
                             isActive: isActive,
                           );
                           context.read<AdminBloc>().add(
-                            AddAnnouncement(announcement: newAnnouncement),
+                            isEdit
+                                ? UpdateAnnouncement(
+                                    announcement: newAnnouncement,
+                                  )
+                                : AddAnnouncement(
+                                    announcement: newAnnouncement,
+                                  ),
                           );
                         },
                         style: ElevatedButton.styleFrom(

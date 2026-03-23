@@ -107,6 +107,15 @@ class AddAnnouncement extends AdminEvent {
   List<Object?> get props => [announcement];
 }
 
+class UpdateAnnouncement extends AdminEvent {
+  final Announcement announcement;
+
+  const UpdateAnnouncement({required this.announcement});
+
+  @override
+  List<Object?> get props => [announcement];
+}
+
 class ToggleAnnouncement extends AdminEvent {
   final String announcementId;
 

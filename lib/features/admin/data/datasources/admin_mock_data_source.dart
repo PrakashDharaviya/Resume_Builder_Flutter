@@ -241,6 +241,15 @@ class AdminMockDataSource {
     return announcement.copyWith(id: id, createdAt: now);
   }
 
+  Future<Announcement> updateAnnouncement(Announcement announcement) async {
+    await _announcementsCol.doc(announcement.id).update({
+      'title': announcement.title,
+      'message': announcement.message,
+      'isActive': announcement.isActive,
+    });
+    return announcement;
+  }
+
   Future<Announcement> toggleAnnouncement(String id) async {
     final doc = await _announcementsCol.doc(id).get();
     if (!doc.exists) throw Exception('Announcement not found');

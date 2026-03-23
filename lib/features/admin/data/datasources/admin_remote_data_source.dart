@@ -18,6 +18,7 @@ abstract class AdminRemoteDataSource {
   Future<ATSConfig> updateATSConfig(ATSConfig config);
   Future<List<Announcement>> getAllAnnouncements();
   Future<Announcement> addAnnouncement(Announcement announcement);
+  Future<Announcement> updateAnnouncement(Announcement announcement);
   Future<Announcement> toggleAnnouncement(String id);
   Future<void> deleteAnnouncement(String id);
 }
@@ -78,7 +79,10 @@ class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
 
     // Templates
     try {
-      final templatesCountSnap = await _templatesCol.where('isActive', isEqualTo: true).count().get();
+      final templatesCountSnap = await _templatesCol
+          .where('isActive', isEqualTo: true)
+          .count()
+          .get();
       activeTemplates = templatesCountSnap.count ?? 0;
     } catch (e) {
       print('Error fetching templates: $e');
@@ -273,6 +277,16 @@ class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
       'isActive': announcement.isActive,
     });
     return announcement.copyWith(id: id, createdAt: now);
+  }
+
+  @override
+  Future<Announcement> updateAnnouncement(Announcement announcement) async {
+    await _announcementsCol.doc(announcement.id).update({
+      'title': announcement.title,
+      'message': announcement.message,
+      'isActive': announcement.isActive,
+    });
+    return announcement;
   }
 
   @override

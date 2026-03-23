@@ -32,7 +32,9 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
-  Future<Either<Failure, ResumeTemplate>> addTemplate(ResumeTemplate template) async {
+  Future<Either<Failure, ResumeTemplate>> addTemplate(
+    ResumeTemplate template,
+  ) async {
     try {
       return Right(await dataSource.addTemplate(template));
     } catch (e) {
@@ -41,7 +43,9 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
-  Future<Either<Failure, ResumeTemplate>> updateTemplate(ResumeTemplate template) async {
+  Future<Either<Failure, ResumeTemplate>> updateTemplate(
+    ResumeTemplate template,
+  ) async {
     try {
       return Right(await dataSource.updateTemplate(template));
     } catch (e) {
@@ -114,11 +118,24 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
-  Future<Either<Failure, Announcement>> addAnnouncement(Announcement announcement) async {
+  Future<Either<Failure, Announcement>> addAnnouncement(
+    Announcement announcement,
+  ) async {
     try {
       return Right(await dataSource.addAnnouncement(announcement));
     } catch (e) {
       return const Left(ServerFailure('Failed to add announcement'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Announcement>> updateAnnouncement(
+    Announcement announcement,
+  ) async {
+    try {
+      return Right(await dataSource.updateAnnouncement(announcement));
+    } catch (e) {
+      return const Left(ServerFailure('Failed to update announcement'));
     }
   }
 

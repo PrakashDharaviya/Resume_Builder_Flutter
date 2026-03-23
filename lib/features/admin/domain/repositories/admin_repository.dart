@@ -13,7 +13,9 @@ abstract class AdminRepository {
   // Templates
   Future<Either<Failure, List<ResumeTemplate>>> getAllTemplates();
   Future<Either<Failure, ResumeTemplate>> addTemplate(ResumeTemplate template);
-  Future<Either<Failure, ResumeTemplate>> updateTemplate(ResumeTemplate template);
+  Future<Either<Failure, ResumeTemplate>> updateTemplate(
+    ResumeTemplate template,
+  );
   Future<Either<Failure, Unit>> deleteTemplate(String id);
 
   // Users
@@ -27,7 +29,12 @@ abstract class AdminRepository {
 
   // Announcements
   Future<Either<Failure, List<Announcement>>> getAllAnnouncements();
-  Future<Either<Failure, Announcement>> addAnnouncement(Announcement announcement);
+  Future<Either<Failure, Announcement>> addAnnouncement(
+    Announcement announcement,
+  );
+  Future<Either<Failure, Announcement>> updateAnnouncement(
+    Announcement announcement,
+  );
   Future<Either<Failure, Announcement>> toggleAnnouncement(String id);
   Future<Either<Failure, Unit>> deleteAnnouncement(String id);
 }
