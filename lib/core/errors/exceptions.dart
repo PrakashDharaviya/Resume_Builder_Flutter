@@ -1,11 +1,18 @@
 // Base exception class
 class ServerException implements Exception {
   final String message;
+  final int? statusCode;
 
-  const ServerException([this.message = 'Server error occurred']);
+  const ServerException([
+    this.message = 'Server error occurred',
+    this.statusCode,
+  ]);
 
   @override
-  String toString() => 'ServerException: $message';
+  String toString() {
+    if (statusCode == null) return 'ServerException: $message';
+    return 'ServerException($statusCode): $message';
+  }
 }
 
 // Network exception

@@ -148,11 +148,7 @@ Return ONLY the JSON object now:
     final http.Response response;
     try {
       response = await _httpClient
-          .post(
-            url,
-            headers: {'Content-Type': 'application/json'},
-            body: body,
-          )
+          .post(url, headers: {'Content-Type': 'application/json'}, body: body)
           .timeout(const Duration(seconds: 25));
     } catch (e) {
       throw ServerException('Failed to connect to Gemini API: ${e.toString()}');
@@ -162,6 +158,7 @@ Return ONLY the JSON object now:
       final errorBody = response.body;
       throw ServerException(
         'Gemini API error (${response.statusCode}): $errorBody',
+        response.statusCode,
       );
     }
 
@@ -179,7 +176,8 @@ Return ONLY the JSON object now:
     }
 
     final content =
-        (candidates[0] as Map<String, dynamic>)['content'] as Map<String, dynamic>?;
+        (candidates[0] as Map<String, dynamic>)['content']
+            as Map<String, dynamic>?;
     final parts = content?['parts'] as List?;
     if (parts == null || parts.isEmpty) {
       throw const ServerException('Gemini returned empty content.');

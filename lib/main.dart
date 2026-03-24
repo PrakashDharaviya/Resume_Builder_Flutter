@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:resumebuilder/app_router.dart';
 import 'package:resumebuilder/core/constants/app_routes.dart';
 import 'package:resumebuilder/core/constants/app_theme.dart';
@@ -14,6 +15,7 @@ import 'package:resumebuilder/injection_container.dart' as di;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: '.env');
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await NotificationService.initialize();
   await di.init();

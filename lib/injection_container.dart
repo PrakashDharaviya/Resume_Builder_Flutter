@@ -6,8 +6,10 @@ import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:resumebuilder/api_keys.dart';
 import 'package:resumebuilder/core/network/network_info.dart';
+import 'package:resumebuilder/core/services/ai_service.dart';
 import 'package:resumebuilder/core/services/firebase_service.dart';
 import 'package:resumebuilder/core/services/gemini_ai_service.dart';
+import 'package:resumebuilder/core/services/groq_ai_service.dart';
 import 'package:resumebuilder/core/theme/theme_cubit.dart';
 // Admin
 import 'package:resumebuilder/features/admin/data/datasources/admin_remote_data_source.dart';
@@ -82,10 +84,9 @@ Future<void> init() async {
       firebaseAuth: FirebaseAuth.instance,
       firebaseFirestore: FirebaseFirestore.instance,
       googleSignIn: GoogleSignIn(
-        clientId:
-            (kIsWeb || defaultTargetPlatform == TargetPlatform.windows)
-                ? '465329982315-bg09qe87n32c633q9ogubk32dhsrje82.apps.googleusercontent.com'
-                : null,
+        clientId: (kIsWeb || defaultTargetPlatform == TargetPlatform.windows)
+            ? '465329982315-bg09qe87n32c633q9ogubk32dhsrje82.apps.googleusercontent.com'
+            : null,
       ),
     ),
   );
@@ -136,7 +137,11 @@ Future<void> init() async {
 
   // Data sources
   sl.registerLazySingleton<ATSRemoteDataSource>(
-    () => ATSRemoteDataSourceImpl(geminiAIService: sl()),
+    () => ATSRemoteDataSourceImpl(
+      geminiAIService: sl(),
+      groqAIService: sl(),
+      localAIService: sl(),
+    ),
   );
 
   //! Core
@@ -146,9 +151,9 @@ Future<void> init() async {
   // Services
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl());
   sl.registerLazySingleton(() => FirebaseService());
-  sl.registerLazySingleton(() => GeminiAIService(
-    apiKey: geminiApiKey,
-  ));
+  sl.registerLazySingleton(() => AIService());
+  sl.registerLazySingleton(() => GeminiAIService(apiKey: geminiApiKey));
+  sl.registerLazySingleton(() => GroqAIService(apiKey: groqApiKey));
 
   // ============ Admin ============
   // Bloc
@@ -160,5 +165,7 @@ Future<void> init() async {
   );
 
   // Data sources
-  sl.registerLazySingleton<AdminRemoteDataSource>(() => AdminRemoteDataSourceImpl(firestore: FirebaseFirestore.instance));
+  sl.registerLazySingleton<AdminRemoteDataSource>(
+    () => AdminRemoteDataSourceImpl(firestore: FirebaseFirestore.instance),
+  );
 }
