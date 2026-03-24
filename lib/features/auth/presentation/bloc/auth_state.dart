@@ -56,3 +56,47 @@ class PasswordChangeSuccess extends AuthState {
   @override
   List<Object?> get props => [message];
 }
+
+class ForgotPasswordLoading extends AuthState {
+  const ForgotPasswordLoading();
+}
+
+class ForgotPasswordSuccess extends AuthState {
+  final String message;
+
+  const ForgotPasswordSuccess({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class ForgotPasswordError extends AuthState {
+  final String message;
+
+  const ForgotPasswordError({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class ConfirmPasswordResetLoading extends AuthState {
+  const ConfirmPasswordResetLoading();
+}
+
+class ConfirmPasswordResetSuccess extends AuthState {
+  final String message;
+
+  const ConfirmPasswordResetSuccess({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class ConfirmPasswordResetError extends AuthState {
+  final String message;
+
+  const ConfirmPasswordResetError({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}

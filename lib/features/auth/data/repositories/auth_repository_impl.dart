@@ -82,12 +82,46 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<Failure, bool>> checkEmailExists(String email) async {
+    try {
+      final exists = await remoteDataSource.checkEmailExists(email);
+      return Right(exists);
+    } on AuthException catch (e) {
+      return Left(AuthFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (e) {
+      return Left(UnknownFailure(e.toString()));
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> resetPassword(String email) async {
     try {
       await remoteDataSource.resetPassword(email);
       return const Right(null);
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));
+    } catch (e) {
+      return Left(UnknownFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> confirmPasswordReset({
+    required String oobCode,
+    required String newPassword,
+  }) async {
+    try {
+      await remoteDataSource.confirmPasswordReset(
+        oobCode: oobCode,
+        newPassword: newPassword,
+      );
+      return const Right(null);
+    } on AuthException catch (e) {
+      return Left(AuthFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
     } catch (e) {
       return Left(UnknownFailure(e.toString()));
     }

@@ -27,7 +27,10 @@ import 'package:resumebuilder/features/auth/data/datasources/auth_remote_data_so
 import 'package:resumebuilder/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:resumebuilder/features/auth/domain/repositories/auth_repository.dart';
 import 'package:resumebuilder/features/auth/domain/usecases/change_password.dart';
+import 'package:resumebuilder/features/auth/domain/usecases/check_email_exists.dart';
+import 'package:resumebuilder/features/auth/domain/usecases/confirm_password_reset.dart';
 import 'package:resumebuilder/features/auth/domain/usecases/get_current_user.dart';
+import 'package:resumebuilder/features/auth/domain/usecases/reset_password.dart';
 import 'package:resumebuilder/features/auth/domain/usecases/sign_in_with_email.dart';
 import 'package:resumebuilder/features/auth/domain/usecases/sign_in_with_google.dart';
 import 'package:resumebuilder/features/auth/domain/usecases/sign_out.dart';
@@ -61,6 +64,9 @@ Future<void> init() async {
       getCurrentUser: sl(),
       updateProfile: sl(),
       changePassword: sl(),
+      checkEmailExists: sl(),
+      resetPassword: sl(),
+      confirmPasswordReset: sl(),
     ),
   );
 
@@ -72,6 +78,9 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetCurrentUser(sl()));
   sl.registerLazySingleton(() => UpdateProfile(sl()));
   sl.registerLazySingleton(() => ChangePassword(sl()));
+  sl.registerLazySingleton(() => CheckEmailExists(sl()));
+  sl.registerLazySingleton(() => ResetPassword(sl()));
+  sl.registerLazySingleton(() => ConfirmPasswordReset(sl()));
 
   // Repository
   sl.registerLazySingleton<AuthRepository>(

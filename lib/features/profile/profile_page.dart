@@ -29,7 +29,10 @@ class ProfilePageState extends State<ProfilePage> {
     _isLoadingPrefs = true;
     _cachedUid = uid;
     try {
-      final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .get();
       if (doc.exists && doc.data()!.containsKey('notificationsEnabled')) {
         setState(() {
           pushNotif = (doc.data()!['notificationsEnabled'] as bool?) ?? false;
@@ -46,9 +49,12 @@ class ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Future<void> _updatePushNotificationConfig(bool value, StateSetter setSheet) async {
+  Future<void> _updatePushNotificationConfig(
+    bool value,
+    StateSetter setSheet,
+  ) async {
     if (_cachedUid == null) return;
-    
+
     // Optimistic UI update
     setState(() => pushNotif = value);
     setSheet(() {});
@@ -291,7 +297,10 @@ class ProfilePageState extends State<ProfilePage> {
       ),
       subtitle: Text(
         subtitle,
-        style: const TextStyle(fontSize: 12, color: AppColors.textSecondaryLight),
+        style: const TextStyle(
+          fontSize: 12,
+          color: AppColors.textSecondaryLight,
+        ),
       ),
       trailing: Switch(
         value: value,
@@ -329,7 +338,8 @@ class ProfilePageState extends State<ProfilePage> {
                 setSheet(() => isSaving = false);
                 if (ctx.mounted) {
                   // Check if password also needs changing
-                  if (newPassCtrl.text.isNotEmpty && oldPassCtrl.text.isNotEmpty) {
+                  if (newPassCtrl.text.isNotEmpty &&
+                      oldPassCtrl.text.isNotEmpty) {
                     // Dispatch password change after profile update
                     blocCtx.read<AuthBloc>().add(
                       ChangePasswordEvent(
@@ -442,10 +452,11 @@ class ProfilePageState extends State<ProfilePage> {
                           const SizedBox(width: 8),
                           Text(
                             'Edit Profile',
-                            style: Theme.of(ctx).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primary,
-                            ),
+                            style: Theme.of(ctx).textTheme.titleMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                ),
                           ),
                           const Spacer(),
                           IconButton(
@@ -475,7 +486,8 @@ class ProfilePageState extends State<ProfilePage> {
                                   ),
                                   filled: true,
                                 ),
-                                validator: (v) => (v == null || v.trim().isEmpty)
+                                validator: (v) =>
+                                    (v == null || v.trim().isEmpty)
                                     ? 'Username cannot be empty'
                                     : null,
                               ),
@@ -483,6 +495,7 @@ class ProfilePageState extends State<ProfilePage> {
                               // Email
                               TextFormField(
                                 controller: emailCtrl,
+                                enabled: false,
                                 keyboardType: TextInputType.emailAddress,
                                 decoration: InputDecoration(
                                   labelText: 'Email',
@@ -532,8 +545,9 @@ class ProfilePageState extends State<ProfilePage> {
                                           ? Icons.visibility_off_outlined
                                           : Icons.visibility_outlined,
                                     ),
-                                    onPressed: () =>
-                                        setSheet(() => obscureOld = !obscureOld),
+                                    onPressed: () => setSheet(
+                                      () => obscureOld = !obscureOld,
+                                    ),
                                   ),
                                 ),
                                 validator: (v) {
@@ -569,12 +583,15 @@ class ProfilePageState extends State<ProfilePage> {
                                           ? Icons.visibility_off_outlined
                                           : Icons.visibility_outlined,
                                     ),
-                                    onPressed: () =>
-                                        setSheet(() => obscureNew = !obscureNew),
+                                    onPressed: () => setSheet(
+                                      () => obscureNew = !obscureNew,
+                                    ),
                                   ),
                                 ),
                                 validator: (v) {
-                                  if (v != null && v.isNotEmpty && v.length < 6) {
+                                  if (v != null &&
+                                      v.isNotEmpty &&
+                                      v.length < 6) {
                                     return 'Password must be at least 6 characters';
                                   }
                                   return null;
@@ -633,22 +650,31 @@ class ProfilePageState extends State<ProfilePage> {
                                             newPass.isNotEmpty &&
                                             oldPass.isNotEmpty;
 
-                                        if (!hasProfileChanges && !hasPasswordChange) {
+                                        if (!hasProfileChanges &&
+                                            !hasPasswordChange) {
                                           setSheet(() => isSaving = false);
                                           Navigator.of(ctx).pop();
-                                          ScaffoldMessenger.of(context).showSnackBar(
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
                                             SnackBar(
                                               content: const Row(
                                                 children: [
-                                                  Icon(Icons.info_outline, color: Colors.white),
+                                                  Icon(
+                                                    Icons.info_outline,
+                                                    color: Colors.white,
+                                                  ),
                                                   SizedBox(width: 10),
                                                   Text('No changes to save.'),
                                                 ],
                                               ),
-                                              backgroundColor: Colors.grey.shade600,
-                                              behavior: SnackBarBehavior.floating,
+                                              backgroundColor:
+                                                  Colors.grey.shade600,
+                                              behavior:
+                                                  SnackBarBehavior.floating,
                                               shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(10),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
                                               ),
                                             ),
                                           );
@@ -661,7 +687,10 @@ class ProfilePageState extends State<ProfilePage> {
                                             UpdateProfileEvent(
                                               displayName: newName,
                                               email: newEmail,
-                                              currentPassword: oldPass.isNotEmpty ? oldPass : null,
+                                              currentPassword:
+                                                  oldPass.isNotEmpty
+                                                  ? oldPass
+                                                  : null,
                                             ),
                                           );
                                         } else if (hasPasswordChange) {
@@ -881,7 +910,10 @@ class ProfilePageState extends State<ProfilePage> {
                                     Navigator.of(context).pop();
                                     Navigator.of(
                                       context,
-                                    ).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
+                                    ).pushNamedAndRemoveUntil(
+                                      AppRoutes.login,
+                                      (route) => false,
+                                    );
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.error,

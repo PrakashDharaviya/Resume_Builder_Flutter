@@ -15,6 +15,7 @@ class SplashPageState extends State<SplashPage>
   late AnimationController animationController;
   late Animation<double> fadeAnimation;
   late Animation<double> scaleAnimation;
+  bool _hasNavigated = false;
 
   @override
   void initState() {
@@ -41,9 +42,64 @@ class SplashPageState extends State<SplashPage>
 
     animationController.forward();
 
-    // Navigate after 2 seconds
+    _navigateFromLaunchContext();
+  }
+
+  String? _extractResetCodeFromUri(Uri uri) {
+    final oobCode = uri.queryParameters['oobCode'];
+    final mode = uri.queryParameters['mode'];
+    if (oobCode != null && oobCode.isNotEmpty) {
+      if (mode == null || mode == 'resetPassword') {
+        return oobCode;
+      }
+    }
+
+    final fragment = uri.fragment;
+    if (fragment.contains('oobCode=')) {
+      final fragmentAsUri = Uri.tryParse('https://dummy/$fragment');
+      final fragmentCode = fragmentAsUri?.queryParameters['oobCode'];
+      final fragmentMode = fragmentAsUri?.queryParameters['mode'];
+      if (fragmentCode != null && fragmentCode.isNotEmpty) {
+        if (fragmentMode == null || fragmentMode == 'resetPassword') {
+          return fragmentCode;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  String? _getLaunchResetCode() {
+    final baseCode = _extractResetCodeFromUri(Uri.base);
+    if (baseCode != null) {
+      return baseCode;
+    }
+
+    final defaultRouteName =
+        WidgetsBinding.instance.platformDispatcher.defaultRouteName;
+    final routeUri = Uri.tryParse(defaultRouteName);
+    if (routeUri != null) {
+      return _extractResetCodeFromUri(routeUri);
+    }
+
+    return null;
+  }
+
+  void _navigateFromLaunchContext() {
+    final launchResetCode = _getLaunchResetCode();
+
     Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
+      if (!mounted || _hasNavigated) {
+        return;
+      }
+      _hasNavigated = true;
+
+      if (launchResetCode != null && launchResetCode.isNotEmpty) {
+        Navigator.of(context).pushReplacementNamed(
+          AppRoutes.resetPassword,
+          arguments: launchResetCode,
+        );
+      } else {
         Navigator.of(context).pushReplacementNamed(AppRoutes.login);
       }
     });

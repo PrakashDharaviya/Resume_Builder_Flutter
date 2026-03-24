@@ -1,6 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:resumebuilder/features/auth/domain/usecases/change_password.dart';
+import 'package:resumebuilder/features/auth/domain/usecases/check_email_exists.dart';
+import 'package:resumebuilder/features/auth/domain/usecases/confirm_password_reset.dart';
 import 'package:resumebuilder/features/auth/domain/usecases/get_current_user.dart';
+import 'package:resumebuilder/features/auth/domain/usecases/reset_password.dart';
 import 'package:resumebuilder/features/auth/domain/usecases/sign_in_with_email.dart';
 import 'package:resumebuilder/features/auth/domain/usecases/sign_in_with_google.dart';
 import 'package:resumebuilder/features/auth/domain/usecases/sign_out.dart';
@@ -17,6 +20,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final GetCurrentUser getCurrentUser;
   final UpdateProfile updateProfile;
   final ChangePassword changePassword;
+  final CheckEmailExists checkEmailExists;
+  final ResetPassword resetPassword;
+  final ConfirmPasswordReset confirmPasswordReset;
 
   AuthBloc({
     required this.signInWithEmail,
@@ -26,6 +32,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.getCurrentUser,
     required this.updateProfile,
     required this.changePassword,
+    required this.checkEmailExists,
+    required this.resetPassword,
+    required this.confirmPasswordReset,
   }) : super(const AuthInitial()) {
     on<SignInWithEmailEvent>(onSignInWithEmail);
     on<SignUpWithEmailEvent>(onSignUpWithEmail);
@@ -34,6 +43,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<CheckAuthStatusEvent>(onCheckAuthStatus);
     on<UpdateProfileEvent>(onUpdateProfile);
     on<ChangePasswordEvent>(onChangePassword);
+    on<ForgotPasswordRequestedEvent>(onForgotPasswordRequested);
+    on<ConfirmPasswordResetEvent>(onConfirmPasswordReset);
   }
 
   Future<void> onSignInWithEmail(
@@ -122,10 +133,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     result.fold(
       (failure) => emit(AuthError(message: failure.message)),
-      (user) => emit(ProfileUpdateSuccess(
-        user: user,
-        message: 'Profile updated successfully!',
-      )),
+      (user) => emit(
+        ProfileUpdateSuccess(
+          user: user,
+          message: 'Profile updated successfully!',
+        ),
+      ),
     );
   }
 
@@ -142,9 +155,74 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     result.fold(
       (failure) => emit(AuthError(message: failure.message)),
-      (_) => emit(const PasswordChangeSuccess(
-        message: 'Password changed successfully!',
-      )),
+      (_) => emit(
+        const PasswordChangeSuccess(message: 'Password changed successfully!'),
+      ),
+    );
+  }
+
+  Future<void> onForgotPasswordRequested(
+    ForgotPasswordRequestedEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const ForgotPasswordLoading());
+
+    final existsResult = await checkEmailExists(event.email);
+
+    await existsResult.fold(
+      (failure) async {
+        final resetResult = await resetPassword(event.email);
+        resetResult.fold(
+          (resetFailure) =>
+              emit(ForgotPasswordError(message: resetFailure.message)),
+          (_) => emit(
+            const ForgotPasswordSuccess(
+              message: 'Password reset link sent. Please check your email.',
+            ),
+          ),
+        );
+      },
+      (exists) async {
+        if (!exists) {
+          emit(
+            const ForgotPasswordError(
+              message: 'No account found with this email address.',
+            ),
+          );
+          return;
+        }
+
+        final resetResult = await resetPassword(event.email);
+        resetResult.fold(
+          (failure) => emit(ForgotPasswordError(message: failure.message)),
+          (_) => emit(
+            const ForgotPasswordSuccess(
+              message: 'Password reset link sent. Please check your email.',
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> onConfirmPasswordReset(
+    ConfirmPasswordResetEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const ConfirmPasswordResetLoading());
+
+    final result = await confirmPasswordReset(
+      oobCode: event.oobCode,
+      newPassword: event.newPassword,
+    );
+
+    result.fold(
+      (failure) => emit(ConfirmPasswordResetError(message: failure.message)),
+      (_) => emit(
+        const ConfirmPasswordResetSuccess(
+          message: 'Password updated successfully. Please login.',
+        ),
+      ),
     );
   }
 }

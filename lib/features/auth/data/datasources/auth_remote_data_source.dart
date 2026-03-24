@@ -23,7 +23,14 @@ abstract class AuthRemoteDataSource {
 
   Future<void> signOut();
 
+  Future<bool> checkEmailExists(String email);
+
   Future<void> resetPassword(String email);
+
+  Future<void> confirmPasswordReset({
+    required String oobCode,
+    required String newPassword,
+  });
 
   Future<UserModel> updateProfile({
     required String displayName,
@@ -59,11 +66,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   /// Fetches role / isBlocked / isPremium from the `users` collection.
   /// Falls back to sensible defaults if the document does not exist yet.
-  Future<UserModel> _userModelFromFirebaseUser(
-    firebase_auth.User user,
-  ) async {
-    final doc =
-        await firebaseFirestore.collection('users').doc(user.uid).get();
+  Future<UserModel> _userModelFromFirebaseUser(firebase_auth.User user) async {
+    final doc = await firebaseFirestore.collection('users').doc(user.uid).get();
 
     if (doc.exists) {
       final data = doc.data()!;
@@ -99,9 +103,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       case 'invalid-email':
         friendlyMessage = 'The email address is not valid.';
         break;
+      case 'missing-email':
+        friendlyMessage = 'Please enter your email address.';
+        break;
       case 'user-disabled':
-        friendlyMessage =
-            'This account has been disabled. Contact support.';
+        friendlyMessage = 'This account has been disabled. Contact support.';
         break;
       case 'user-not-found':
         friendlyMessage = 'No account found with this email.';
@@ -113,12 +119,18 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         friendlyMessage = 'Invalid credentials. Please check and try again.';
         break;
       case 'email-already-in-use':
-        friendlyMessage =
-            'An account already exists with this email address.';
+        friendlyMessage = 'An account already exists with this email address.';
         break;
       case 'weak-password':
+        friendlyMessage = 'Password is too weak. Use at least 6 characters.';
+        break;
+      case 'expired-action-code':
         friendlyMessage =
-            'Password is too weak. Use at least 6 characters.';
+            'This reset link has expired. Request a new password reset email.';
+        break;
+      case 'invalid-action-code':
+        friendlyMessage =
+            'Invalid reset link or code. Please request a new one.';
         break;
       case 'operation-not-allowed':
         friendlyMessage =
@@ -133,7 +145,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             'Network error. Please check your connection and try again.';
         break;
       default:
-        friendlyMessage = e.message ?? 'Authentication failed. Please try again.';
+        friendlyMessage =
+            e.message ?? 'Authentication failed. Please try again.';
     }
 
     throw AuthException(friendlyMessage);
@@ -191,10 +204,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'createdAt': FieldValue.serverTimestamp(),
       };
 
-      await firebaseFirestore
-          .collection('users')
-          .doc(user.uid)
-          .set(userData);
+      await firebaseFirestore.collection('users').doc(user.uid).set(userData);
 
       // 4. Return the freshly created user model.
       return UserModel(
@@ -229,13 +239,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         idToken: googleAuth.idToken,
       );
 
-      final userCredential =
-          await firebaseAuth.signInWithCredential(oAuthCredential);
+      final userCredential = await firebaseAuth.signInWithCredential(
+        oAuthCredential,
+      );
       final user = userCredential.user!;
 
       // Create a Firestore profile if this is the user's first sign‑in.
-      final doc =
-          await firebaseFirestore.collection('users').doc(user.uid).get();
+      final doc = await firebaseFirestore
+          .collection('users')
+          .doc(user.uid)
+          .get();
       if (!doc.exists) {
         final userData = <String, dynamic>{
           'uid': user.uid,
@@ -247,10 +260,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'isPremium': false,
           'createdAt': FieldValue.serverTimestamp(),
         };
-        await firebaseFirestore
-            .collection('users')
-            .doc(user.uid)
-            .set(userData);
+        await firebaseFirestore.collection('users').doc(user.uid).set(userData);
       }
 
       return _userModelFromFirebaseUser(user);
@@ -275,6 +285,39 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     }
   }
 
+  // ── Check Email Exists ────────────────────────────────────────────────
+
+  @override
+  Future<bool> checkEmailExists(String email) async {
+    try {
+      final rawEmail = email.trim();
+      final normalizedEmail = email.trim().toLowerCase();
+      final exactQuery = await firebaseFirestore
+          .collection('users')
+          .where('email', isEqualTo: rawEmail)
+          .limit(1)
+          .get();
+
+      if (exactQuery.docs.isNotEmpty) {
+        return true;
+      }
+
+      if (rawEmail != normalizedEmail) {
+        final normalizedQuery = await firebaseFirestore
+            .collection('users')
+            .where('email', isEqualTo: normalizedEmail)
+            .limit(1)
+            .get();
+
+        return normalizedQuery.docs.isNotEmpty;
+      }
+
+      return false;
+    } catch (e) {
+      throw const AuthException('Could not verify email. Please try again.');
+    }
+  }
+
   // ── Reset Password ─────────────────────────────────────────────────────
 
   @override
@@ -285,6 +328,25 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       _handleFirebaseAuthError(e);
     } catch (e) {
       throw AuthException('Password reset failed: ${e.toString()}');
+    }
+  }
+
+  // ── Confirm Password Reset ─────────────────────────────────────────────
+
+  @override
+  Future<void> confirmPasswordReset({
+    required String oobCode,
+    required String newPassword,
+  }) async {
+    try {
+      await firebaseAuth.confirmPasswordReset(
+        code: oobCode,
+        newPassword: newPassword,
+      );
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      _handleFirebaseAuthError(e);
+    } catch (e) {
+      throw const AuthException('Could not reset password. Please try again.');
     }
   }
 

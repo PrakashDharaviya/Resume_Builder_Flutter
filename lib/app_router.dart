@@ -6,17 +6,20 @@ import 'package:resumebuilder/admin/presentation/pages/announcements_page.dart';
 import 'package:resumebuilder/admin/presentation/pages/ats_settings_page.dart';
 import 'package:resumebuilder/admin/presentation/pages/manage_templates_page.dart';
 import 'package:resumebuilder/admin/presentation/pages/manage_users_page.dart';
-import 'package:resumebuilder/features/admin/presentation/pages/send_notification_page.dart';
 import 'package:resumebuilder/auth/auth_check_screen.dart';
 import 'package:resumebuilder/auth/login_page.dart';
 import 'package:resumebuilder/auth/register_page.dart';
 import 'package:resumebuilder/core/constants/app_routes.dart';
 import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
 import 'package:resumebuilder/features/admin/presentation/bloc/admin_bloc.dart';
+import 'package:resumebuilder/features/admin/presentation/pages/send_notification_page.dart';
 import 'package:resumebuilder/features/admin/presentation/pages/template_preview_page.dart';
 import 'package:resumebuilder/features/ats_analysis/presentation/bloc/ats_bloc.dart';
 import 'package:resumebuilder/features/ats_analysis/presentation/pages/ats_analysis_page.dart';
-import 'package:resumebuilder/features/auth/domain/entities/user.dart' as auth_user;
+import 'package:resumebuilder/features/auth/domain/entities/user.dart'
+    as auth_user;
+import 'package:resumebuilder/features/auth/presentation/pages/forgot_password_page.dart';
+import 'package:resumebuilder/features/auth/presentation/pages/reset_password_page.dart';
 import 'package:resumebuilder/features/auth/presentation/pages/splash_page.dart';
 import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
 import 'package:resumebuilder/features/resume/presentation/pages/pdf_export_page.dart';
@@ -195,6 +198,13 @@ class AppRouter {
       case AppRoutes.forgotPassword:
         return MaterialPageRoute(builder: (_) => const ForgotPasswordPage());
 
+      case AppRoutes.resetPassword:
+        final initialLinkOrCode = settings.arguments as String?;
+        return MaterialPageRoute(
+          builder: (_) =>
+              ResetPasswordPage(initialLinkOrCode: initialLinkOrCode),
+        );
+
       case AppRoutes.settings:
         return MaterialPageRoute(builder: (_) => const SettingsPage());
 
@@ -208,68 +218,6 @@ class AppRouter {
           ),
         );
     }
-  }
-}
-
-class ForgotPasswordPage extends StatelessWidget {
-  const ForgotPasswordPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final emailCtrl = TextEditingController();
-    return Scaffold(
-      appBar: AppBar(title: const Text('Forgot Password')),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.lock_reset, size: 80, color: Color(0xFF10B981)),
-            const SizedBox(height: 24),
-            const Text(
-              'Reset Your Password',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            const Text(
-              'Enter your email address and we\'ll send you a link to reset your password.',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Color(0xFF6B7280)),
-            ),
-            const SizedBox(height: 32),
-            TextField(
-              controller: emailCtrl,
-              decoration: InputDecoration(
-                labelText: 'Email Address',
-                prefixIcon: const Icon(Icons.email_outlined),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Password reset link sent to your email'),
-                    ),
-                  );
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                ),
-                child: const Text('Send Reset Link'),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 
