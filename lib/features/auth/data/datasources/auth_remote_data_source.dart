@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:resumebuilder/core/errors/exceptions.dart';
@@ -28,6 +29,7 @@ abstract class AuthRemoteDataSource {
   Future<void> resetPassword(String email);
 
   Future<void> confirmPasswordReset({
+    required String email,
     required String oobCode,
     required String newPassword,
   });
@@ -54,11 +56,13 @@ abstract class AuthRemoteDataSource {
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final firebase_auth.FirebaseAuth firebaseAuth;
   final FirebaseFirestore firebaseFirestore;
+  final FirebaseFunctions firebaseFunctions;
   final GoogleSignIn googleSignIn;
 
   AuthRemoteDataSourceImpl({
     required this.firebaseAuth,
     required this.firebaseFirestore,
+    required this.firebaseFunctions,
     required this.googleSignIn,
   });
 
@@ -147,6 +151,39 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       default:
         friendlyMessage =
             e.message ?? 'Authentication failed. Please try again.';
+    }
+
+    throw AuthException(friendlyMessage);
+  }
+
+  Never _handleFunctionsError(FirebaseFunctionsException e) {
+    final String friendlyMessage;
+    switch (e.code) {
+      case 'not-found':
+        friendlyMessage = 'No account found with this email address.';
+        break;
+      case 'resource-exhausted':
+        friendlyMessage =
+            e.message ?? 'Please wait before requesting a new code.';
+        break;
+      case 'deadline-exceeded':
+        friendlyMessage =
+            e.message ?? 'Verification code has expired. Request a new one.';
+        break;
+      case 'permission-denied':
+        friendlyMessage =
+            e.message ?? 'Too many attempts or invalid verification request.';
+        break;
+      case 'failed-precondition':
+        friendlyMessage =
+            e.message ?? 'Please request a new verification code first.';
+        break;
+      case 'invalid-argument':
+        friendlyMessage = e.message ?? 'Invalid input. Please check and retry.';
+        break;
+      default:
+        friendlyMessage =
+            e.message ?? 'Password reset request failed. Please try again.';
     }
 
     throw AuthException(friendlyMessage);
@@ -323,9 +360,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> resetPassword(String email) async {
     try {
-      await firebaseAuth.sendPasswordResetEmail(email: email);
-    } on firebase_auth.FirebaseAuthException catch (e) {
-      _handleFirebaseAuthError(e);
+      final callable = firebaseFunctions.httpsCallable(
+        'requestPasswordResetOtp',
+      );
+      await callable.call<dynamic>(<String, dynamic>{'email': email.trim()});
+    } on FirebaseFunctionsException catch (e) {
+      _handleFunctionsError(e);
     } catch (e) {
       throw AuthException('Password reset failed: ${e.toString()}');
     }
@@ -335,16 +375,21 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<void> confirmPasswordReset({
+    required String email,
     required String oobCode,
     required String newPassword,
   }) async {
     try {
-      await firebaseAuth.confirmPasswordReset(
-        code: oobCode,
-        newPassword: newPassword,
+      final callable = firebaseFunctions.httpsCallable(
+        'confirmPasswordResetWithOtp',
       );
-    } on firebase_auth.FirebaseAuthException catch (e) {
-      _handleFirebaseAuthError(e);
+      await callable.call<dynamic>(<String, dynamic>{
+        'email': email.trim(),
+        'otpCode': oobCode.trim(),
+        'newPassword': newPassword,
+      });
+    } on FirebaseFunctionsException catch (e) {
+      _handleFunctionsError(e);
     } catch (e) {
       throw const AuthException('Could not reset password. Please try again.');
     }

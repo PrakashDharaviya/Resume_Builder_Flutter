@@ -199,10 +199,9 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const ForgotPasswordPage());
 
       case AppRoutes.resetPassword:
-        final initialLinkOrCode = settings.arguments as String?;
+        final initialEmail = settings.arguments as String?;
         return MaterialPageRoute(
-          builder: (_) =>
-              ResetPasswordPage(initialLinkOrCode: initialLinkOrCode),
+          builder: (_) => ResetPasswordPage(initialEmail: initialEmail),
         );
 
       case AppRoutes.settings:

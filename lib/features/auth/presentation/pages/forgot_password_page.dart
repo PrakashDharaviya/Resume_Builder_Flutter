@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:resumebuilder/core/constants/app_colors.dart';
-import 'package:resumebuilder/core/constants/app_routes.dart';
 import 'package:resumebuilder/core/utils/validators.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_event.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_state.dart';
+import 'package:resumebuilder/features/auth/presentation/pages/reset_password_page.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -48,7 +48,13 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
             Future.delayed(const Duration(milliseconds: 1200), () {
               if (mounted) {
-                Navigator.of(this.context).pop();
+                Navigator.of(this.context).pushReplacement(
+                  MaterialPageRoute<void>(
+                    builder: (_) => ResetPasswordPage(
+                      initialEmail: _emailController.text.trim(),
+                    ),
+                  ),
+                );
               }
             });
           } else if (state is ForgotPasswordError) {
@@ -87,7 +93,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        'Enter your email address and we will send you a password reset link.',
+                        'Enter your email and we will send a 6-digit verification code.',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: AppColors.textSecondaryLight,
@@ -119,20 +125,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                   color: AppColors.white,
                                 ),
                               )
-                            : const Text('Send Reset Link'),
-                      ),
-                      const SizedBox(height: 12),
-                      TextButton(
-                        onPressed: isLoading
-                            ? null
-                            : () {
-                                Navigator.of(
-                                  context,
-                                ).pushNamed(AppRoutes.resetPassword);
-                              },
-                        child: const Text(
-                          'Already have reset link/code? Set new password',
-                        ),
+                            : const Text('Send Verification Code'),
                       ),
                     ],
                   ),

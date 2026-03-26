@@ -47,4 +47,6 @@ app.*.map.json
 # API Keys & Secrets — NEVER commit these
 .env
 .env.*
+functions/.env
+functions/.env.*
 api_keys.dart

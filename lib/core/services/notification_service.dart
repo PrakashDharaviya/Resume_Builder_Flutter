@@ -58,8 +58,8 @@ class NotificationService {
 
     // Listen to foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
+      final RemoteNotification? notification = message.notification;
+      final AndroidNotification? android = message.notification?.android;
 
       if (notification != null && android != null && !kIsWeb) {
         _localNotificationsPlugin.show(
@@ -81,7 +81,7 @@ class NotificationService {
   }
 
   static Future<bool> requestPermission() async {
-    NotificationSettings settings = await _firebaseMessaging.requestPermission(
+    final NotificationSettings settings = await _firebaseMessaging.requestPermission(
       alert: true,
       announcement: false,
       badge: true,

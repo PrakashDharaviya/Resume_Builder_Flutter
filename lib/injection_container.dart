@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart'
     show kIsWeb, defaultTargetPlatform, TargetPlatform;
@@ -92,6 +93,7 @@ Future<void> init() async {
     () => AuthRemoteDataSourceImpl(
       firebaseAuth: FirebaseAuth.instance,
       firebaseFirestore: FirebaseFirestore.instance,
+      firebaseFunctions: FirebaseFunctions.instance,
       googleSignIn: GoogleSignIn(
         clientId: (kIsWeb || defaultTargetPlatform == TargetPlatform.windows)
             ? '465329982315-bg09qe87n32c633q9ogubk32dhsrje82.apps.googleusercontent.com'

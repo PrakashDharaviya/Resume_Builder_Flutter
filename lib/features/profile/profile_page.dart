@@ -75,7 +75,7 @@ class ProfilePageState extends State<ProfilePage> {
 
       await FirebaseFirestore.instance.collection('users').doc(_cachedUid).set({
         'notificationsEnabled': value,
-        if (fcmToken != null) 'fcmToken': fcmToken,
+        'fcmToken': ?fcmToken,
       }, SetOptions(merge: true));
     } catch (e) {
       debugPrint('Error updating push config: $e');

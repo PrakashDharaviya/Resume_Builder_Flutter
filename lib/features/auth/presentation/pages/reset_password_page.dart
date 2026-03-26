@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:resumebuilder/core/constants/app_colors.dart';
@@ -8,9 +10,9 @@ import 'package:resumebuilder/features/auth/presentation/bloc/auth_event.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_state.dart';
 
 class ResetPasswordPage extends StatefulWidget {
-  final String? initialLinkOrCode;
+  final String? initialEmail;
 
-  const ResetPasswordPage({super.key, this.initialLinkOrCode});
+  const ResetPasswordPage({super.key, this.initialEmail});
 
   @override
   State<ResetPasswordPage> createState() => _ResetPasswordPageState();
@@ -18,40 +20,75 @@ class ResetPasswordPage extends StatefulWidget {
 
 class _ResetPasswordPageState extends State<ResetPasswordPage> {
   final _formKey = GlobalKey<FormState>();
-  final _resetLinkOrCodeController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _otpCodeController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
   bool _obscureNewPassword = true;
   bool _obscureConfirmPassword = true;
+  Timer? _resendTimer;
+  int _secondsUntilResend = 60;
 
   @override
   void initState() {
     super.initState();
-    final initialValue = widget.initialLinkOrCode?.trim();
-    if (initialValue != null && initialValue.isNotEmpty) {
-      _resetLinkOrCodeController.text = initialValue;
+    _emailController.text = widget.initialEmail?.trim() ?? '';
+    if (_emailController.text.isNotEmpty) {
+      _startResendCountdown();
     }
   }
 
   @override
   void dispose() {
-    _resetLinkOrCodeController.dispose();
+    _emailController.dispose();
+    _otpCodeController.dispose();
     _newPasswordController.dispose();
     _confirmPasswordController.dispose();
+    _resendTimer?.cancel();
     super.dispose();
   }
 
-  String _extractOobCode(String input) {
-    final value = input.trim();
-    if (value.contains('oobCode=')) {
-      final uri = Uri.tryParse(value);
-      final code = uri?.queryParameters['oobCode'];
-      if (code != null && code.isNotEmpty) {
-        return code;
+  void _startResendCountdown() {
+    _resendTimer?.cancel();
+    setState(() {
+      _secondsUntilResend = 60;
+    });
+
+    _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
       }
+
+      if (_secondsUntilResend <= 1) {
+        timer.cancel();
+        setState(() {
+          _secondsUntilResend = 0;
+        });
+        return;
+      }
+
+      setState(() {
+        _secondsUntilResend -= 1;
+      });
+    });
+  }
+
+  void _onResendCode() {
+    if (Validators.validateEmail(_emailController.text.trim()) != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter a valid email address to resend code.'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+      return;
     }
-    return value;
+
+    context.read<AuthBloc>().add(
+      ForgotPasswordRequestedEvent(email: _emailController.text.trim()),
+    );
   }
 
   void _onResetPassword() {
@@ -59,10 +96,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       return;
     }
 
-    final oobCode = _extractOobCode(_resetLinkOrCodeController.text);
     context.read<AuthBloc>().add(
       ConfirmPasswordResetEvent(
-        oobCode: oobCode,
+        email: _emailController.text.trim(),
+        oobCode: _otpCodeController.text.trim(),
         newPassword: _newPasswordController.text,
       ),
     );
@@ -89,6 +126,21 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                 ).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
               }
             });
+          } else if (state is ForgotPasswordSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.green,
+              ),
+            );
+            _startResendCountdown();
+          } else if (state is ForgotPasswordError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: AppColors.error,
+              ),
+            );
           } else if (state is ConfirmPasswordResetError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -99,7 +151,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
           }
         },
         builder: (context, state) {
-          final isLoading = state is ConfirmPasswordResetLoading;
+          final isLoading =
+              state is ConfirmPasswordResetLoading ||
+              state is ForgotPasswordLoading;
 
           return SafeArea(
             child: Center(
@@ -124,7 +178,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        'Paste reset link or code from your email, then set your new password.',
+                        'Enter the OTP code sent to your email, then set your new password.',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: AppColors.textSecondaryLight,
@@ -132,18 +186,49 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                       ),
                       const SizedBox(height: 28),
                       TextFormField(
-                        controller: _resetLinkOrCodeController,
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
                         enabled: !isLoading,
                         decoration: const InputDecoration(
-                          labelText: 'Reset Link or Code',
-                          prefixIcon: Icon(Icons.link_outlined),
+                          labelText: 'Email Address',
+                          prefixIcon: Icon(Icons.email_outlined),
+                        ),
+                        validator: Validators.validateEmail,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _otpCodeController,
+                        keyboardType: TextInputType.number,
+                        enabled: !isLoading,
+                        decoration: const InputDecoration(
+                          labelText: 'Verification Code (OTP)',
+                          prefixIcon: Icon(Icons.pin_outlined),
                         ),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'Reset link or code is required';
+                            return 'Verification code is required';
+                          }
+
+                          final code = value.trim();
+                          if (code.length != 6 || int.tryParse(code) == null) {
+                            return 'Enter a valid 6-digit code';
                           }
                           return null;
                         },
+                      ),
+                      const SizedBox(height: 8),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: isLoading || _secondsUntilResend > 0
+                              ? null
+                              : _onResendCode,
+                          child: Text(
+                            _secondsUntilResend > 0
+                                ? 'Resend code in ${_secondsUntilResend}s'
+                                : 'Resend Code',
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 16),
                       TextFormField(

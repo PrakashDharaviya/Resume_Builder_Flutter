@@ -1,22 +1,30 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:resumebuilder/app_router.dart';
 import 'package:resumebuilder/core/constants/app_routes.dart';
 import 'package:resumebuilder/core/constants/app_theme.dart';
+import 'package:resumebuilder/core/services/notification_service.dart';
 import 'package:resumebuilder/core/theme/theme_cubit.dart';
 import 'package:resumebuilder/core/utils/app_preferences.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:resumebuilder/features/resume/presentation/bloc/resume_bloc.dart';
 import 'package:resumebuilder/firebase_options.dart';
-import 'package:resumebuilder/core/services/notification_service.dart';
 import 'package:resumebuilder/injection_container.dart' as di;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Use Firebase emulator for local development
+  if (kDebugMode && kIsWeb) {
+    FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
+  }
+
   await NotificationService.initialize();
   await di.init();
   runApp(const ResumeIQApp());

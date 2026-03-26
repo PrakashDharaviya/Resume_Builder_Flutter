@@ -1,12 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:flutter/material.dart';
+import 'package:resumebuilder/admin/presentation/widgets/admin_drawer.dart';
 import 'package:resumebuilder/core/constants/app_colors.dart';
 import 'package:resumebuilder/core/constants/app_routes.dart';
-import 'package:resumebuilder/core/utils/app_preferences.dart';
-import 'package:resumebuilder/admin/presentation/widgets/admin_drawer.dart';
-import 'package:resumebuilder/features/admin/presentation/bloc/admin_bloc.dart';
-import 'package:resumebuilder/features/admin/presentation/bloc/admin_event.dart';
 
 class SendNotificationPage extends StatefulWidget {
   const SendNotificationPage({super.key});
@@ -34,8 +30,10 @@ class _SendNotificationPageState extends State<SendNotificationPage> {
     setState(() => _isSending = true);
 
     try {
-      final HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('sendBroadcastNotification');
-      await callable.call(<String, dynamic>{
+      final HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
+        'sendBroadcastNotification',
+      );
+      await callable.call<dynamic>(<String, dynamic>{
         'title': _titleController.text.trim(),
         'body': _messageController.text.trim(),
       });
@@ -52,7 +50,9 @@ class _SendNotificationPageState extends State<SendNotificationPage> {
             ),
             backgroundColor: AppColors.success,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         );
         Navigator.pop(context);
@@ -64,7 +64,9 @@ class _SendNotificationPageState extends State<SendNotificationPage> {
             content: Text('Failed to send notification: $e'),
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         );
       }
@@ -80,7 +82,9 @@ class _SendNotificationPageState extends State<SendNotificationPage> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColors.backgroundDark
+          : AppColors.backgroundLight,
       appBar: AppBar(
         title: const Text(
           'Send Push Notification',
@@ -96,7 +100,9 @@ class _SendNotificationPageState extends State<SendNotificationPage> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 600),
             child: Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
               color: isDark ? const Color(0xFF1F2937) : Colors.white,
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
@@ -124,7 +130,9 @@ class _SendNotificationPageState extends State<SendNotificationPage> {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
-                          color: isDark ? Colors.white : const Color(0xFF111827),
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF111827),
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -132,18 +140,26 @@ class _SendNotificationPageState extends State<SendNotificationPage> {
                         'Send an immediate push notification to everyone who has opted-in via their profile settings.',
                         style: TextStyle(
                           fontSize: 14,
-                          color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
+                          color: isDark
+                              ? const Color(0xFF9CA3AF)
+                              : const Color(0xFF6B7280),
                         ),
                       ),
                       const SizedBox(height: 32),
                       TextFormField(
                         controller: _titleController,
-                        style: TextStyle(color: isDark ? Colors.white : const Color(0xFF111827)),
+                        style: TextStyle(
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF111827),
+                        ),
                         decoration: InputDecoration(
                           labelText: 'Notification Title',
                           hintText: 'e.g., New Premium Template Available!',
                           filled: true,
-                          fillColor: isDark ? const Color(0xFF374151) : const Color(0xFFF9FAFB),
+                          fillColor: isDark
+                              ? const Color(0xFF374151)
+                              : const Color(0xFFF9FAFB),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide.none,
@@ -151,25 +167,36 @@ class _SendNotificationPageState extends State<SendNotificationPage> {
                           prefixIcon: const Icon(Icons.title),
                         ),
                         validator: (value) =>
-                            value == null || value.trim().isEmpty ? 'Title is required' : null,
+                            value == null || value.trim().isEmpty
+                            ? 'Title is required'
+                            : null,
                       ),
                       const SizedBox(height: 20),
                       TextFormField(
                         controller: _messageController,
                         maxLines: 4,
-                        style: TextStyle(color: isDark ? Colors.white : const Color(0xFF111827)),
+                        style: TextStyle(
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF111827),
+                        ),
                         decoration: InputDecoration(
                           labelText: 'Notification Message',
-                          hintText: 'Enter the body text of the notification...',
+                          hintText:
+                              'Enter the body text of the notification...',
                           filled: true,
-                          fillColor: isDark ? const Color(0xFF374151) : const Color(0xFFF9FAFB),
+                          fillColor: isDark
+                              ? const Color(0xFF374151)
+                              : const Color(0xFFF9FAFB),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide.none,
                           ),
                         ),
                         validator: (value) =>
-                            value == null || value.trim().isEmpty ? 'Message is required' : null,
+                            value == null || value.trim().isEmpty
+                            ? 'Message is required'
+                            : null,
                       ),
                       const SizedBox(height: 32),
                       SizedBox(
@@ -188,8 +215,13 @@ class _SendNotificationPageState extends State<SendNotificationPage> {
                                 )
                               : const Icon(Icons.send_rounded),
                           label: Text(
-                            _isSending ? 'Sending Broadcast...' : 'Send Broadcast',
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            _isSending
+                                ? 'Sending Broadcast...'
+                                : 'Send Broadcast',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF3B82F6),

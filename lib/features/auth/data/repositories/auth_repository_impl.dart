@@ -109,11 +109,13 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Either<Failure, void>> confirmPasswordReset({
+    required String email,
     required String oobCode,
     required String newPassword,
   }) async {
     try {
       await remoteDataSource.confirmPasswordReset(
+        email: email,
         oobCode: oobCode,
         newPassword: newPassword,
       );

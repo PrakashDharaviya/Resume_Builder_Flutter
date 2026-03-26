@@ -177,7 +177,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               emit(ForgotPasswordError(message: resetFailure.message)),
           (_) => emit(
             const ForgotPasswordSuccess(
-              message: 'Password reset link sent. Please check your email.',
+              message: 'Verification code sent. Please check your email.',
             ),
           ),
         );
@@ -197,7 +197,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           (failure) => emit(ForgotPasswordError(message: failure.message)),
           (_) => emit(
             const ForgotPasswordSuccess(
-              message: 'Password reset link sent. Please check your email.',
+              message: 'Verification code sent. Please check your email.',
             ),
           ),
         );
@@ -212,6 +212,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const ConfirmPasswordResetLoading());
 
     final result = await confirmPasswordReset(
+      email: event.email,
       oobCode: event.oobCode,
       newPassword: event.newPassword,
     );

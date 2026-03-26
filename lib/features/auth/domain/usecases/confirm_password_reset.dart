@@ -8,10 +8,12 @@ class ConfirmPasswordReset {
   ConfirmPasswordReset(this.repository);
 
   Future<Either<Failure, void>> call({
+    required String email,
     required String oobCode,
     required String newPassword,
   }) async {
     return await repository.confirmPasswordReset(
+      email: email,
       oobCode: oobCode,
       newPassword: newPassword,
     );
