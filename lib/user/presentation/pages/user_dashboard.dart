@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:resumebuilder/core/constants/app_routes.dart';
@@ -52,6 +53,12 @@ class UserDashboardState extends State<UserDashboard> {
   void initState() {
     super.initState();
     context.read<ResumeBloc>().add(const LoadAllResumesEvent());
+    _loadNotificationReadTime();
+  }
+
+  Future<void> _loadNotificationReadTime() async {
+    await AppPreferences.loadLastReadTime();
+    if (mounted) setState(() {});
   }
 
   @override
@@ -98,6 +105,58 @@ class UserDashboardState extends State<UserDashboard> {
                 tooltip: 'Profile',
                 onPressed: () =>
                     Navigator.pushNamed(context, AppRoutes.profile),
+              ),
+              // Notification bell with badge
+              StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('notifications')
+                    .orderBy('createdAt', descending: true)
+                    .limit(50)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  int unreadCount = 0;
+                  final docs = snapshot.data?.docs ?? [];
+                  
+                  if (AppPreferences.lastReadNotificationsTime != null) {
+                    for (var doc in docs) {
+                      final createdAt = (doc['createdAt'] as Timestamp?)?.toDate();
+                      if (createdAt != null &&
+                          createdAt.isAfter(AppPreferences.lastReadNotificationsTime!)) {
+                        unreadCount++;
+                      }
+                    }
+                  } else {
+                    unreadCount = docs.length;
+                  }
+
+                  return IconButton(
+                    icon: Badge(
+                      isLabelVisible: unreadCount > 0,
+                      label: Text(
+                        unreadCount > 9 ? '9+' : unreadCount.toString(),
+                        style: const TextStyle(fontSize: 10),
+                      ),
+                      child: const Icon(
+                        Icons.notifications_outlined,
+                      ),
+                    ),
+                    tooltip: 'Notifications',
+                    onPressed: () async {
+                      // Save current time as last read time
+                      await AppPreferences.saveLastReadTime(DateTime.now());
+                      if (mounted) {
+                        setState(() {});
+                        Navigator.pushNamed(
+                          context,
+                          AppRoutes.notifications,
+                        ).then((_) {
+                          // Update again when returning just in case
+                          if (mounted) setState(() {});
+                        });
+                      }
+                    },
+                  );
+                },
               ),
               IconButton(
                 icon: const Icon(Icons.style_rounded),

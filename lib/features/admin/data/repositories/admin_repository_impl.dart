@@ -3,6 +3,7 @@ import 'package:resumebuilder/core/errors/failures.dart';
 import 'package:resumebuilder/features/admin/data/datasources/admin_remote_data_source.dart';
 import 'package:resumebuilder/features/admin/domain/entities/admin_stats.dart';
 import 'package:resumebuilder/features/admin/domain/entities/announcement.dart';
+import 'package:resumebuilder/features/admin/domain/entities/app_notification.dart';
 import 'package:resumebuilder/features/admin/domain/entities/ats_config.dart';
 import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
 import 'package:resumebuilder/features/admin/domain/repositories/admin_repository.dart';
@@ -155,6 +156,37 @@ class AdminRepositoryImpl implements AdminRepository {
       return const Right(unit);
     } catch (e) {
       return const Left(ServerFailure('Failed to delete announcement'));
+    }
+  }
+
+  // ========== Notifications ==========
+  @override
+  Future<Either<Failure, List<AppNotification>>> getAllNotifications() async {
+    try {
+      return Right(await dataSource.getAllNotifications());
+    } catch (e) {
+      return const Left(ServerFailure('Failed to load notifications'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, AppNotification>> addNotification(
+    AppNotification notification,
+  ) async {
+    try {
+      return Right(await dataSource.addNotification(notification));
+    } catch (e) {
+      return const Left(ServerFailure('Failed to send notification'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> deleteNotification(String id) async {
+    try {
+      await dataSource.deleteNotification(id);
+      return const Right(unit);
+    } catch (e) {
+      return const Left(ServerFailure('Failed to delete notification'));
     }
   }
 }

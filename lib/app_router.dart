@@ -30,6 +30,7 @@ import 'package:resumebuilder/user/presentation/pages/resume_preview_page.dart';
 import 'package:resumebuilder/user/presentation/pages/template_selection_page.dart';
 import 'package:resumebuilder/user/presentation/pages/user_dashboard.dart';
 import 'package:resumebuilder/user/presentation/pages/user_profile_page.dart';
+import 'package:resumebuilder/user/presentation/pages/notifications_page.dart';
 
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -209,6 +210,9 @@ class AppRouter {
 
       case AppRoutes.privacy:
         return MaterialPageRoute(builder: (_) => const PrivacyPage());
+
+      case AppRoutes.notifications:
+        return MaterialPageRoute(builder: (_) => const NotificationsPage());
 
       default:
         return MaterialPageRoute(

@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:resumebuilder/core/errors/failures.dart';
 import 'package:resumebuilder/features/admin/domain/entities/admin_stats.dart';
 import 'package:resumebuilder/features/admin/domain/entities/announcement.dart';
+import 'package:resumebuilder/features/admin/domain/entities/app_notification.dart';
 import 'package:resumebuilder/features/admin/domain/entities/ats_config.dart';
 import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
 import 'package:resumebuilder/features/auth/domain/entities/user.dart';
@@ -37,4 +38,11 @@ abstract class AdminRepository {
   );
   Future<Either<Failure, Announcement>> toggleAnnouncement(String id);
   Future<Either<Failure, Unit>> deleteAnnouncement(String id);
+
+  // Notifications
+  Future<Either<Failure, List<AppNotification>>> getAllNotifications();
+  Future<Either<Failure, AppNotification>> addNotification(
+    AppNotification notification,
+  );
+  Future<Either<Failure, Unit>> deleteNotification(String id);
 }

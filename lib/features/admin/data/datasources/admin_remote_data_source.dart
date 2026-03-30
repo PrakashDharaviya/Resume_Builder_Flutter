@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:resumebuilder/features/admin/domain/entities/admin_stats.dart';
 import 'package:resumebuilder/features/admin/domain/entities/announcement.dart';
+import 'package:resumebuilder/features/admin/domain/entities/app_notification.dart';
 import 'package:resumebuilder/features/admin/domain/entities/ats_config.dart';
 import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
 import 'package:resumebuilder/features/auth/domain/entities/user.dart';
@@ -21,6 +22,11 @@ abstract class AdminRemoteDataSource {
   Future<Announcement> updateAnnouncement(Announcement announcement);
   Future<Announcement> toggleAnnouncement(String id);
   Future<void> deleteAnnouncement(String id);
+
+  // Notifications
+  Future<List<AppNotification>> getAllNotifications();
+  Future<AppNotification> addNotification(AppNotification notification);
+  Future<void> deleteNotification(String id);
 }
 
 class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
@@ -34,6 +40,8 @@ class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
       firestore.collection('templates');
   CollectionReference<Map<String, dynamic>> get _announcementsCol =>
       firestore.collection('announcements');
+  CollectionReference<Map<String, dynamic>> get _notificationsCol =>
+      firestore.collection('notifications');
   DocumentReference<Map<String, dynamic>> get _atsConfigDoc =>
       firestore.collection('config').doc('ats');
 
@@ -309,5 +317,41 @@ class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
   @override
   Future<void> deleteAnnouncement(String id) async {
     await _announcementsCol.doc(id).delete();
+  }
+
+  // ========== Notification Operations ==========
+  @override
+  Future<List<AppNotification>> getAllNotifications() async {
+    final snap = await _notificationsCol
+        .orderBy('createdAt', descending: true)
+        .get();
+    return snap.docs.map((doc) {
+      final d = doc.data();
+      return AppNotification(
+        id: doc.id,
+        title: (d['title'] as String?) ?? '',
+        message: (d['message'] as String?) ?? '',
+        createdAt: (d['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+        type: (d['type'] as String?) ?? 'broadcast',
+      );
+    }).toList();
+  }
+
+  @override
+  Future<AppNotification> addNotification(AppNotification notification) async {
+    final id = 'notif_${DateTime.now().millisecondsSinceEpoch}';
+    final now = DateTime.now();
+    await _notificationsCol.doc(id).set({
+      'title': notification.title,
+      'message': notification.message,
+      'createdAt': Timestamp.fromDate(now),
+      'type': notification.type,
+    });
+    return notification.copyWith(id: id, createdAt: now);
+  }
+
+  @override
+  Future<void> deleteNotification(String id) async {
+    await _notificationsCol.doc(id).delete();
   }
 }

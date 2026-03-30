@@ -133,3 +133,27 @@ class DeleteAnnouncement extends AdminEvent {
   @override
   List<Object?> get props => [announcementId];
 }
+
+// ========== Notification Events ==========
+class LoadNotifications extends AdminEvent {
+  const LoadNotifications();
+}
+
+class SendBroadcastNotification extends AdminEvent {
+  final String title;
+  final String body;
+
+  const SendBroadcastNotification({required this.title, required this.body});
+
+  @override
+  List<Object?> get props => [title, body];
+}
+
+class DeleteNotification extends AdminEvent {
+  final String notificationId;
+
+  const DeleteNotification({required this.notificationId});
+
+  @override
+  List<Object?> get props => [notificationId];
+}

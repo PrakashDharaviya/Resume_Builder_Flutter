@@ -216,6 +216,7 @@ class AnnouncementsPageState extends State<AnnouncementsPage> {
       text: announcement?.message ?? '',
     );
     bool isActive = announcement?.isActive ?? true;
+    bool sendNotification = !isEdit; // Default on for new, off for edit
 
     showModalBottomSheet<void>(
       context: context,
@@ -321,6 +322,53 @@ class AnnouncementsPageState extends State<AnnouncementsPage> {
                         ),
                       ],
                     ),
+                    // Send notification toggle
+                    Container(
+                      margin: const EdgeInsets.only(top: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? const Color(0xFF374151)
+                            : const Color(0xFFFEF3C7),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: const Color(0xFFF59E0B)
+                              .withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.notifications_active_outlined,
+                            color: Color(0xFFF59E0B),
+                            size: 18,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Also notify all users',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: isDark
+                                    ? Colors.white
+                                    : const Color(0xFF111827),
+                              ),
+                            ),
+                          ),
+                          Switch(
+                            value: sendNotification,
+                            onChanged: (v) =>
+                                setModalState(() => sendNotification = v),
+                            activeThumbColor: Colors.white,
+                            activeTrackColor: const Color(0xFFF59E0B),
+                          ),
+                        ],
+                      ),
+                    ),
                     const SizedBox(height: 20),
                     SizedBox(
                       width: double.infinity,
@@ -352,6 +400,15 @@ class AnnouncementsPageState extends State<AnnouncementsPage> {
                                     announcement: newAnnouncement,
                                   ),
                           );
+                          // Also send notification if toggled
+                          if (sendNotification) {
+                            context.read<AdminBloc>().add(
+                              SendBroadcastNotification(
+                                title: title,
+                                body: message,
+                              ),
+                            );
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,

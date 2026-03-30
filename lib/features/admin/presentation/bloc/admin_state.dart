@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:resumebuilder/features/admin/domain/entities/admin_stats.dart';
 import 'package:resumebuilder/features/admin/domain/entities/announcement.dart';
+import 'package:resumebuilder/features/admin/domain/entities/app_notification.dart';
 import 'package:resumebuilder/features/admin/domain/entities/ats_config.dart';
 import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
 import 'package:resumebuilder/features/auth/domain/entities/user.dart';
@@ -90,4 +91,14 @@ class AnnouncementsLoaded extends AdminState {
 
   @override
   List<Object?> get props => [announcements];
+}
+
+// ========== Notification States ==========
+class NotificationsLoaded extends AdminState {
+  final List<AppNotification> notifications;
+
+  const NotificationsLoaded({required this.notifications});
+
+  @override
+  List<Object?> get props => [notifications];
 }

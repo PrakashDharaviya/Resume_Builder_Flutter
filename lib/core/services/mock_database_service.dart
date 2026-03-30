@@ -1,6 +1,7 @@
 import 'package:resumebuilder/features/admin/data/datasources/admin_remote_data_source.dart';
 import 'package:resumebuilder/features/admin/domain/entities/admin_stats.dart';
 import 'package:resumebuilder/features/admin/domain/entities/announcement.dart';
+import 'package:resumebuilder/features/admin/domain/entities/app_notification.dart';
 import 'package:resumebuilder/features/admin/domain/entities/ats_config.dart';
 import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
 import 'package:resumebuilder/features/auth/domain/entities/user.dart';
@@ -47,8 +48,17 @@ class MockDatabaseService {
   Future<void> deleteAnnouncement(String id) =>
       adminSource.deleteAnnouncement(id);
 
+  // Notifications
+  Future<List<AppNotification>> getNotifications() =>
+      adminSource.getAllNotifications();
+  Future<AppNotification> addNotification(AppNotification notification) =>
+      adminSource.addNotification(notification);
+  Future<void> deleteNotification(String id) =>
+      adminSource.deleteNotification(id);
+
   Future<List<Resume>> getResumes() async {
     final models = await resumeSource.getUserResumes();
     return List<Resume>.from(models);
   }
 }
+

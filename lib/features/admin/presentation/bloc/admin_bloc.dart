@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:resumebuilder/features/admin/domain/entities/app_notification.dart';
 import 'package:resumebuilder/features/admin/domain/repositories/admin_repository.dart';
 import 'package:resumebuilder/features/admin/presentation/bloc/admin_event.dart';
 import 'package:resumebuilder/features/admin/presentation/bloc/admin_state.dart';
@@ -36,6 +37,11 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     on<UpdateAnnouncement>(onUpdateAnnouncement);
     on<ToggleAnnouncement>(onToggleAnnouncement);
     on<DeleteAnnouncement>(onDeleteAnnouncement);
+
+    // Notifications
+    on<LoadNotifications>(onLoadNotifications);
+    on<SendBroadcastNotification>(onSendBroadcastNotification);
+    on<DeleteNotification>(onDeleteNotification);
   }
 
   // ========== Dashboard ==========
@@ -260,5 +266,54 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
       emit(const AdminActionSuccess(message: 'Announcement deleted'));
       emit(AnnouncementsLoaded(announcements: announcements));
     });
+  }
+
+  // ========== Notifications ==========
+  Future<void> onLoadNotifications(
+    LoadNotifications event,
+    Emitter<AdminState> emit,
+  ) async {
+    emit(const AdminLoading());
+    final result = await repository.getAllNotifications();
+    result.fold(
+      (failure) => emit(AdminError(message: failure.message)),
+      (notifications) =>
+          emit(NotificationsLoaded(notifications: notifications)),
+    );
+  }
+
+  Future<void> onSendBroadcastNotification(
+    SendBroadcastNotification event,
+    Emitter<AdminState> emit,
+  ) async {
+    final notification = AppNotification(
+      id: '',
+      title: event.title,
+      message: event.body,
+      createdAt: DateTime.now(),
+      type: 'broadcast',
+    );
+    final result = await repository.addNotification(notification);
+    result.fold(
+      (failure) => emit(AdminError(message: failure.message)),
+      (_) => emit(
+        const AdminActionSuccess(message: 'Notification sent successfully'),
+      ),
+    );
+  }
+
+  Future<void> onDeleteNotification(
+    DeleteNotification event,
+    Emitter<AdminState> emit,
+  ) async {
+    await repository.deleteNotification(event.notificationId);
+    final result = await repository.getAllNotifications();
+    result.fold(
+      (failure) => emit(AdminError(message: failure.message)),
+      (notifications) {
+        emit(const AdminActionSuccess(message: 'Notification deleted'));
+        emit(NotificationsLoaded(notifications: notifications));
+      },
+    );
   }
 }
