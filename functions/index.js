@@ -54,96 +54,104 @@ function hashOtp(email, otpCode) {
 }
 
 exports.requestPasswordResetOtp = functions.https.onCall(async (data) => {
-  const email = normalizeEmail(data?.email);
-
-  if (!email) {
-    throw new functions.https.HttpsError(
-      "invalid-argument",
-      "Email is required.",
-    );
-  }
-
-  let userRecord;
   try {
-    userRecord = await admin.auth().getUserByEmail(email);
-  } catch (error) {
-    if (error?.code === "auth/user-not-found") {
+    const email = normalizeEmail(data?.email);
+
+    if (!email) {
       throw new functions.https.HttpsError(
-        "not-found",
-        "No account found with this email address.",
+        "invalid-argument",
+        "Email is required.",
       );
     }
-    throw new functions.https.HttpsError(
-      "internal",
-      "Could not verify account. Please try again.",
+
+    let userRecord;
+    try {
+      userRecord = await admin.auth().getUserByEmail(email);
+    } catch (error) {
+      if (error?.code === "auth/user-not-found") {
+        throw new functions.https.HttpsError(
+          "not-found",
+          "No account found with this email address.",
+        );
+      }
+      throw new functions.https.HttpsError(
+        "internal",
+        "Could not verify account. Please try again.",
+      );
+    }
+
+    const docRef = admin
+      .firestore()
+      .collection(OTP_COLLECTION)
+      .doc(userRecord.uid);
+    const nowMs = Date.now();
+    const existingDoc = await docRef.get();
+
+    if (existingDoc.exists) {
+      const existingData = existingDoc.data() || {};
+      const lastSentAt = existingData.lastSentAt;
+      const lastSentMs =
+        lastSentAt && typeof lastSentAt.toMillis === "function"
+          ? lastSentAt.toMillis()
+          : 0;
+      const elapsedSeconds = Math.floor((nowMs - lastSentMs) / 1000);
+
+      if (elapsedSeconds < OTP_RESEND_COOLDOWN_SECONDS) {
+        throw new functions.https.HttpsError(
+          "resource-exhausted",
+          `Please wait ${OTP_RESEND_COOLDOWN_SECONDS - elapsedSeconds}s before requesting a new code.`,
+        );
+      }
+    }
+
+    const otpCode = generateOtpCode();
+    const otpHash = hashOtp(email, otpCode);
+    const expiresAt = new Date(nowMs + OTP_EXPIRY_MINUTES * 60 * 1000);
+
+    await docRef.set(
+      {
+        email,
+        otpHash,
+        attempts: 0,
+        createdAt: new Date(nowMs),
+        lastSentAt: new Date(nowMs),
+        expiresAt,
+      },
+      { merge: true },
     );
-  }
 
-  const docRef = admin
-    .firestore()
-    .collection(OTP_COLLECTION)
-    .doc(userRecord.uid);
-  const nowMs = Date.now();
-  const existingDoc = await docRef.get();
+    const transporter = createTransporter();
+    const { email: fromEmail } = getMailerConfig();
 
-  if (existingDoc.exists) {
-    const existingData = existingDoc.data() || {};
-    const lastSentAt = existingData.lastSentAt;
-    const lastSentMs =
-      lastSentAt && typeof lastSentAt.toMillis === "function"
-        ? lastSentAt.toMillis()
-        : 0;
-    const elapsedSeconds = Math.floor((nowMs - lastSentMs) / 1000);
+    await transporter.sendMail({
+      from: `ResumeIQ <${fromEmail}>`,
+      to: email,
+      subject: "ResumeIQ Password Reset Verification Code",
+      text:
+        `Your ResumeIQ password reset code is ${otpCode}. ` +
+        `It will expire in ${OTP_EXPIRY_MINUTES} minutes. ` +
+        "If you did not request this, please ignore this email.",
+      html:
+        `<p>Your ResumeIQ password reset code is <b>${otpCode}</b>.</p>` +
+        `<p>This code expires in <b>${OTP_EXPIRY_MINUTES} minutes</b>.</p>` +
+        "<p>If you did not request this, please ignore this email.</p>",
+    });
 
-    if (elapsedSeconds < OTP_RESEND_COOLDOWN_SECONDS) {
-      throw new functions.https.HttpsError(
-        "resource-exhausted",
-        `Please wait ${OTP_RESEND_COOLDOWN_SECONDS - elapsedSeconds}s before requesting a new code.`,
-      );
+    return {
+      success: true,
+      message: "Verification code sent to your email.",
+      expiresInMinutes: OTP_EXPIRY_MINUTES,
+      resendInSeconds: OTP_RESEND_COOLDOWN_SECONDS,
+    };
+  } catch (e) {
+    console.error("FATAL ERROR IN requestPasswordResetOtp:", e);
+    // If it's already an HttpsError, throw it directly
+    if (e instanceof functions.https.HttpsError) {
+      throw e;
     }
+    // Otherwise, wrap it to send the exact error message to Flutter
+    throw new functions.https.HttpsError("internal", `Backend Error: ${e.message}`);
   }
-
-  const otpCode = generateOtpCode();
-  const otpHash = hashOtp(email, otpCode);
-  const expiresAt = admin.firestore.Timestamp.fromMillis(
-    nowMs + OTP_EXPIRY_MINUTES * 60 * 1000,
-  );
-
-  await docRef.set(
-    {
-      email,
-      otpHash,
-      attempts: 0,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      lastSentAt: admin.firestore.FieldValue.serverTimestamp(),
-      expiresAt,
-    },
-    { merge: true },
-  );
-
-  const transporter = createTransporter();
-  const { email: fromEmail } = getMailerConfig();
-
-  await transporter.sendMail({
-    from: `ResumeIQ <${fromEmail}>`,
-    to: email,
-    subject: "ResumeIQ Password Reset Verification Code",
-    text:
-      `Your ResumeIQ password reset code is ${otpCode}. ` +
-      `It will expire in ${OTP_EXPIRY_MINUTES} minutes. ` +
-      "If you did not request this, please ignore this email.",
-    html:
-      `<p>Your ResumeIQ password reset code is <b>${otpCode}</b>.</p>` +
-      `<p>This code expires in <b>${OTP_EXPIRY_MINUTES} minutes</b>.</p>` +
-      "<p>If you did not request this, please ignore this email.</p>",
-  });
-
-  return {
-    success: true,
-    message: "Verification code sent to your email.",
-    expiresInMinutes: OTP_EXPIRY_MINUTES,
-    resendInSeconds: OTP_RESEND_COOLDOWN_SECONDS,
-  };
 });
 
 exports.confirmPasswordResetWithOtp = functions.https.onCall(async (data) => {

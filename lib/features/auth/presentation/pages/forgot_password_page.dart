@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:resumebuilder/core/constants/app_colors.dart';
+import 'package:resumebuilder/core/constants/app_routes.dart';
 import 'package:resumebuilder/core/utils/validators.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_event.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_state.dart';
-import 'package:resumebuilder/features/auth/presentation/pages/reset_password_page.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -46,14 +46,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               ),
             );
 
-            Future.delayed(const Duration(milliseconds: 1200), () {
+            // Navigate to Reset Password page with email
+            Future.delayed(const Duration(milliseconds: 800), () {
               if (mounted) {
-                Navigator.of(this.context).pushReplacement(
-                  MaterialPageRoute<void>(
-                    builder: (_) => ResetPasswordPage(
-                      initialEmail: _emailController.text.trim(),
-                    ),
-                  ),
+                Navigator.of(this.context).pushReplacementNamed(
+                  AppRoutes.resetPassword,
+                  arguments: _emailController.text.trim(),
                 );
               }
             });
@@ -93,7 +91,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        'Enter your email and we will send a 6-digit verification code.',
+                        'Enter your registered email address. We will check if your account exists and send a 6-digit OTP code to your email.',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: AppColors.textSecondaryLight,
@@ -126,6 +124,13 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                 ),
                               )
                             : const Text('Send Verification Code'),
+                      ),
+                      const SizedBox(height: 16),
+                      TextButton(
+                        onPressed: isLoading
+                            ? null
+                            : () => Navigator.of(context).pop(),
+                        child: const Text('Back to Login'),
                       ),
                     ],
                   ),

@@ -20,7 +20,7 @@ void main() async {
   await dotenv.load(fileName: '.env');
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Use Firebase emulator for local development
+  // Use Firebase emulator for local development (Free for students!)
   if (kDebugMode && kIsWeb) {
     FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
   }

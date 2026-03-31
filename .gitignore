@@ -49,4 +49,5 @@ app.*.map.json
 .env.*
 functions/.env
 functions/.env.*
+functions/.runtimeconfig.json
 api_keys.dart

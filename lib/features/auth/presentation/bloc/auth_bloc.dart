@@ -167,41 +167,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(const ForgotPasswordLoading());
 
-    final existsResult = await checkEmailExists(event.email);
-
-    await existsResult.fold(
-      (failure) async {
-        final resetResult = await resetPassword(event.email);
-        resetResult.fold(
-          (resetFailure) =>
-              emit(ForgotPasswordError(message: resetFailure.message)),
-          (_) => emit(
-            const ForgotPasswordSuccess(
-              message: 'Verification code sent. Please check your email.',
-            ),
-          ),
-        );
-      },
-      (exists) async {
-        if (!exists) {
-          emit(
-            const ForgotPasswordError(
-              message: 'No account found with this email address.',
-            ),
-          );
-          return;
-        }
-
-        final resetResult = await resetPassword(event.email);
-        resetResult.fold(
-          (failure) => emit(ForgotPasswordError(message: failure.message)),
-          (_) => emit(
-            const ForgotPasswordSuccess(
-              message: 'Verification code sent. Please check your email.',
-            ),
-          ),
-        );
-      },
+    // Directly call resetPassword which calls the cloud function.
+    // The cloud function natively checks if the user exists and returns an error if not.
+    final resetResult = await resetPassword(event.email);
+    
+    resetResult.fold(
+      (failure) => emit(ForgotPasswordError(message: failure.message)),
+      (_) => emit(
+        const ForgotPasswordSuccess(
+          message: 'Verification code sent. Please check your email.',
+        ),
+      ),
     );
   }
 

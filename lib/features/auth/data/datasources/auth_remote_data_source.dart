@@ -181,9 +181,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       case 'invalid-argument':
         friendlyMessage = e.message ?? 'Invalid input. Please check and retry.';
         break;
+      case 'internal':
+        if (e.message != null && e.message != 'internal') {
+          friendlyMessage = e.message!;
+        } else {
+          friendlyMessage = 'Server error. Ensure backend is running and mailer configured.';
+        }
+        break;
       default:
-        friendlyMessage =
-            e.message ?? 'Password reset request failed. Please try again.';
+        if (e.message == 'internal') {
+          friendlyMessage = 'Unexpected server error occurred. Please try again.';
+        } else {
+          friendlyMessage = e.message ?? 'Password reset request failed. Please try again.';
+        }
     }
 
     throw AuthException(friendlyMessage);

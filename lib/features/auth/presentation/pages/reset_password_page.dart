@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:resumebuilder/core/constants/app_colors.dart';
 import 'package:resumebuilder/core/constants/app_routes.dart';
@@ -20,7 +21,6 @@ class ResetPasswordPage extends StatefulWidget {
 
 class _ResetPasswordPageState extends State<ResetPasswordPage> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
   final _otpCodeController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -30,18 +30,18 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   Timer? _resendTimer;
   int _secondsUntilResend = 60;
 
+  String get _email => widget.initialEmail?.trim() ?? '';
+
   @override
   void initState() {
     super.initState();
-    _emailController.text = widget.initialEmail?.trim() ?? '';
-    if (_emailController.text.isNotEmpty) {
+    if (_email.isNotEmpty) {
       _startResendCountdown();
     }
   }
 
   @override
   void dispose() {
-    _emailController.dispose();
     _otpCodeController.dispose();
     _newPasswordController.dispose();
     _confirmPasswordController.dispose();
@@ -76,10 +76,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   }
 
   void _onResendCode() {
-    if (Validators.validateEmail(_emailController.text.trim()) != null) {
+    if (_email.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please enter a valid email address to resend code.'),
+          content: Text('Email address not available. Please go back and try again.'),
           backgroundColor: AppColors.error,
         ),
       );
@@ -87,7 +87,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     }
 
     context.read<AuthBloc>().add(
-      ForgotPasswordRequestedEvent(email: _emailController.text.trim()),
+      ForgotPasswordRequestedEvent(email: _email),
     );
   }
 
@@ -96,9 +96,19 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       return;
     }
 
+    if (_email.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Email address not available. Please go back and try again.'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+      return;
+    }
+
     context.read<AuthBloc>().add(
       ConfirmPasswordResetEvent(
-        email: _emailController.text.trim(),
+        email: _email,
         oobCode: _otpCodeController.text.trim(),
         newPassword: _newPasswordController.text,
       ),
@@ -164,12 +174,15 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      // Icon
                       const Icon(
                         Icons.password,
                         size: 72,
                         color: AppColors.primary,
                       ),
                       const SizedBox(height: 20),
+
+                      // Title
                       Text(
                         'Create New Password',
                         textAlign: TextAlign.center,
@@ -177,46 +190,48 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                             ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 10),
+
+                      // Description with email
                       Text(
-                        'Enter the OTP code sent to your email, then set your new password.',
+                        'We have sent a 6-digit OTP code to\n$_email\nEnter it below along with your new password.',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: AppColors.textSecondaryLight,
                         ),
                       ),
                       const SizedBox(height: 28),
-                      TextFormField(
-                        controller: _emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        enabled: !isLoading,
-                        decoration: const InputDecoration(
-                          labelText: 'Email Address',
-                          prefixIcon: Icon(Icons.email_outlined),
-                        ),
-                        validator: Validators.validateEmail,
-                      ),
-                      const SizedBox(height: 16),
+
+                      // OTP Field
                       TextFormField(
                         controller: _otpCodeController,
                         keyboardType: TextInputType.number,
                         enabled: !isLoading,
+                        maxLength: 6,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(6),
+                        ],
                         decoration: const InputDecoration(
-                          labelText: 'Verification Code (OTP)',
+                          labelText: 'OTP Code',
+                          hintText: 'Enter 6-digit OTP',
                           prefixIcon: Icon(Icons.pin_outlined),
+                          counterText: '',
                         ),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'Verification code is required';
+                            return 'OTP code is required';
                           }
 
                           final code = value.trim();
                           if (code.length != 6 || int.tryParse(code) == null) {
-                            return 'Enter a valid 6-digit code';
+                            return 'Enter a valid 6-digit OTP code';
                           }
                           return null;
                         },
                       ),
-                      const SizedBox(height: 8),
+
+                      // Resend code button
+                      const SizedBox(height: 4),
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
@@ -230,7 +245,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
+
+                      // New Password Field
                       TextFormField(
                         controller: _newPasswordController,
                         obscureText: _obscureNewPassword,
@@ -254,6 +271,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                         validator: Validators.validatePassword,
                       ),
                       const SizedBox(height: 16),
+
+                      // Confirm Password Field
                       TextFormField(
                         controller: _confirmPasswordController,
                         obscureText: _obscureConfirmPassword,
@@ -282,6 +301,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                             ),
                       ),
                       const SizedBox(height: 24),
+
+                      // Update Password Button
                       ElevatedButton(
                         onPressed: isLoading ? null : _onResetPassword,
                         style: ElevatedButton.styleFrom(
