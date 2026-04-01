@@ -131,10 +131,100 @@ exports.requestPasswordResetOtp = functions.https.onCall(async (data) => {
         `Your ResumeIQ password reset code is ${otpCode}. ` +
         `It will expire in ${OTP_EXPIRY_MINUTES} minutes. ` +
         "If you did not request this, please ignore this email.",
-      html:
-        `<p>Your ResumeIQ password reset code is <b>${otpCode}</b>.</p>` +
-        `<p>This code expires in <b>${OTP_EXPIRY_MINUTES} minutes</b>.</p>` +
-        "<p>If you did not request this, please ignore this email.</p>",
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <style>
+            body {
+              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              background-color: #f4f6f9;
+              margin: 0;
+              padding: 0;
+            }
+            .container {
+              max-width: 600px;
+              margin: 40px auto;
+              background-color: #ffffff;
+              border-radius: 12px;
+              box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+              overflow: hidden;
+            }
+            .header {
+              background-color: #00b47d; /* Matching active green active color */
+              padding: 30px;
+              text-align: center;
+              color: white;
+            }
+            .header h1 {
+              margin: 0;
+              font-size: 28px;
+              font-weight: 700;
+              letter-spacing: 1px;
+            }
+            .content {
+              padding: 40px 30px;
+              color: #333333;
+              line-height: 1.6;
+            }
+            .content p {
+              font-size: 16px;
+              margin-bottom: 20px;
+            }
+            .otp-container {
+              text-align: center;
+              margin: 35px 0;
+            }
+            .otp-code {
+              font-size: 38px;
+              font-weight: bold;
+              color: #00b47d;
+              letter-spacing: 6px;
+              padding: 15px 30px;
+              background-color: #e5f7f1;
+              border: 2px dashed #00b47d;
+              border-radius: 8px;
+              display: inline-block;
+            }
+            .footer {
+              background-color: #f9fafb;
+              padding: 20px 30px;
+              text-align: center;
+              font-size: 14px;
+              color: #888888;
+              border-top: 1px solid #eeeeee;
+            }
+            .alert-text {
+              font-size: 13px;
+              color: #f44336;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>ResumeIQ</h1>
+            </div>
+            <div class="content">
+              <p>Hello,</p>
+              <p>We received a request to reset the password for your ResumeIQ account. Please use the following One-Time Password (OTP) to complete your password reset process:</p>
+              
+              <div class="otp-container">
+                <div class="otp-code">${otpCode}</div>
+              </div>
+              
+              <p>This code is secure and will expire in exactly <b>${OTP_EXPIRY_MINUTES} minutes</b>.</p>
+              <p class="alert-text">If you did not request this password reset, please ignore this email or contact support if you have concerns.</p>
+            </div>
+            <div class="footer">
+              &copy; ${new Date().getFullYear()} ResumeIQ. All rights reserved.
+            </div>
+          </div>
+        </body>
+        </html>
+      `,
     });
 
     return {
