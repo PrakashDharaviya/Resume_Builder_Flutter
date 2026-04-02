@@ -56,6 +56,9 @@ dependencies:
   # HTTP
   http: ^1.2.1
 
+  # Email sending (OTP via Gmail SMTP — no backend needed)
+  mailer: ^6.1.2
+
   # Environment & Secrets
   flutter_dotenv: ^5.1.0
 

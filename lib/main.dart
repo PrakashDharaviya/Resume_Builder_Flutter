@@ -1,6 +1,4 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_functions/cloud_functions.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -20,10 +18,7 @@ void main() async {
   await dotenv.load(fileName: '.env');
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Use Firebase emulator for local development (Free for students!)
-  if (kDebugMode && kIsWeb) {
-    FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
-  }
+  // No emulator needed — OTP emails are sent directly via Gmail SMTP from Flutter.
 
   await NotificationService.initialize();
   await di.init();

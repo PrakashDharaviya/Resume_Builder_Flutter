@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResumeIQ — Reset Password</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #e0f7ef 0%, #f0f4ff 50%, #fce4ec 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04);
+      max-width: 440px;
+      width: 100%;
+      overflow: hidden;
+      animation: slideUp 0.5s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header {
+      background: linear-gradient(135deg, #00b47d 0%, #009966 100%);
+      padding: 36px 30px 28px;
+      text-align: center;
+      color: white;
+    }
+
+    .header .logo {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .header .subtitle {
+      font-size: 14px;
+      opacity: 0.85;
+      font-weight: 400;
+    }
+
+    .lock-icon {
+      width: 60px; height: 60px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 28px;
+    }
+
+    .content {
+      padding: 36px 30px;
+    }
+
+    .content h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .content p {
+      font-size: 14px;
+      color: #6b7280;
+      text-align: center;
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+      position: relative;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 6px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 15px;
+      font-family: inherit;
+      transition: all 0.2s;
+      outline: none;
+      background: #f9fafb;
+    }
+
+    .form-group input:focus {
+      border-color: #00b47d;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(0, 180, 125, 0.1);
+    }
+
+    .toggle-pw {
+      position: absolute;
+      right: 14px;
+      top: 38px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      color: #9ca3af;
+    }
+    .toggle-pw:hover { color: #6b7280; }
+
+    .password-strength {
+      height: 4px;
+      border-radius: 2px;
+      margin-top: 8px;
+      background: #e5e7eb;
+      overflow: hidden;
+    }
+    .password-strength .bar {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.3s, background 0.3s;
+      width: 0%;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #00b47d 0%, #009966 100%);
+      color: white;
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,180,125,0.3); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .error-msg {
+      background: #fef2f2;
+      color: #dc2626;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: none;
+      border: 1px solid #fecaca;
+    }
+
+    .success-view {
+      text-align: center;
+      padding: 40px 30px;
+      display: none;
+    }
+
+    .success-view .checkmark {
+      width: 80px; height: 80px;
+      background: #e5f7f1;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 40px;
+      animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0); }
+      to { transform: scale(1); }
+    }
+
+    .success-view h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 12px;
+    }
+
+    .success-view p {
+      font-size: 14px;
+      color: #6b7280;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 16px 30px 24px;
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 20px; height: 20px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top: 2px solid white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="header">
+    <div class="lock-icon">🔐</div>
+    <div class="logo">ResumeIQ</div>
+    <div class="subtitle">Password Reset</div>
+  </div>
+
+  <!-- FORM VIEW -->
+  <div id="formView">
+    <div class="content">
+      <h2>Create New Password</h2>
+      <p>Enter your new password below. Make sure it's at least 6 characters long and something you'll remember.</p>
+
+      <div id="errorMsg" class="error-msg"></div>
+
+      <form id="resetForm" onsubmit="handleReset(event)">
+        <div class="form-group">
+          <label for="newPassword">New Password</label>
+          <input type="password" id="newPassword" placeholder="Enter new password" required minlength="6" oninput="checkStrength()">
+          <button type="button" class="toggle-pw" onclick="togglePw('newPassword', this)">👁</button>
+          <div class="password-strength"><div class="bar" id="strengthBar"></div></div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <input type="password" id="confirmPassword" placeholder="Confirm new password" required minlength="6">
+          <button type="button" class="toggle-pw" onclick="togglePw('confirmPassword', this)">👁</button>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="submitBtn">
+          Reset Password
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- SUCCESS VIEW -->
+  <div id="successView" class="success-view">
+    <div class="checkmark">✅</div>
+    <h2>Password Updated!</h2>
+    <p>Your password has been successfully changed.<br>You can now sign in to ResumeIQ with your new password.</p>
+    <a href="/" class="btn btn-primary" style="display:inline-block; text-decoration:none; padding:14px 40px;">
+      Go to App
+    </a>
+  </div>
+
+  <div class="footer">
+    &copy; 2026 ResumeIQ. All rights reserved.
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+
+<script>
+  // Initialize Firebase
+  firebase.initializeApp({
+    apiKey: "AIzaSyA5EReEAlt--ag-zmUbtlCjTOCvXZG9164",
+    authDomain: "resumeiq-91b72.firebaseapp.com",
+    projectId: "resumeiq-91b72",
+    appId: "1:465329982315:web:8c5744839aa2f952675a2e"
+  });
+
+  // Extract oobCode from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const oobCode = urlParams.get('oobCode');
+  const mode = urlParams.get('mode');
+
+  // If no oobCode or wrong mode, show error
+  if (!oobCode || mode !== 'resetPassword') {
+    document.getElementById('errorMsg').style.display = 'block';
+    document.getElementById('errorMsg').textContent = 
+      'Invalid or expired password reset link. Please request a new one from the app.';
+    document.getElementById('submitBtn').disabled = true;
+  }
+
+  function togglePw(id, btn) {
+    const inp = document.getElementById(id);
+    if (inp.type === 'password') {
+      inp.type = 'text';
+      btn.textContent = '🙈';
+    } else {
+      inp.type = 'password';
+      btn.textContent = '👁';
+    }
+  }
+
+  function checkStrength() {
+    const pw = document.getElementById('newPassword').value;
+    const bar = document.getElementById('strengthBar');
+    let strength = 0;
+    if (pw.length >= 6) strength += 25;
+    if (pw.length >= 8) strength += 25;
+    if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) strength += 25;
+    if (/[0-9!@#$%^&*]/.test(pw)) strength += 25;
+
+    bar.style.width = strength + '%';
+    if (strength <= 25) bar.style.background = '#ef4444';
+    else if (strength <= 50) bar.style.background = '#f59e0b';
+    else if (strength <= 75) bar.style.background = '#3b82f6';
+    else bar.style.background = '#00b47d';
+  }
+
+  async function handleReset(e) {
+    e.preventDefault();
+    const newPw = document.getElementById('newPassword').value;
+    const confirmPw = document.getElementById('confirmPassword').value;
+    const errorEl = document.getElementById('errorMsg');
+    const btn = document.getElementById('submitBtn');
+
+    errorEl.style.display = 'none';
+
+    if (newPw !== confirmPw) {
+      errorEl.textContent = 'Passwords do not match. Please try again.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    if (newPw.length < 6) {
+      errorEl.textContent = 'Password must be at least 6 characters long.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Resetting...';
+
+    try {
+      await firebase.auth().confirmPasswordReset(oobCode, newPw);
+      // Show success
+      document.getElementById('formView').style.display = 'none';
+      document.getElementById('successView').style.display = 'block';
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Reset Password';
+      
+      let msg = 'Something went wrong. Please try again.';
+      if (err.code === 'auth/expired-action-code') {
+        msg = 'This reset link has expired. Please request a new one from the app.';
+      } else if (err.code === 'auth/invalid-action-code') {
+        msg = 'Invalid reset link. It may have already been used.';
+      } else if (err.code === 'auth/weak-password') {
+        msg = 'Password is too weak. Please use at least 6 characters.';
+      }
+      errorEl.textContent = msg;
+      errorEl.style.display = 'block';
+    }
+  }
+</script>
+
+</body>
+</html>

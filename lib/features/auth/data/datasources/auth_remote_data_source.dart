@@ -156,48 +156,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     throw AuthException(friendlyMessage);
   }
 
-  Never _handleFunctionsError(FirebaseFunctionsException e) {
-    final String friendlyMessage;
-    switch (e.code) {
-      case 'not-found':
-        friendlyMessage = 'No account found with this email address.';
-        break;
-      case 'resource-exhausted':
-        friendlyMessage =
-            e.message ?? 'Please wait before requesting a new code.';
-        break;
-      case 'deadline-exceeded':
-        friendlyMessage =
-            e.message ?? 'Verification code has expired. Request a new one.';
-        break;
-      case 'permission-denied':
-        friendlyMessage =
-            e.message ?? 'Too many attempts or invalid verification request.';
-        break;
-      case 'failed-precondition':
-        friendlyMessage =
-            e.message ?? 'Please request a new verification code first.';
-        break;
-      case 'invalid-argument':
-        friendlyMessage = e.message ?? 'Invalid input. Please check and retry.';
-        break;
-      case 'internal':
-        if (e.message != null && e.message != 'internal') {
-          friendlyMessage = e.message!;
-        } else {
-          friendlyMessage = 'Server error. Ensure backend is running and mailer configured.';
-        }
-        break;
-      default:
-        if (e.message == 'internal') {
-          friendlyMessage = 'Unexpected server error occurred. Please try again.';
-        } else {
-          friendlyMessage = e.message ?? 'Password reset request failed. Please try again.';
-        }
-    }
-
-    throw AuthException(friendlyMessage);
-  }
+  // NOTE: _handleFunctionsError removed — Cloud Functions no longer used for password reset.
 
   // ── Sign In with Email & Password ───────────────────────────────────────
 
@@ -365,23 +324,27 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     }
   }
 
-  // ── Reset Password ─────────────────────────────────────────────────────
+  // ── Reset Password (Firebase built-in — free, works on web + mobile) ────
 
   @override
   Future<void> resetPassword(String email) async {
     try {
-      final callable = firebaseFunctions.httpsCallable(
-        'requestPasswordResetOtp',
-      );
-      await callable.call<dynamic>(<String, dynamic>{'email': email.trim()});
-    } on FirebaseFunctionsException catch (e) {
-      _handleFunctionsError(e);
+      final trimmedEmail = email.trim();
+
+      // Firebase's built-in password reset — completely free on Spark plan.
+      // Works on both Web and Mobile without any backend or SMTP.
+      // User receives an email with a secure reset link from Firebase.
+      await firebaseAuth.sendPasswordResetEmail(email: trimmedEmail);
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      _handleFirebaseAuthError(e);
     } catch (e) {
       throw AuthException('Password reset failed: ${e.toString()}');
     }
   }
 
-  // ── Confirm Password Reset ─────────────────────────────────────────────
+  // ── Confirm Password Reset ────────────────────────────────────────────────
+  // Note: Password is actually reset when user clicks the Firebase link.
+  // This method is kept for interface compatibility.
 
   @override
   Future<void> confirmPasswordReset({
@@ -390,18 +353,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String newPassword,
   }) async {
     try {
-      final callable = firebaseFunctions.httpsCallable(
-        'confirmPasswordResetWithOtp',
+      // Use Firebase Auth's confirmPasswordReset with the oobCode from the email link
+      await firebaseAuth.confirmPasswordReset(
+        code: oobCode,
+        newPassword: newPassword,
       );
-      await callable.call<dynamic>(<String, dynamic>{
-        'email': email.trim(),
-        'otpCode': oobCode.trim(),
-        'newPassword': newPassword,
-      });
-    } on FirebaseFunctionsException catch (e) {
-      _handleFunctionsError(e);
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      _handleFirebaseAuthError(e);
     } catch (e) {
-      throw const AuthException('Could not reset password. Please try again.');
+      throw AuthException('Could not reset password. Please try again.');
     }
   }
 

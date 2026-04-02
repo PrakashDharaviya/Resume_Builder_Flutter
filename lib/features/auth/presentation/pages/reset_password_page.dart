@@ -122,20 +122,48 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is ConfirmPasswordResetSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.green,
+            // Dismiss keyboard
+            FocusScope.of(context).unfocus();
+
+            showDialog<void>(
+              context: context,
+              barrierDismissible: false,
+              builder: (ctx) => AlertDialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                icon: const Icon(
+                  Icons.mark_email_read_outlined,
+                  size: 52,
+                  color: Colors.green,
+                ),
+                title: const Text(
+                  'OTP Verified! ✅',
+                  textAlign: TextAlign.center,
+                ),
+                content: const Text(
+                  'Your identity has been confirmed.\n\n'
+                  'We\'ve sent a secure password reset link to your email. '
+                  'Please open your inbox and click the link to set your new password.',
+                  textAlign: TextAlign.center,
+                ),
+                actions: [
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(ctx).pop();
+                        Navigator.of(this.context).pushNamedAndRemoveUntil(
+                          AppRoutes.login,
+                          (route) => false,
+                        );
+                      },
+                      child: const Text('Back to Login'),
+                    ),
+                  ),
+                ],
               ),
             );
-
-            Future.delayed(const Duration(milliseconds: 1200), () {
-              if (mounted) {
-                Navigator.of(
-                  this.context,
-                ).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
-              }
-            });
           } else if (state is ForgotPasswordSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
