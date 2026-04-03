@@ -60,12 +60,33 @@ class TemplatesLoaded extends AdminState {
   List<Object?> get props => [templates];
 }
 
+class AdminTemplatesLoaded extends AdminState {
+  final List<ResumeTemplate> templates;
+
+  const AdminTemplatesLoaded({required this.templates});
+
+  @override
+  List<Object?> get props => [templates];
+}
+
 // ========== User States ==========
 class UsersLoaded extends AdminState {
   final List<User> users;
   final List<User>? filteredUsers;
 
   const UsersLoaded({required this.users, this.filteredUsers});
+
+  List<User> get displayUsers => filteredUsers ?? users;
+
+  @override
+  List<Object?> get props => [users, filteredUsers];
+}
+
+class AdminUsersLoaded extends AdminState {
+  final List<User> users;
+  final List<User>? filteredUsers;
+
+  const AdminUsersLoaded({required this.users, this.filteredUsers});
 
   List<User> get displayUsers => filteredUsers ?? users;
 

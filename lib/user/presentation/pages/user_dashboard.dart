@@ -106,58 +106,6 @@ class UserDashboardState extends State<UserDashboard> {
                 onPressed: () =>
                     Navigator.pushNamed(context, AppRoutes.profile),
               ),
-              // Notification bell with badge
-              StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('notifications')
-                    .orderBy('createdAt', descending: true)
-                    .limit(50)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  int unreadCount = 0;
-                  final docs = snapshot.data?.docs ?? [];
-                  
-                  if (AppPreferences.lastReadNotificationsTime != null) {
-                    for (var doc in docs) {
-                      final createdAt = (doc['createdAt'] as Timestamp?)?.toDate();
-                      if (createdAt != null &&
-                          createdAt.isAfter(AppPreferences.lastReadNotificationsTime!)) {
-                        unreadCount++;
-                      }
-                    }
-                  } else {
-                    unreadCount = docs.length;
-                  }
-
-                  return IconButton(
-                    icon: Badge(
-                      isLabelVisible: unreadCount > 0,
-                      label: Text(
-                        unreadCount > 9 ? '9+' : unreadCount.toString(),
-                        style: const TextStyle(fontSize: 10),
-                      ),
-                      child: const Icon(
-                        Icons.notifications_outlined,
-                      ),
-                    ),
-                    tooltip: 'Notifications',
-                    onPressed: () async {
-                      // Save current time as last read time
-                      await AppPreferences.saveLastReadTime(DateTime.now());
-                      if (mounted) {
-                        setState(() {});
-                        Navigator.pushNamed(
-                          context,
-                          AppRoutes.notifications,
-                        ).then((_) {
-                          // Update again when returning just in case
-                          if (mounted) setState(() {});
-                        });
-                      }
-                    },
-                  );
-                },
-              ),
               IconButton(
                 icon: const Icon(Icons.style_rounded),
                 tooltip: 'Templates',
@@ -167,9 +115,7 @@ class UserDashboardState extends State<UserDashboard> {
                     AppRoutes.templateSelection,
                   ).then((_) {
                     if (!context.mounted) return;
-                    context.read<ResumeBloc>().add(
-                      const LoadAllResumesEvent(),
-                    );
+                    context.read<ResumeBloc>().add(const LoadAllResumesEvent());
                   });
                 },
               ),

@@ -105,7 +105,11 @@ class AdminDashboardPageState extends State<AdminDashboardPage>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.error_outline, size: 48, color: AppColors.error),
+                  const Icon(
+                    Icons.error_outline,
+                    size: 48,
+                    color: AppColors.error,
+                  ),
                   const SizedBox(height: 16),
                   Text(state.message),
                   const SizedBox(height: 16),
@@ -235,18 +239,27 @@ class AdminDashboardPageState extends State<AdminDashboardPage>
                                         color: const Color(0xFF34D399),
                                         subtitle:
                                             '+${state.stats.todaySignups} today',
+                                        onTap: () => navigateAndReload(
+                                          AppRoutes.adminAllUsers,
+                                        ),
                                       ),
                                       StatCard(
                                         title: 'Total Resumes',
                                         value: '${state.stats.totalResumes}',
                                         icon: Icons.description_rounded,
                                         color: const Color(0xFF10B981),
+                                        onTap: () => navigateAndReload(
+                                          AppRoutes.adminAllResumes,
+                                        ),
                                       ),
                                       StatCard(
                                         title: 'Premium Users',
                                         value: '${state.stats.premiumUsers}',
                                         icon: Icons.star_rounded,
                                         color: const Color(0xFFF59E0B),
+                                        onTap: () => navigateAndReload(
+                                          AppRoutes.adminPremiumUsers,
+                                        ),
                                       ),
                                       StatCard(
                                         title: 'Avg. ATS Score',
@@ -254,18 +267,27 @@ class AdminDashboardPageState extends State<AdminDashboardPage>
                                             '${state.stats.avgAtsScore.toStringAsFixed(1)}%',
                                         icon: Icons.analytics_rounded,
                                         color: const Color(0xFF8B5CF6),
+                                        onTap: () => navigateAndReload(
+                                          AppRoutes.adminAtsAnalytics,
+                                        ),
                                       ),
                                       StatCard(
                                         title: 'Active Templates',
                                         value: '${state.stats.activeTemplates}',
                                         icon: Icons.style_rounded,
                                         color: const Color(0xFFEC4899),
+                                        onTap: () => navigateAndReload(
+                                          AppRoutes.adminActiveTemplates,
+                                        ),
                                       ),
                                       StatCard(
                                         title: 'Blocked Users',
                                         value: '${state.stats.blockedUsers}',
                                         icon: Icons.block_rounded,
                                         color: const Color(0xFFEF4444),
+                                        onTap: () => navigateAndReload(
+                                          AppRoutes.adminBlockedUsers,
+                                        ),
                                       ),
                                     ];
 

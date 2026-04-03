@@ -20,6 +20,10 @@ class LoadTemplates extends AdminEvent {
   const LoadTemplates();
 }
 
+class FetchTemplates extends AdminEvent {
+  const FetchTemplates();
+}
+
 class AddTemplate extends AdminEvent {
   final ResumeTemplate template;
 
@@ -50,6 +54,10 @@ class DeleteTemplate extends AdminEvent {
 // ========== User Management Events ==========
 class LoadUsers extends AdminEvent {
   const LoadUsers();
+}
+
+class FetchUsers extends AdminEvent {
+  const FetchUsers();
 }
 
 class ToggleBlockUser extends AdminEvent {

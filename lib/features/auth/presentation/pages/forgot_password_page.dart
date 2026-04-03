@@ -33,10 +33,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
       parent: _animController,
       curve: Curves.elasticOut,
     );
-    _fadeAnim = CurvedAnimation(
-      parent: _animController,
-      curve: Curves.easeIn,
-    );
+    _fadeAnim = CurvedAnimation(parent: _animController, curve: Curves.easeIn);
   }
 
   @override
@@ -66,6 +63,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
             });
             _animController.forward();
           } else if (state is ForgotPasswordError) {
+            _emailController.clear();
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
@@ -101,16 +99,13 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Icon(
-            Icons.lock_reset,
-            size: 80,
-            color: AppColors.primary,
-          ),
+          const Icon(Icons.lock_reset, size: 80, color: AppColors.primary),
           const SizedBox(height: 24),
           Text(
             'Reset Your Password',
-            style: Theme.of(context).textTheme.headlineMedium
-                ?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 12),
@@ -173,9 +168,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
           ),
           const SizedBox(height: 16),
           TextButton(
-            onPressed: isLoading
-                ? null
-                : () => Navigator.of(context).pop(),
+            onPressed: isLoading ? null : () => Navigator.of(context).pop(),
             child: const Text('Back to Login'),
           ),
         ],
@@ -211,9 +204,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
 
             Text(
               'Check Your Email! 📧',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
@@ -265,17 +258,18 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
               decoration: BoxDecoration(
                 color: Colors.amber.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: Colors.amber.withValues(alpha: 0.3),
-                ),
+                border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.lightbulb_outline,
-                          size: 18, color: Colors.amber[700]),
+                      Icon(
+                        Icons.lightbulb_outline,
+                        size: 18,
+                        color: Colors.amber[700],
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         'Tips',

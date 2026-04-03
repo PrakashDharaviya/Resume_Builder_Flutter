@@ -14,6 +14,12 @@ import 'package:resumebuilder/features/admin/domain/entities/resume_template.dar
 import 'package:resumebuilder/features/admin/presentation/bloc/admin_bloc.dart';
 import 'package:resumebuilder/features/admin/presentation/pages/send_notification_page.dart';
 import 'package:resumebuilder/features/admin/presentation/pages/template_preview_page.dart';
+import 'package:resumebuilder/features/admin/presentation/pages/all_users_page.dart';
+import 'package:resumebuilder/features/admin/presentation/pages/all_resumes_page.dart';
+import 'package:resumebuilder/features/admin/presentation/pages/premium_users_page.dart';
+import 'package:resumebuilder/features/admin/presentation/pages/ats_analytics_page.dart';
+import 'package:resumebuilder/features/admin/presentation/pages/active_templates_page.dart';
+import 'package:resumebuilder/features/admin/presentation/pages/blocked_users_page.dart';
 import 'package:resumebuilder/features/ats_analysis/presentation/bloc/ats_bloc.dart';
 import 'package:resumebuilder/features/ats_analysis/presentation/pages/ats_analysis_page.dart';
 import 'package:resumebuilder/features/auth/domain/entities/user.dart'
@@ -30,7 +36,6 @@ import 'package:resumebuilder/user/presentation/pages/resume_preview_page.dart';
 import 'package:resumebuilder/user/presentation/pages/template_selection_page.dart';
 import 'package:resumebuilder/user/presentation/pages/user_dashboard.dart';
 import 'package:resumebuilder/user/presentation/pages/user_profile_page.dart';
-import 'package:resumebuilder/user/presentation/pages/notifications_page.dart';
 
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -196,6 +201,55 @@ class AppRouter {
           ),
         );
 
+      // Admin Stats Detail Pages
+      case AppRoutes.adminAllUsers:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<AdminBloc>(
+            create: (_) => di.sl<AdminBloc>(),
+            child: const AllUsersPage(),
+          ),
+        );
+
+      case AppRoutes.adminAllResumes:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<AdminBloc>(
+            create: (_) => di.sl<AdminBloc>(),
+            child: const AllResumesPage(),
+          ),
+        );
+
+      case AppRoutes.adminPremiumUsers:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<AdminBloc>(
+            create: (_) => di.sl<AdminBloc>(),
+            child: const PremiumUsersPage(),
+          ),
+        );
+
+      case AppRoutes.adminAtsAnalytics:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<AdminBloc>(
+            create: (_) => di.sl<AdminBloc>(),
+            child: const ATSAnalyticsPage(),
+          ),
+        );
+
+      case AppRoutes.adminActiveTemplates:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<AdminBloc>(
+            create: (_) => di.sl<AdminBloc>(),
+            child: const ActiveTemplatesPage(),
+          ),
+        );
+
+      case AppRoutes.adminBlockedUsers:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<AdminBloc>(
+            create: (_) => di.sl<AdminBloc>(),
+            child: const BlockedUsersPage(),
+          ),
+        );
+
       case AppRoutes.forgotPassword:
         return MaterialPageRoute(builder: (_) => const ForgotPasswordPage());
 
@@ -210,9 +264,6 @@ class AppRouter {
 
       case AppRoutes.privacy:
         return MaterialPageRoute(builder: (_) => const PrivacyPage());
-
-      case AppRoutes.notifications:
-        return MaterialPageRoute(builder: (_) => const NotificationsPage());
 
       default:
         return MaterialPageRoute(

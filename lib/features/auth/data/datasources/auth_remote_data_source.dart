@@ -331,11 +331,37 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final trimmedEmail = email.trim();
 
-      // Firebase's built-in password reset — completely free on Spark plan.
-      // Works on both Web and Mobile without any backend or SMTP.
-      // User receives an email with a secure reset link from Firebase.
+      // 1. Check if email is registered (works when Email Enumeration
+      //    Protection is disabled in Firebase Console → Auth → Settings)
+      final methods = await firebaseAuth.fetchSignInMethodsForEmail(
+        trimmedEmail,
+      );
+
+      if (methods.isEmpty) {
+        throw const AuthException(
+          'This email is not registered. Please check and try again.',
+        );
+      }
+
+      // 2. Check if user only has Google Sign-In (no password to reset)
+      if (!methods.contains('password')) {
+        throw const AuthException(
+          'This account uses Google Sign-In. '
+          'Please use the "Sign in with Google" button on the login page.',
+        );
+      }
+
+      // 3. Email exists and has password provider — send reset link
       await firebaseAuth.sendPasswordResetEmail(email: trimmedEmail);
+    } on AuthException {
+      rethrow;
     } on firebase_auth.FirebaseAuthException catch (e) {
+      // Handle user-not-found explicitly
+      if (e.code == 'user-not-found') {
+        throw const AuthException(
+          'This email is not registered. Please check and try again.',
+        );
+      }
       _handleFirebaseAuthError(e);
     } catch (e) {
       throw AuthException('Password reset failed: ${e.toString()}');

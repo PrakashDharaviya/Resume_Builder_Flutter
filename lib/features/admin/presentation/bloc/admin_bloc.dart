@@ -17,12 +17,14 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
 
     // Templates
     on<LoadTemplates>(onLoadTemplates);
+    on<FetchTemplates>(onFetchTemplates);
     on<AddTemplate>(onAddTemplate);
     on<UpdateTemplate>(onUpdateTemplate);
     on<DeleteTemplate>(onDeleteTemplate);
 
     // Users
     on<LoadUsers>(onLoadUsers);
+    on<FetchUsers>(onFetchUsers);
     on<ToggleBlockUser>(onToggleBlockUser);
     on<TogglePremiumUser>(onTogglePremiumUser);
     on<SearchUsers>(onSearchUsers);
@@ -67,6 +69,18 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     result.fold(
       (failure) => emit(AdminError(message: failure.message)),
       (templates) => emit(TemplatesLoaded(templates: templates)),
+    );
+  }
+
+  Future<void> onFetchTemplates(
+    FetchTemplates event,
+    Emitter<AdminState> emit,
+  ) async {
+    emit(const AdminLoading());
+    final result = await repository.getAllTemplates();
+    result.fold(
+      (failure) => emit(AdminError(message: failure.message)),
+      (templates) => emit(AdminTemplatesLoaded(templates: templates)),
     );
   }
 
@@ -121,6 +135,17 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     ) {
       cachedUsers = users;
       emit(UsersLoaded(users: users));
+    });
+  }
+
+  Future<void> onFetchUsers(FetchUsers event, Emitter<AdminState> emit) async {
+    emit(const AdminLoading());
+    final result = await repository.getAllUsers();
+    result.fold((failure) => emit(AdminError(message: failure.message)), (
+      users,
+    ) {
+      cachedUsers = users;
+      emit(AdminUsersLoaded(users: users));
     });
   }
 
@@ -308,12 +333,11 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   ) async {
     await repository.deleteNotification(event.notificationId);
     final result = await repository.getAllNotifications();
-    result.fold(
-      (failure) => emit(AdminError(message: failure.message)),
-      (notifications) {
-        emit(const AdminActionSuccess(message: 'Notification deleted'));
-        emit(NotificationsLoaded(notifications: notifications));
-      },
-    );
+    result.fold((failure) => emit(AdminError(message: failure.message)), (
+      notifications,
+    ) {
+      emit(const AdminActionSuccess(message: 'Notification deleted'));
+      emit(NotificationsLoaded(notifications: notifications));
+    });
   }
 }

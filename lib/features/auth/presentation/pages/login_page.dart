@@ -53,6 +53,7 @@ class LoginPageState extends State<LoginPage> {
               context,
             ).pushReplacementNamed(AppRoutes.authCheck, arguments: state.user);
           } else if (state is AuthError) {
+            passwordController.clear();
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
