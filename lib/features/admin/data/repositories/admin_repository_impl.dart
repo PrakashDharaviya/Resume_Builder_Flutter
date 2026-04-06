@@ -92,6 +92,16 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
+  Future<Either<Failure, Unit>> deleteUser(String uid) async {
+    try {
+      await dataSource.deleteUser(uid);
+      return const Right(unit);
+    } catch (e) {
+      return const Left(ServerFailure('Failed to delete user'));
+    }
+  }
+
+  @override
   Future<Either<Failure, ATSConfig>> getATSConfig() async {
     try {
       return Right(await dataSource.getATSConfig());

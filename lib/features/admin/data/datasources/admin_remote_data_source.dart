@@ -15,6 +15,7 @@ abstract class AdminRemoteDataSource {
   Future<List<User>> getAllUsers();
   Future<User> toggleBlockUser(String uid);
   Future<User> togglePremiumUser(String uid);
+  Future<void> deleteUser(String uid);
   Future<ATSConfig> getATSConfig();
   Future<ATSConfig> updateATSConfig(ATSConfig config);
   Future<List<Announcement>> getAllAnnouncements();
@@ -218,6 +219,13 @@ class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
       isBlocked: (d['isBlocked'] as bool?) ?? false,
       isPremium: (d['isPremium'] as bool?) ?? false,
     );
+  }
+
+  @override
+  Future<void> deleteUser(String uid) async {
+    final doc = await _usersCol.doc(uid).get();
+    if (!doc.exists) throw Exception('User not found');
+    await _usersCol.doc(uid).delete();
   }
 
   // ========== ATS Config Operations ==========

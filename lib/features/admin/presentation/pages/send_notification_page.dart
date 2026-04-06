@@ -38,22 +38,26 @@ class _SendNotificationPageState extends State<SendNotificationPage> {
       final bloc = context.read<AdminBloc>();
 
       // Save notification to Firestore (works on free plan!)
-      bloc.add(SendBroadcastNotification(
-        title: _titleController.text.trim(),
-        body: _messageController.text.trim(),
-      ));
+      bloc.add(
+        SendBroadcastNotification(
+          title: _titleController.text.trim(),
+          body: _messageController.text.trim(),
+        ),
+      );
 
       // Also create announcement if toggled
       if (_alsoCreateAnnouncement) {
-        bloc.add(AddAnnouncement(
-          announcement: Announcement(
-            id: DateTime.now().millisecondsSinceEpoch.toString(),
-            title: _titleController.text.trim(),
-            message: _messageController.text.trim(),
-            createdAt: DateTime.now(),
-            isActive: true,
+        bloc.add(
+          AddAnnouncement(
+            announcement: Announcement(
+              id: DateTime.now().millisecondsSinceEpoch.toString(),
+              title: _titleController.text.trim(),
+              message: _messageController.text.trim(),
+              createdAt: DateTime.now(),
+              isActive: true,
+            ),
           ),
-        ));
+        );
       }
     } catch (e) {
       if (mounted) {
@@ -111,8 +115,9 @@ class _SendNotificationPageState extends State<SendNotificationPage> {
         }
       },
       child: Scaffold(
-        backgroundColor:
-            isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+        backgroundColor: isDark
+            ? AppColors.backgroundDark
+            : AppColors.backgroundLight,
         appBar: AppBar(
           title: const Text(
             'Send Push Notification',
@@ -120,6 +125,10 @@ class _SendNotificationPageState extends State<SendNotificationPage> {
           ),
           centerTitle: true,
           elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
         ),
         drawer: const AdminDrawer(currentRoute: AppRoutes.sendNotification),
         body: SingleChildScrollView(
@@ -143,8 +152,9 @@ class _SendNotificationPageState extends State<SendNotificationPage> {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF3B82F6)
-                                .withValues(alpha: 0.1),
+                            color: const Color(
+                              0xFF3B82F6,
+                            ).withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
@@ -184,8 +194,7 @@ class _SendNotificationPageState extends State<SendNotificationPage> {
                           ),
                           decoration: InputDecoration(
                             labelText: 'Notification Title',
-                            hintText:
-                                'e.g., New Premium Template Available!',
+                            hintText: 'e.g., New Premium Template Available!',
                             filled: true,
                             fillColor: isDark
                                 ? const Color(0xFF374151)
@@ -198,8 +207,8 @@ class _SendNotificationPageState extends State<SendNotificationPage> {
                           ),
                           validator: (value) =>
                               value == null || value.trim().isEmpty
-                                  ? 'Title is required'
-                                  : null,
+                              ? 'Title is required'
+                              : null,
                         ),
                         const SizedBox(height: 20),
                         TextFormField(
@@ -225,8 +234,8 @@ class _SendNotificationPageState extends State<SendNotificationPage> {
                           ),
                           validator: (value) =>
                               value == null || value.trim().isEmpty
-                                  ? 'Message is required'
-                                  : null,
+                              ? 'Message is required'
+                              : null,
                         ),
                         const SizedBox(height: 20),
                         // Also create announcement toggle
@@ -241,8 +250,9 @@ class _SendNotificationPageState extends State<SendNotificationPage> {
                                 : const Color(0xFFF0FDF4),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: const Color(0xFF10B981)
-                                  .withValues(alpha: 0.3),
+                              color: const Color(
+                                0xFF10B981,
+                              ).withValues(alpha: 0.3),
                             ),
                           ),
                           child: Row(
@@ -280,8 +290,7 @@ class _SendNotificationPageState extends State<SendNotificationPage> {
                           width: double.infinity,
                           height: 52,
                           child: ElevatedButton.icon(
-                            onPressed:
-                                _isSending ? null : _sendNotification,
+                            onPressed: _isSending ? null : _sendNotification,
                             icon: _isSending
                                 ? const SizedBox(
                                     width: 24,
@@ -293,9 +302,7 @@ class _SendNotificationPageState extends State<SendNotificationPage> {
                                   )
                                 : const Icon(Icons.send_rounded),
                             label: Text(
-                              _isSending
-                                  ? 'Sending...'
-                                  : 'Send Notification',
+                              _isSending ? 'Sending...' : 'Send Notification',
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,

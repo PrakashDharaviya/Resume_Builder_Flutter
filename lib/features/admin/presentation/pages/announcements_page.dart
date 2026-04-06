@@ -39,6 +39,10 @@ class AnnouncementsPageState extends State<AnnouncementsPage> {
         ),
         centerTitle: true,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_rounded),
+          onPressed: () => Navigator.pop(context),
+        ),
         actions: [
           ValueListenableBuilder<ThemeMode>(
             valueListenable: themeNotifier,
@@ -335,8 +339,7 @@ class AnnouncementsPageState extends State<AnnouncementsPage> {
                             : const Color(0xFFFEF3C7),
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                          color: const Color(0xFFF59E0B)
-                              .withValues(alpha: 0.3),
+                          color: const Color(0xFFF59E0B).withValues(alpha: 0.3),
                         ),
                       ),
                       child: Row(

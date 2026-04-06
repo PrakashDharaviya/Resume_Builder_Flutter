@@ -46,6 +46,10 @@ class ManageUsersPageState extends State<ManageUsersPage> {
         ),
         centerTitle: true,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_rounded),
+          onPressed: () => Navigator.pop(context),
+        ),
         actions: [
           ValueListenableBuilder<ThemeMode>(
             valueListenable: themeNotifier,
@@ -248,9 +252,19 @@ class ManageUsersPageState extends State<ManageUsersPage> {
                                     },
                                   );
                                 },
-                                onTogglePremium: () {
-                                  context.read<AdminBloc>().add(
-                                    TogglePremiumUser(uid: user.uid),
+                                onDelete: () {
+                                  showConfirmDialog(
+                                    context,
+                                    title: 'Delete User',
+                                    message:
+                                        'Are you sure you want to delete ${user.displayName}? This action cannot be undone.',
+                                    confirmLabel: 'Delete',
+                                    confirmColor: Colors.red,
+                                    onConfirm: () {
+                                      context.read<AdminBloc>().add(
+                                        DeleteUser(uid: user.uid),
+                                      );
+                                    },
                                   );
                                 },
                               );

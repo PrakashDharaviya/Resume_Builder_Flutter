@@ -44,6 +44,10 @@ class ATSSettingsPageState extends State<ATSSettingsPage> {
         ),
         centerTitle: true,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_rounded),
+          onPressed: () => Navigator.pop(context),
+        ),
         actions: [
           ValueListenableBuilder<ThemeMode>(
             valueListenable: themeNotifier,
@@ -208,8 +212,7 @@ class ATSSettingsPageState extends State<ATSSettingsPage> {
                             icon: Icons.key_rounded,
                             value: keywordWeight,
                             color: const Color(0xFF34D399),
-                            onChanged: (v) =>
-                                setState(() => keywordWeight = v),
+                            onChanged: (v) => setState(() => keywordWeight = v),
                             isDark: isDark,
                           ),
                           weightSlider(
@@ -227,8 +230,7 @@ class ATSSettingsPageState extends State<ATSSettingsPage> {
                             icon: Icons.spellcheck_rounded,
                             value: grammarWeight,
                             color: const Color(0xFFF59E0B),
-                            onChanged: (v) =>
-                                setState(() => grammarWeight = v),
+                            onChanged: (v) => setState(() => grammarWeight = v),
                             isDark: isDark,
                           ),
                           weightSlider(

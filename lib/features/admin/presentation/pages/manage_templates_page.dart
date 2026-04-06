@@ -39,6 +39,10 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
         ),
         centerTitle: true,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_rounded),
+          onPressed: () => Navigator.pop(context),
+        ),
         actions: [
           ValueListenableBuilder<ThemeMode>(
             valueListenable: themeNotifier,

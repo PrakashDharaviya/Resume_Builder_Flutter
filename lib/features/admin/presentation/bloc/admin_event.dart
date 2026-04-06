@@ -78,6 +78,15 @@ class TogglePremiumUser extends AdminEvent {
   List<Object?> get props => [uid];
 }
 
+class DeleteUser extends AdminEvent {
+  final String uid;
+
+  const DeleteUser({required this.uid});
+
+  @override
+  List<Object?> get props => [uid];
+}
+
 class SearchUsers extends AdminEvent {
   final String query;
 

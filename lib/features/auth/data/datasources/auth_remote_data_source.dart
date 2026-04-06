@@ -170,7 +170,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         email: email,
         password: password,
       );
-      return _userModelFromFirebaseUser(credential.user!);
+      final userModel = await _userModelFromFirebaseUser(credential.user!);
+
+      // Check if user is blocked
+      if (userModel.isBlocked) {
+        await firebaseAuth.signOut();
+        throw AuthException(
+          'Your account has been blocked. Please contact support.',
+        );
+      }
+
+      return userModel;
     } on firebase_auth.FirebaseAuthException catch (e) {
       _handleFirebaseAuthError(e);
     } catch (e) {
@@ -269,7 +279,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         await firebaseFirestore.collection('users').doc(user.uid).set(userData);
       }
 
-      return _userModelFromFirebaseUser(user);
+      final userModel = await _userModelFromFirebaseUser(user);
+
+      // Check if user is blocked
+      if (userModel.isBlocked) {
+        await firebaseAuth.signOut();
+        throw AuthException(
+          'Your account has been blocked. Please contact support.',
+        );
+      }
+
+      return userModel;
     } on AuthException {
       rethrow;
     } on firebase_auth.FirebaseAuthException catch (e) {

@@ -23,6 +23,7 @@ abstract class AdminRepository {
   Future<Either<Failure, List<User>>> getAllUsers();
   Future<Either<Failure, User>> toggleBlockUser(String uid);
   Future<Either<Failure, User>> togglePremiumUser(String uid);
+  Future<Either<Failure, Unit>> deleteUser(String uid);
 
   // ATS Config
   Future<Either<Failure, ATSConfig>> getATSConfig();

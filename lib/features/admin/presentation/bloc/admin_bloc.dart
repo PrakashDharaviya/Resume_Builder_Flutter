@@ -27,6 +27,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     on<FetchUsers>(onFetchUsers);
     on<ToggleBlockUser>(onToggleBlockUser);
     on<TogglePremiumUser>(onTogglePremiumUser);
+    on<DeleteUser>(onDeleteUser);
     on<SearchUsers>(onSearchUsers);
 
     // ATS Config
@@ -175,6 +176,18 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     ) {
       cachedUsers = users;
       emit(const AdminActionSuccess(message: 'User premium status updated'));
+      emit(UsersLoaded(users: users));
+    });
+  }
+
+  Future<void> onDeleteUser(DeleteUser event, Emitter<AdminState> emit) async {
+    await repository.deleteUser(event.uid);
+    final result = await repository.getAllUsers();
+    result.fold((failure) => emit(AdminError(message: failure.message)), (
+      users,
+    ) {
+      cachedUsers = users;
+      emit(const AdminActionSuccess(message: 'User deleted successfully'));
       emit(UsersLoaded(users: users));
     });
   }
