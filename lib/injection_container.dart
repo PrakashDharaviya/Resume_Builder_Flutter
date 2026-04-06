@@ -3,9 +3,9 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart'
     show kIsWeb, defaultTargetPlatform, TargetPlatform;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:resumebuilder/api_keys.dart';
 import 'package:resumebuilder/core/network/network_info.dart';
 import 'package:resumebuilder/core/services/ai_service.dart';
 import 'package:resumebuilder/core/services/firebase_service.dart';
@@ -50,6 +50,14 @@ import 'package:resumebuilder/features/resume/domain/usecases/update_resume.dart
 import 'package:resumebuilder/features/resume/presentation/bloc/resume_bloc.dart';
 
 final sl = GetIt.instance;
+
+String _requireEnv(String key) {
+  final value = dotenv.env[key]?.trim();
+  if (value == null || value.isEmpty) {
+    throw StateError('Missing required environment variable: $key');
+  }
+  return value;
+}
 
 Future<void> init() async {
   //! Features
@@ -163,8 +171,12 @@ Future<void> init() async {
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl());
   sl.registerLazySingleton(() => FirebaseService());
   sl.registerLazySingleton(() => AIService());
-  sl.registerLazySingleton(() => GeminiAIService(apiKey: geminiApiKey));
-  sl.registerLazySingleton(() => GroqAIService(apiKey: groqApiKey));
+  sl.registerLazySingleton(
+    () => GeminiAIService(apiKey: _requireEnv('GEMINI_API_KEY')),
+  );
+  sl.registerLazySingleton(
+    () => GroqAIService(apiKey: _requireEnv('GROQ_API_KEY')),
+  );
 
   // ============ Admin ============
   // Bloc

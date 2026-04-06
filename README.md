@@ -149,7 +149,20 @@ cd resumebuilder
 flutter pub get
 ```
 
-3. Run the app:
+3. Create a local environment file:
+
+```bash
+cp .env.example .env
+```
+
+Then set required keys in `.env`:
+
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
+GROQ_API_KEY=your_groq_api_key_here
+```
+
+4. Run the app:
 
 ```bash
 flutter run
