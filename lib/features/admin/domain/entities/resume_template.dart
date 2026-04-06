@@ -8,6 +8,9 @@ class ResumeTemplate extends Equatable {
   final String templateType; // professional, modern, minimal, creative, classic
   final String layoutJson;
   final String previewImage;
+  final String assetType; // image or pdf
+  final String assetName;
+  final String assetDataBase64; // Base64-encoded file data
   final DateTime createdAt;
 
   const ResumeTemplate({
@@ -18,6 +21,9 @@ class ResumeTemplate extends Equatable {
     this.templateType = 'professional',
     this.layoutJson = '{}',
     this.previewImage = '',
+    this.assetType = 'image',
+    this.assetName = '',
+    this.assetDataBase64 = '',
     required this.createdAt,
   });
 
@@ -54,6 +60,9 @@ class ResumeTemplate extends Equatable {
     String? templateType,
     String? layoutJson,
     String? previewImage,
+    String? assetType,
+    String? assetName,
+    String? assetDataBase64,
     DateTime? createdAt,
   }) {
     return ResumeTemplate(
@@ -64,6 +73,9 @@ class ResumeTemplate extends Equatable {
       templateType: templateType ?? this.templateType,
       layoutJson: layoutJson ?? this.layoutJson,
       previewImage: previewImage ?? this.previewImage,
+      assetType: assetType ?? this.assetType,
+      assetName: assetName ?? this.assetName,
+      assetDataBase64: assetDataBase64 ?? this.assetDataBase64,
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -77,6 +89,9 @@ class ResumeTemplate extends Equatable {
     templateType,
     layoutJson,
     previewImage,
+    assetType,
+    assetName,
+    assetDataBase64,
     createdAt,
   ];
 }

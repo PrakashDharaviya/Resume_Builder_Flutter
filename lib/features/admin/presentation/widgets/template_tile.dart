@@ -49,10 +49,14 @@ class TemplateTile extends StatelessWidget {
               width: 52,
               height: 64,
               decoration: BoxDecoration(
-                color: _templateTypeColor(template.templateType).withValues(alpha: 0.08),
+                color: _templateTypeColor(
+                  template.templateType,
+                ).withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: _templateTypeColor(template.templateType).withValues(alpha: 0.15),
+                  color: _templateTypeColor(
+                    template.templateType,
+                  ).withValues(alpha: 0.15),
                 ),
               ),
               child: Column(
@@ -62,7 +66,9 @@ class TemplateTile extends StatelessWidget {
                     _templateTypeIcon(template.templateType),
                     size: 24,
                     color: isDark
-                        ? _templateTypeColor(template.templateType).withValues(alpha: 0.8)
+                        ? _templateTypeColor(
+                            template.templateType,
+                          ).withValues(alpha: 0.8)
                         : _templateTypeColor(template.templateType),
                   ),
                   const SizedBox(height: 2),
@@ -111,11 +117,15 @@ class TemplateTile extends StatelessWidget {
                           vertical: 3,
                         ),
                         decoration: BoxDecoration(
-                          color: _templateTypeColor(template.templateType).withValues(alpha: 0.12),
+                          color: _templateTypeColor(
+                            template.templateType,
+                          ).withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
-                          ResumeTemplate.templateTypeLabel(template.templateType),
+                          ResumeTemplate.templateTypeLabel(
+                            template.templateType,
+                          ),
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
@@ -178,6 +188,20 @@ class TemplateTile extends StatelessWidget {
                           : const Color(0xFF6B7280),
                     ),
                   ),
+                  if (template.assetName.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      'Asset: ${template.assetType.toUpperCase()} - ${template.assetName}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: isDark
+                            ? const Color(0xFF6B7280)
+                            : const Color(0xFF9CA3AF),
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),

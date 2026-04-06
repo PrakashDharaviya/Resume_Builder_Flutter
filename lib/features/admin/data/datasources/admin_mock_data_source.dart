@@ -86,6 +86,8 @@ class AdminMockDataSource {
         templateType: (d['templateType'] as String?) ?? 'professional',
         layoutJson: (d['layoutJson'] as String?) ?? '{}',
         previewImage: (d['previewImage'] as String?) ?? '',
+        assetType: (d['assetType'] as String?) ?? 'image',
+        assetName: (d['assetName'] as String?) ?? '',
         createdAt: (d['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       );
     }).toList();
@@ -103,6 +105,8 @@ class AdminMockDataSource {
       'templateType': template.templateType,
       'layoutJson': template.layoutJson,
       'previewImage': template.previewImage,
+      'assetType': template.assetType,
+      'assetName': template.assetName,
       'createdAt': Timestamp.fromDate(now),
     };
     await _templatesCol.doc(id).set(data);
@@ -117,6 +121,8 @@ class AdminMockDataSource {
       'templateType': template.templateType,
       'layoutJson': template.layoutJson,
       'previewImage': template.previewImage,
+      'assetType': template.assetType,
+      'assetName': template.assetName,
     });
     return template;
   }

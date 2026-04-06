@@ -41,7 +41,6 @@ class AppRoutes {
 
   // Admin Stats Detail Routes
   static const String adminAllUsers = '/admin/all-users';
-  static const String adminAllResumes = '/admin/all-resumes';
   static const String adminPremiumUsers = '/admin/premium-users';
   static const String adminAtsAnalytics = '/admin/ats-analytics';
   static const String adminActiveTemplates = '/admin/active-templates';

@@ -39,12 +39,7 @@ class AdminDrawer extends StatelessWidget {
             'Dashboard',
             AppRoutes.adminDashboard,
           ),
-          item(
-            context,
-            Icons.people_rounded,
-            'Users',
-            AppRoutes.manageUsers,
-          ),
+          item(context, Icons.people_rounded, 'Users', AppRoutes.manageUsers),
           item(
             context,
             Icons.style_rounded,
@@ -105,12 +100,7 @@ class AdminDrawer extends StatelessWidget {
     );
   }
 
-  Widget item(
-    BuildContext context,
-    IconData icon,
-    String label,
-    String route,
-  ) {
+  Widget item(BuildContext context, IconData icon, String label, String route) {
     final selected = currentRoute == route;
     return ListTile(
       selected: selected,

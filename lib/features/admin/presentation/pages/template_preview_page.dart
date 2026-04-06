@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:resumebuilder/core/constants/app_colors.dart';
 import 'package:resumebuilder/core/utils/app_preferences.dart';
@@ -13,7 +15,6 @@ class TemplatePreviewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final sample = sampleResume;
 
     return Scaffold(
       backgroundColor: isDark
@@ -158,10 +159,7 @@ class TemplatePreviewPage extends StatelessWidget {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: buildTemplateRenderer(
-                        template.templateType,
-                        sample,
-                      ),
+                      child: _previewContent(),
                     ),
                   ),
                 ),
@@ -171,5 +169,62 @@ class TemplatePreviewPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _previewContent() {
+    if (template.assetDataBase64.isNotEmpty) {
+      if (template.assetType == 'image') {
+        try {
+          final bytes = base64Decode(template.assetDataBase64);
+          return Image.memory(
+            bytes,
+            fit: BoxFit.contain,
+            errorBuilder: (_, __, ___) => _rendererFallback(),
+          );
+        } catch (_) {
+          return _rendererFallback();
+        }
+      }
+
+      if (template.assetType == 'pdf') {
+        return Container(
+          color: const Color(0xFFF8FAFC),
+          constraints: const BoxConstraints(minHeight: 400),
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.picture_as_pdf_rounded,
+                  size: 72,
+                  color: Color(0xFFEF4444),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  template.assetName.isNotEmpty
+                      ? template.assetName
+                      : 'PDF Template Uploaded',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF334155),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                const Text(
+                  'PDF preview thumbnail is not rendered here.',
+                  style: TextStyle(color: Color(0xFF64748B), fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+    }
+
+    return _rendererFallback();
+  }
+
+  Widget _rendererFallback() {
+    return buildTemplateRenderer(template.templateType, sampleResume);
   }
 }

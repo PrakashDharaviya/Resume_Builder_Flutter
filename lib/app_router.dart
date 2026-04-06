@@ -15,7 +15,6 @@ import 'package:resumebuilder/features/admin/presentation/bloc/admin_bloc.dart';
 import 'package:resumebuilder/features/admin/presentation/pages/send_notification_page.dart';
 import 'package:resumebuilder/features/admin/presentation/pages/template_preview_page.dart';
 import 'package:resumebuilder/features/admin/presentation/pages/all_users_page.dart';
-import 'package:resumebuilder/features/admin/presentation/pages/all_resumes_page.dart';
 import 'package:resumebuilder/features/admin/presentation/pages/premium_users_page.dart';
 import 'package:resumebuilder/features/admin/presentation/pages/ats_analytics_page.dart';
 import 'package:resumebuilder/features/admin/presentation/pages/active_templates_page.dart';
@@ -207,14 +206,6 @@ class AppRouter {
           builder: (_) => BlocProvider<AdminBloc>(
             create: (_) => di.sl<AdminBloc>(),
             child: const AllUsersPage(),
-          ),
-        );
-
-      case AppRoutes.adminAllResumes:
-        return MaterialPageRoute(
-          builder: (_) => BlocProvider<AdminBloc>(
-            create: (_) => di.sl<AdminBloc>(),
-            child: const AllResumesPage(),
           ),
         );
 
