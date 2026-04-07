@@ -1,6 +1,6 @@
 /// Error Message Service - Provides user-friendly and admin-detailed error messages
 /// Helps users and admins understand authentication and general errors clearly
-library error_message_service;
+library;
 
 class ErrorMessage {
   /// User-friendly message (simple, clear language)
@@ -69,7 +69,7 @@ class ErrorMessageService {
     switch (normalizedCode) {
       // Network Errors
       case 'network-request-failed':
-        return ErrorMessage(
+        return const ErrorMessage(
           userMessage: 'Connect Your Network',
           adminMessage:
               'Network request failed. Check internet connectivity and Firebase configuration.',
@@ -78,7 +78,7 @@ class ErrorMessageService {
         );
 
       case 'network_error':
-        return ErrorMessage(
+        return const ErrorMessage(
           userMessage: 'Connect Your Network',
           adminMessage:
               'Failed to reach Firebase servers. Network connectivity issue or DNS resolution failed.',
@@ -88,7 +88,7 @@ class ErrorMessageService {
 
       // Credential & Authentication Errors
       case 'wrong-password':
-        return ErrorMessage(
+        return const ErrorMessage(
           userMessage: 'Incorrect Password',
           adminMessage:
               'Authentication failed: wrong password provided for valid user account.',
@@ -98,7 +98,7 @@ class ErrorMessageService {
         );
 
       case 'invalid-credential':
-        return ErrorMessage(
+        return const ErrorMessage(
           userMessage: 'Incorrect Email or Password',
           adminMessage:
               'Invalid credentials provided. Email/password combination does not match any account.',
@@ -108,7 +108,7 @@ class ErrorMessageService {
         );
 
       case 'user-not-found':
-        return ErrorMessage(
+        return const ErrorMessage(
           userMessage: 'Account Not Found',
           adminMessage:
               'No user account exists with the provided email address.',
@@ -118,7 +118,7 @@ class ErrorMessageService {
 
       // Email Validation Errors
       case 'invalid-email':
-        return ErrorMessage(
+        return const ErrorMessage(
           userMessage: 'Invalid Email Address',
           adminMessage: 'The provided email address format is invalid.',
           category: 'validation',
@@ -127,7 +127,7 @@ class ErrorMessageService {
         );
 
       case 'missing-email':
-        return ErrorMessage(
+        return const ErrorMessage(
           userMessage: 'Email Required',
           adminMessage: 'Email field is empty or missing.',
           category: 'validation',
@@ -135,7 +135,7 @@ class ErrorMessageService {
         );
 
       case 'email-already-in-use':
-        return ErrorMessage(
+        return const ErrorMessage(
           userMessage: 'Email Already Registered',
           adminMessage: 'An account already exists with this email address.',
           category: 'auth',
@@ -145,7 +145,7 @@ class ErrorMessageService {
 
       // Password Errors
       case 'weak-password':
-        return ErrorMessage(
+        return const ErrorMessage(
           userMessage: 'Password Too Weak',
           adminMessage:
               'Password does not meet security requirements (minimum 6 characters recommended).',
@@ -155,7 +155,7 @@ class ErrorMessageService {
         );
 
       case 'operation-not-allowed':
-        return ErrorMessage(
+        return const ErrorMessage(
           userMessage: 'Sign-in Method Disabled',
           adminMessage:
               'This authentication method is not enabled for this Firebase project.',
@@ -166,7 +166,7 @@ class ErrorMessageService {
 
       // Account Status Errors
       case 'user-disabled':
-        return ErrorMessage(
+        return const ErrorMessage(
           userMessage: 'Account Disabled',
           adminMessage:
               'This user account has been disabled by an administrator.',
@@ -176,7 +176,7 @@ class ErrorMessageService {
 
       // Rate Limiting & Security
       case 'too-many-requests':
-        return ErrorMessage(
+        return const ErrorMessage(
           userMessage: 'Too Many Attempts',
           adminMessage:
               'Too many login attempts. Account temporarily locked for security. Try again in a few minutes.',
@@ -187,7 +187,7 @@ class ErrorMessageService {
 
       // Password Reset Errors
       case 'expired-action-code':
-        return ErrorMessage(
+        return const ErrorMessage(
           userMessage: 'Reset Link Expired',
           adminMessage:
               'Password reset link has expired (typically after 24 hours).',
@@ -196,7 +196,7 @@ class ErrorMessageService {
         );
 
       case 'invalid-action-code':
-        return ErrorMessage(
+        return const ErrorMessage(
           userMessage: 'Invalid Reset Link',
           adminMessage:
               'The password reset link is invalid or has already been used.',
@@ -206,7 +206,7 @@ class ErrorMessageService {
 
       // Google Sign-In Errors
       case 'sign-in-cancelled':
-        return ErrorMessage(
+        return const ErrorMessage(
           userMessage: 'Sign-in Cancelled',
           adminMessage: 'User cancelled the Google sign-in dialog.',
           category: 'info',
@@ -214,7 +214,7 @@ class ErrorMessageService {
         );
 
       case 'network_error_google':
-        return ErrorMessage(
+        return const ErrorMessage(
           userMessage: 'Connect Your Network',
           adminMessage:
               'Google sign-in failed due to network connectivity issue.',
@@ -223,7 +223,7 @@ class ErrorMessageService {
         );
 
       case 'google_account_not_available':
-        return ErrorMessage(
+        return const ErrorMessage(
           userMessage: 'Google Account Unavailable',
           adminMessage: 'No Google account available on this device.',
           category: 'auth',
@@ -233,7 +233,7 @@ class ErrorMessageService {
 
       // Account Blocked/Security
       case 'account_not_found_or_blocked':
-        return ErrorMessage(
+        return const ErrorMessage(
           userMessage: 'Account Not Available',
           adminMessage: 'Account was not found or has been blocked.',
           category: 'blocked',
@@ -242,7 +242,7 @@ class ErrorMessageService {
 
       // Database/Server Errors
       case 'permission-denied':
-        return ErrorMessage(
+        return const ErrorMessage(
           userMessage: 'Unable to Access Account',
           adminMessage:
               'Firestore permission denied. User lacks necessary permissions.',
@@ -251,7 +251,7 @@ class ErrorMessageService {
         );
 
       case 'service-unavailable':
-        return ErrorMessage(
+        return const ErrorMessage(
           userMessage: 'Service Temporarily Unavailable',
           adminMessage: 'Firebase services are currently unavailable.',
           category: 'error',

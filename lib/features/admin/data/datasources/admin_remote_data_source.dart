@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:resumebuilder/features/admin/domain/entities/admin_stats.dart';
 import 'package:resumebuilder/features/admin/domain/entities/announcement.dart';
 import 'package:resumebuilder/features/admin/domain/entities/app_notification.dart';
@@ -74,7 +75,7 @@ class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
         return false;
       }).length;
     } catch (e) {
-      print('Error fetching users: $e');
+      debugPrint('Error fetching users: $e');
     }
 
     // Resumes (using collectionGroup to search across all users)
@@ -83,7 +84,7 @@ class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
       final resumesCountSnap = await resumesQuery.count().get();
       totalResumes = resumesCountSnap.count ?? 0;
     } catch (e) {
-      print('Error fetching resumes: $e');
+      debugPrint('Error fetching resumes: $e');
     }
 
     // Templates
@@ -94,7 +95,7 @@ class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
           .get();
       activeTemplates = templatesCountSnap.count ?? 0;
     } catch (e) {
-      print('Error fetching templates: $e');
+      debugPrint('Error fetching templates: $e');
     }
 
     return AdminStats(

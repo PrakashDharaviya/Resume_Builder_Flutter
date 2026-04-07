@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:resumebuilder/core/errors/exceptions.dart';
 import 'package:resumebuilder/core/services/error_message_service.dart';
@@ -110,7 +111,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     final userFacingMessage = ErrorMessageService.formatForUser(errorMessage);
 
     // For logging and debugging: log the admin message
-    print(
+    debugPrint(
       '🔐 Auth Error Log: ${ErrorMessageService.formatForLog(errorMessage)}',
     );
 
@@ -136,7 +137,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       // Check if user is blocked
       if (userModel.isBlocked) {
         await firebaseAuth.signOut();
-        throw AuthException(
+        throw const AuthException(
           'Your account has been blocked. Please contact support.',
         );
       }
@@ -149,7 +150,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         e,
         errorType: 'sign_in',
       );
-      print(
+      debugPrint(
         '🔐 Sign-In Error: ${ErrorMessageService.formatForLog(errorMessage)}',
       );
       throw AuthException(ErrorMessageService.formatForUser(errorMessage));
@@ -207,7 +208,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         e,
         errorType: 'sign_up',
       );
-      print(
+      debugPrint(
         '🔐 Sign-Up Error: ${ErrorMessageService.formatForLog(errorMessage)}',
       );
       throw AuthException(ErrorMessageService.formatForUser(errorMessage));
@@ -259,7 +260,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       // Check if user is blocked
       if (userModel.isBlocked) {
         await firebaseAuth.signOut();
-        throw AuthException(
+        throw const AuthException(
           'Your account has been blocked. Please contact support.',
         );
       }
@@ -275,7 +276,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         e,
         errorType: 'google_sign_in',
       );
-      print(
+      debugPrint(
         '🔐 Google Sign-In Error: ${ErrorMessageService.formatForLog(errorMessage)}',
       );
       throw AuthException(ErrorMessageService.formatForUser(errorMessage));
@@ -336,6 +337,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       // 1. Check if email is registered (works when Email Enumeration
       //    Protection is disabled in Firebase Console → Auth → Settings)
+      // ignore: deprecated_member_use
       final methods = await firebaseAuth.fetchSignInMethodsForEmail(
         trimmedEmail,
       );
@@ -371,7 +373,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         e,
         errorType: 'password_reset',
       );
-      print(
+      debugPrint(
         '🔐 Password Reset Error: ${ErrorMessageService.formatForLog(errorMessage)}',
       );
       throw AuthException(ErrorMessageService.formatForUser(errorMessage));
@@ -401,7 +403,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         e,
         errorType: 'confirm_password_reset',
       );
-      print(
+      debugPrint(
         '🔐 Confirm Password Reset Error: ${ErrorMessageService.formatForLog(errorMessage)}',
       );
       throw AuthException(ErrorMessageService.formatForUser(errorMessage));
@@ -488,7 +490,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         e,
         errorType: 'change_password',
       );
-      print(
+      debugPrint(
         '🔐 Change Password Error: ${ErrorMessageService.formatForLog(errorMessage)}',
       );
       throw AuthException(ErrorMessageService.formatForUser(errorMessage));

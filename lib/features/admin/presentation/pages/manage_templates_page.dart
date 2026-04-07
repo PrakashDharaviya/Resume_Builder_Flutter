@@ -327,9 +327,9 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
     bool isPremium = template?.isPremium ?? false;
     bool isActive = template?.isActive ?? true;
     String selectedType = template?.templateType ?? 'professional';
-    String currentAssetUrl = template?.previewImage ?? '';
-    String currentAssetType = template?.assetType ?? 'image';
-    String currentAssetName = template?.assetName ?? '';
+    final String currentAssetUrl = template?.previewImage ?? '';
+    final String currentAssetType = template?.assetType ?? 'image';
+    final String currentAssetName = template?.assetName ?? '';
     String currentAssetBase64 = template?.assetDataBase64 ?? '';
     _TemplateAssetPick? selectedAsset;
 
@@ -547,13 +547,14 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
                               onPressed: _savingTemplate
                                   ? null
                                   : () async {
-                                      if (nameController.text.trim().isEmpty)
+                                      if (nameController.text.trim().isEmpty) {
                                         return;
+                                      }
 
                                       try {
                                         setState(() => _savingTemplate = true);
 
-                                        var previewImage = currentAssetUrl;
+                                        final previewImage = currentAssetUrl;
                                         var assetType = currentAssetType;
                                         var assetName = currentAssetName;
                                         var assetDataBase64 = '';
@@ -568,8 +569,10 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
                                           currentAssetBase64 = assetDataBase64;
                                         }
 
+                                        if (!ctx.mounted) return;
+
                                         if (isEdit) {
-                                          context.read<AdminBloc>().add(
+                                          ctx.read<AdminBloc>().add(
                                             UpdateTemplate(
                                               template: template.copyWith(
                                                 name: nameController.text
@@ -588,7 +591,7 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
                                             ),
                                           );
                                         } else {
-                                          context.read<AdminBloc>().add(
+                                          ctx.read<AdminBloc>().add(
                                             AddTemplate(
                                               template: ResumeTemplate(
                                                 id: '',
@@ -609,13 +612,11 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
                                           );
                                         }
 
-                                        if (!mounted) return;
+                                        if (!ctx.mounted) return;
                                         Navigator.pop(ctx);
                                       } catch (e) {
-                                        if (!mounted) return;
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
+                                        if (!ctx.mounted) return;
+                                        ScaffoldMessenger.of(ctx).showSnackBar(
                                           SnackBar(
                                             content: Text(
                                               'Failed to save template: $e',
@@ -756,7 +757,8 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
             height: 140,
             width: double.infinity,
             fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => _pdfOrFallbackPreview(isDark, type),
+            errorBuilder: (_, error, stackTrace) =>
+                _pdfOrFallbackPreview(isDark, type),
           ),
         );
       }

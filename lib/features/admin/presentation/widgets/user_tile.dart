@@ -147,9 +147,9 @@ class UserTile extends StatelessWidget {
                   ],
                 ),
               ),
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: 'delete',
-                child: const Row(
+                child: Row(
                   children: [
                     Icon(Icons.delete_rounded, size: 18, color: Colors.red),
                     SizedBox(width: 8),

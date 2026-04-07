@@ -88,7 +88,7 @@ class ErrorDisplayWidget extends StatelessWidget {
         backgroundColor ?? (isDark ? Colors.grey[900] : Colors.red.shade50);
     final textColorValue =
         textColor ?? (isDark ? Colors.white : Colors.grey[900]);
-    final brdColor = borderColor ?? categoryColor.withOpacity(0.3);
+    final brdColor = borderColor ?? categoryColor.withValues(alpha: 0.3);
 
     return Container(
       decoration: BoxDecoration(
@@ -128,7 +128,7 @@ class ErrorDisplayWidget extends StatelessWidget {
                           _formatSuggestedAction(),
                           style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(
-                                color: textColorValue?.withOpacity(0.8),
+                                color: textColorValue?.withValues(alpha: 0.8),
                               ),
                         ),
                       ),
@@ -145,7 +145,10 @@ class ErrorDisplayWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Divider(height: 16, color: categoryColor.withOpacity(0.2)),
+                  Divider(
+                    height: 16,
+                    color: categoryColor.withValues(alpha: 0.2),
+                  ),
                   Text(
                     '[ADMIN / DEBUG]',
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
@@ -157,7 +160,7 @@ class ErrorDisplayWidget extends StatelessWidget {
                   Text(
                     error.adminMessage,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: textColorValue?.withOpacity(0.7),
+                      color: textColorValue?.withValues(alpha: 0.7),
                       fontFamily: 'monospace',
                     ),
                   ),

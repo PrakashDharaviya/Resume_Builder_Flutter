@@ -179,7 +179,7 @@ class TemplatePreviewPage extends StatelessWidget {
           return Image.memory(
             bytes,
             fit: BoxFit.contain,
-            errorBuilder: (_, __, ___) => _rendererFallback(),
+            errorBuilder: (_, error, stackTrace) => _rendererFallback(),
           );
         } catch (_) {
           return _rendererFallback();

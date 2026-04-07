@@ -245,7 +245,7 @@ class TemplateCard extends StatelessWidget {
         return Image.memory(
           imageBytes,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => _rendererFallback(),
+          errorBuilder: (_, error, stackTrace) => _rendererFallback(),
         );
       } else if (template.assetType == 'pdf') {
         // PDF badge indicator
