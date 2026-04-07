@@ -3,7 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:resumebuilder/core/constants/app_colors.dart';
 import 'package:resumebuilder/core/constants/app_routes.dart';
 import 'package:resumebuilder/core/constants/app_strings.dart';
+import 'package:resumebuilder/core/services/error_message_service.dart';
 import 'package:resumebuilder/core/utils/validators.dart';
+import 'package:resumebuilder/core/widgets/error_display_widget.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_event.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_state.dart';
@@ -54,11 +56,19 @@ class LoginPageState extends State<LoginPage> {
             ).pushReplacementNamed(AppRoutes.authCheck, arguments: state.user);
           } else if (state is AuthError) {
             passwordController.clear();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: AppColors.error,
-              ),
+
+            // Map the error message to user-friendly error
+            final errorMessage = ErrorMessageService.mapFirebaseAuthError(
+              state.message,
+            );
+
+            // Show enhanced error snackbar
+            ErrorSnackbar.show(
+              context,
+              errorMessage,
+              showAdminDetails: false, // Set to true for debug/development
+              onRetry: handleLogin,
+              duration: const Duration(seconds: 3),
             );
           }
         },

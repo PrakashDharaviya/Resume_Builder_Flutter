@@ -3,6 +3,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:resumebuilder/core/errors/exceptions.dart';
+import 'package:resumebuilder/core/services/error_message_service.dart';
 import 'package:resumebuilder/features/auth/data/models/user_model.dart';
 
 // ---------------------------------------------------------------------------
@@ -98,62 +99,22 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     );
   }
 
-  /// Maps Firebase error codes to human‑readable messages and throws
-  /// the project's own [AuthException].
+  /// Maps Firebase error codes to user-friendly and admin messages using ErrorMessageService
   Never _handleFirebaseAuthError(firebase_auth.FirebaseAuthException e) {
-    final String friendlyMessage;
+    final errorMessage = ErrorMessageService.mapFirebaseAuthError(
+      e.code,
+      originalMessage: e.message,
+    );
 
-    switch (e.code) {
-      case 'invalid-email':
-        friendlyMessage = 'The email address is not valid.';
-        break;
-      case 'missing-email':
-        friendlyMessage = 'Please enter your email address.';
-        break;
-      case 'user-disabled':
-        friendlyMessage = 'This account has been disabled. Contact support.';
-        break;
-      case 'user-not-found':
-        friendlyMessage = 'No account found with this email.';
-        break;
-      case 'wrong-password':
-        friendlyMessage = 'Incorrect password. Please try again.';
-        break;
-      case 'invalid-credential':
-        friendlyMessage = 'Invalid credentials. Please check and try again.';
-        break;
-      case 'email-already-in-use':
-        friendlyMessage = 'An account already exists with this email address.';
-        break;
-      case 'weak-password':
-        friendlyMessage = 'Password is too weak. Use at least 6 characters.';
-        break;
-      case 'expired-action-code':
-        friendlyMessage =
-            'This reset link has expired. Request a new password reset email.';
-        break;
-      case 'invalid-action-code':
-        friendlyMessage =
-            'Invalid reset link or code. Please request a new one.';
-        break;
-      case 'operation-not-allowed':
-        friendlyMessage =
-            'This sign‑in method is not enabled. Contact support.';
-        break;
-      case 'too-many-requests':
-        friendlyMessage =
-            'Too many attempts. Please wait a moment and try again.';
-        break;
-      case 'network-request-failed':
-        friendlyMessage =
-            'Network error. Please check your connection and try again.';
-        break;
-      default:
-        friendlyMessage =
-            e.message ?? 'Authentication failed. Please try again.';
-    }
+    // Create a comprehensive error message that includes both user and admin info
+    final userFacingMessage = ErrorMessageService.formatForUser(errorMessage);
 
-    throw AuthException(friendlyMessage);
+    // For logging and debugging: log the admin message
+    print(
+      '🔐 Auth Error Log: ${ErrorMessageService.formatForLog(errorMessage)}',
+    );
+
+    throw AuthException(userFacingMessage);
   }
 
   // NOTE: _handleFunctionsError removed — Cloud Functions no longer used for password reset.
@@ -184,7 +145,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } on firebase_auth.FirebaseAuthException catch (e) {
       _handleFirebaseAuthError(e);
     } catch (e) {
-      throw AuthException('Sign in failed: ${e.toString()}');
+      final errorMessage = ErrorMessageService.mapGenericError(
+        e,
+        errorType: 'sign_in',
+      );
+      print(
+        '🔐 Sign-In Error: ${ErrorMessageService.formatForLog(errorMessage)}',
+      );
+      throw AuthException(ErrorMessageService.formatForUser(errorMessage));
     }
   }
 
@@ -235,7 +203,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } on firebase_auth.FirebaseAuthException catch (e) {
       _handleFirebaseAuthError(e);
     } catch (e) {
-      throw AuthException('Sign up failed: ${e.toString()}');
+      final errorMessage = ErrorMessageService.mapGenericError(
+        e,
+        errorType: 'sign_up',
+      );
+      print(
+        '🔐 Sign-Up Error: ${ErrorMessageService.formatForLog(errorMessage)}',
+      );
+      throw AuthException(ErrorMessageService.formatForUser(errorMessage));
     }
   }
 
@@ -295,7 +270,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } on firebase_auth.FirebaseAuthException catch (e) {
       _handleFirebaseAuthError(e);
     } catch (e) {
-      throw AuthException('Google sign‑in failed: ${e.toString()}');
+      // Handle generic Google Sign-In errors
+      final errorMessage = ErrorMessageService.mapGenericError(
+        e,
+        errorType: 'google_sign_in',
+      );
+      print(
+        '🔐 Google Sign-In Error: ${ErrorMessageService.formatForLog(errorMessage)}',
+      );
+      throw AuthException(ErrorMessageService.formatForUser(errorMessage));
     }
   }
 
@@ -384,7 +367,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }
       _handleFirebaseAuthError(e);
     } catch (e) {
-      throw AuthException('Password reset failed: ${e.toString()}');
+      final errorMessage = ErrorMessageService.mapGenericError(
+        e,
+        errorType: 'password_reset',
+      );
+      print(
+        '🔐 Password Reset Error: ${ErrorMessageService.formatForLog(errorMessage)}',
+      );
+      throw AuthException(ErrorMessageService.formatForUser(errorMessage));
     }
   }
 
@@ -407,7 +397,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } on firebase_auth.FirebaseAuthException catch (e) {
       _handleFirebaseAuthError(e);
     } catch (e) {
-      throw AuthException('Could not reset password. Please try again.');
+      final errorMessage = ErrorMessageService.mapGenericError(
+        e,
+        errorType: 'confirm_password_reset',
+      );
+      print(
+        '🔐 Confirm Password Reset Error: ${ErrorMessageService.formatForLog(errorMessage)}',
+      );
+      throw AuthException(ErrorMessageService.formatForUser(errorMessage));
     }
   }
 
@@ -487,7 +484,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } on AuthException {
       rethrow;
     } catch (e) {
-      throw AuthException('Password change failed: ${e.toString()}');
+      final errorMessage = ErrorMessageService.mapGenericError(
+        e,
+        errorType: 'change_password',
+      );
+      print(
+        '🔐 Change Password Error: ${ErrorMessageService.formatForLog(errorMessage)}',
+      );
+      throw AuthException(ErrorMessageService.formatForUser(errorMessage));
     }
   }
 
