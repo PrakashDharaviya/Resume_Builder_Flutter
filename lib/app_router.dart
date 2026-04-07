@@ -19,6 +19,7 @@ import 'package:resumebuilder/features/admin/presentation/pages/blocked_users_pa
 import 'package:resumebuilder/features/admin/presentation/pages/premium_users_page.dart';
 import 'package:resumebuilder/features/admin/presentation/pages/send_notification_page.dart';
 import 'package:resumebuilder/features/admin/presentation/pages/template_preview_page.dart';
+import 'package:resumebuilder/features/ats_analysis/domain/entities/ats_analysis.dart';
 import 'package:resumebuilder/features/ats_analysis/presentation/bloc/ats_bloc.dart';
 import 'package:resumebuilder/features/ats_analysis/presentation/pages/ats_analysis_page.dart';
 import 'package:resumebuilder/features/auth/domain/entities/user.dart'
@@ -64,11 +65,42 @@ class AppRouter {
         );
 
       case AppRoutes.atsResult:
-        final score = settings.arguments as double?;
+        ATSAnalysis? analysis;
+        Map<String, dynamic>? resumeData;
+        double score = 78;
+
+        final args = settings.arguments;
+        if (args is ATSAnalysis) {
+          analysis = args;
+          score = args.overallScore.toDouble();
+        } else if (args is num) {
+          score = args.toDouble();
+        } else if (args is Map<String, dynamic>) {
+          final rawAnalysis = args['analysis'];
+          if (rawAnalysis is ATSAnalysis) {
+            analysis = rawAnalysis;
+            score = rawAnalysis.overallScore.toDouble();
+          }
+
+          final rawResumeData = args['resumeData'];
+          if (rawResumeData is Map<String, dynamic>) {
+            resumeData = rawResumeData;
+          }
+
+          final rawScore = args['score'];
+          if (rawScore is num) {
+            score = rawScore.toDouble();
+          }
+        }
+
         return MaterialPageRoute(
           builder: (_) => BlocProvider<ATSBloc>(
             create: (_) => di.sl<ATSBloc>(),
-            child: ATSResultPage(score: score ?? 78),
+            child: ATSResultPage(
+              score: score,
+              analysis: analysis,
+              resumeData: resumeData,
+            ),
           ),
         );
 

@@ -35,6 +35,11 @@ class GroqAIService {
   }
 
   String _buildResumeText(Map<String, dynamic> data) {
+    final explicitResumeText = (data['resumeText'] as String?)?.trim() ?? '';
+    if (explicitResumeText.isNotEmpty) {
+      return explicitResumeText;
+    }
+
     final buffer = StringBuffer();
 
     final firstName = (data['firstName'] ?? '').toString();
@@ -45,6 +50,19 @@ class GroqAIService {
         (data['skills'] as List?)?.whereType<String>().toList() ?? <String>[];
     final experienceCount = (data['experience'] as num?)?.toInt() ?? 0;
     final educationCount = (data['education'] as num?)?.toInt() ?? 0;
+    final summary = (data['summary'] as String?)?.trim() ?? '';
+    final experienceDetails =
+        (data['experienceDetails'] as List?)
+            ?.whereType<String>()
+            .where((e) => e.trim().isNotEmpty)
+            .toList() ??
+        <String>[];
+    final projectDetails =
+        (data['projectDetails'] as List?)
+            ?.whereType<String>()
+            .where((p) => p.trim().isNotEmpty)
+            .toList() ??
+        <String>[];
 
     buffer.writeln('Resume Title: $title');
     buffer.writeln('Name: $firstName $lastName');
@@ -52,6 +70,13 @@ class GroqAIService {
     buffer.writeln('Skills: ${skills.join(', ')}');
     buffer.writeln('Number of Experience Entries: $experienceCount');
     buffer.writeln('Number of Education Entries: $educationCount');
+    if (summary.isNotEmpty) buffer.writeln('Summary: $summary');
+    if (experienceDetails.isNotEmpty) {
+      buffer.writeln('Experience Details: ${experienceDetails.join(' | ')}');
+    }
+    if (projectDetails.isNotEmpty) {
+      buffer.writeln('Project Details: ${projectDetails.join(' | ')}');
+    }
 
     return buffer.toString();
   }
@@ -184,7 +209,19 @@ Return ONLY the JSON object now:
     }
 
     try {
-      final parsed = jsonDecode(cleaned);
+      dynamic parsed;
+      try {
+        parsed = jsonDecode(cleaned);
+      } catch (_) {
+        final start = cleaned.indexOf('{');
+        final end = cleaned.lastIndexOf('}');
+        if (start >= 0 && end > start) {
+          parsed = jsonDecode(cleaned.substring(start, end + 1));
+        } else {
+          rethrow;
+        }
+      }
+
       if (parsed is Map<String, dynamic>) {
         parsed['analyzedAt'] ??= DateTime.now().toIso8601String();
         return parsed;

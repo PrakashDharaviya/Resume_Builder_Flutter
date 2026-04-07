@@ -398,7 +398,11 @@ class DashboardPageState extends State<DashboardPage> {
       child: Column(
         children: [
           const SizedBox(height: 48),
-          const Icon(Icons.description_outlined, size: 96, color: AppColors.grey300),
+          const Icon(
+            Icons.description_outlined,
+            size: 96,
+            color: AppColors.grey300,
+          ),
           const SizedBox(height: 16),
           Text(
             AppStrings.noResumes,
@@ -433,15 +437,63 @@ class DashboardPageState extends State<DashboardPage> {
 
   /// Convert a [Resume] entity into the `Map<String,dynamic>` expected by [ATSAnalysisPage].
   Map<String, dynamic> resumeToMap(Resume resume) {
+    final summary = resume.personalInfo?.summary ?? '';
+    final experienceDetails = resume.experience
+        .map(
+          (e) =>
+              '${e.jobTitle} at ${e.company}. ${e.description ?? ''} ${e.responsibilities.join(' ')}',
+        )
+        .toList();
+    final projectDetails = resume.projects
+        .map(
+          (p) =>
+              '${p.name}: ${p.description}. Tech: ${p.technologies.join(', ')}',
+        )
+        .toList();
+
     return {
       'firstName': resume.personalInfo?.firstName ?? '',
       'lastName': resume.personalInfo?.lastName ?? '',
       'email': resume.personalInfo?.email ?? '',
+      'summary': summary,
       'skills': resume.skills.map((s) => s.name).toList(),
       'experience': resume.experience.length,
       'education': resume.education.length,
+      'projects': resume.projects.length,
+      'certifications': resume.certifications.length,
+      'achievements': resume.achievements.length,
+      'languages': resume.languages.map((l) => l.name).toList(),
+      'experienceDetails': experienceDetails,
+      'projectDetails': projectDetails,
       'title': resume.title,
+      'resumeText': _buildResumeTextFromEntity(resume),
     };
+  }
+
+  String _buildResumeTextFromEntity(Resume resume) {
+    final personalInfo = resume.personalInfo;
+    final sections = <String>[
+      resume.title,
+      if (personalInfo != null)
+        '${personalInfo.firstName} ${personalInfo.lastName}',
+      if (personalInfo?.email != null) personalInfo!.email,
+      if ((personalInfo?.summary ?? '').trim().isNotEmpty)
+        'Summary: ${personalInfo!.summary!.trim()}',
+      if (resume.skills.isNotEmpty)
+        'Skills: ${resume.skills.map((s) => s.name).join(', ')}',
+      if (resume.experience.isNotEmpty)
+        'Experience: ${resume.experience.map((e) => '${e.jobTitle} at ${e.company} ${e.description ?? ''} ${e.responsibilities.join(' ')}').join(' | ')}',
+      if (resume.projects.isNotEmpty)
+        'Projects: ${resume.projects.map((p) => '${p.name} ${p.description} ${p.technologies.join(', ')}').join(' | ')}',
+      if (resume.education.isNotEmpty)
+        'Education: ${resume.education.map((e) => '${e.degree} ${e.institution} ${e.fieldOfStudy ?? ''}').join(' | ')}',
+      if (resume.certifications.isNotEmpty)
+        'Certifications: ${resume.certifications.map((c) => '${c.name} ${c.issuingOrganization}').join(' | ')}',
+      if (resume.achievements.isNotEmpty)
+        'Achievements: ${resume.achievements.map((a) => '${a.title} ${a.description}').join(' | ')}',
+    ];
+
+    return sections.where((s) => s.trim().isNotEmpty).join('\n');
   }
 
   // Compact icon+label button for very small screens

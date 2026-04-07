@@ -1470,8 +1470,32 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
                     AppRoutes.atsAnalysis,
                     arguments: {
                       'firstName': firstNameCtrl.text,
+                      'lastName': lastNameCtrl.text,
+                      'email': emailCtrl.text,
+                      'summary': summaryCtrl.text,
+                      'title':
+                          '${firstNameCtrl.text.trim()} ${lastNameCtrl.text.trim()} Resume'
+                              .trim(),
                       'skills': skills.map((s) => s['name']).toList(),
                       'experience': experiences.length,
+                      'education': educations.length,
+                      'projects': projects.length,
+                      'certifications': certifications.length,
+                      'achievements': achievements.length,
+                      'languages': languages.map((l) => l['name']).toList(),
+                      'experienceDetails': experiences
+                          .map(
+                            (e) =>
+                                '${e['title'] ?? ''} at ${e['company'] ?? ''}. ${e['desc'] ?? ''}',
+                          )
+                          .toList(),
+                      'projectDetails': projects
+                          .map(
+                            (p) =>
+                                '${p['name'] ?? ''}: ${p['desc'] ?? ''}. Tech: ${p['tech'] ?? ''}',
+                          )
+                          .toList(),
+                      'resumeText': _buildEditorResumeText(),
                     },
                   );
                 },
@@ -1487,6 +1511,31 @@ class ResumeEditorPageState extends State<ResumeEditorPage> {
         ),
       ),
     );
+  }
+
+  String _buildEditorResumeText() {
+    final sections = <String>[
+      '${firstNameCtrl.text} ${lastNameCtrl.text}'.trim(),
+      emailCtrl.text.trim(),
+      phoneCtrl.text.trim(),
+      locationCtrl.text.trim(),
+      if (summaryCtrl.text.trim().isNotEmpty)
+        'Summary: ${summaryCtrl.text.trim()}',
+      if (skills.isNotEmpty)
+        'Skills: ${skills.map((s) => (s['name'] ?? '').toString()).where((s) => s.trim().isNotEmpty).join(', ')}',
+      if (experiences.isNotEmpty)
+        'Experience: ${experiences.map((e) => '${(e['title'] ?? '').toString()} at ${(e['company'] ?? '').toString()} ${(e['desc'] ?? '').toString()}').join(' | ')}',
+      if (projects.isNotEmpty)
+        'Projects: ${projects.map((p) => '${(p['name'] ?? '').toString()} ${(p['desc'] ?? '').toString()} ${(p['tech'] ?? '').toString()}').join(' | ')}',
+      if (educations.isNotEmpty)
+        'Education: ${educations.map((e) => '${(e['degree'] ?? '').toString()} ${(e['institution'] ?? '').toString()} ${(e['field'] ?? '').toString()}').join(' | ')}',
+      if (certifications.isNotEmpty)
+        'Certifications: ${certifications.map((c) => '${(c['name'] ?? '').toString()} ${(c['org'] ?? '').toString()}').join(' | ')}',
+      if (achievements.isNotEmpty)
+        'Achievements: ${achievements.map((a) => '${(a['title'] ?? '').toString()} ${(a['desc'] ?? '').toString()}').join(' | ')}',
+    ];
+
+    return sections.where((s) => s.trim().isNotEmpty).join('\n');
   }
 
   // ─── Expandable section card ──────────────────────────────────────────────

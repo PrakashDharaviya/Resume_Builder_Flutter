@@ -43,12 +43,18 @@ class ATSRemoteDataSourceImpl implements ATSRemoteDataSource {
   Future<ATSAnalysisModel> _analyzeWithProviderChain(
     Map<String, dynamic> resumeData,
   ) async {
+    final allowLocalFallback =
+        (resumeData['useLocalFallback'] as bool?) ?? false;
+    Object? geminiError;
+    Object? groqError;
+
     try {
       final geminiResult = await _analyzeWithRetry(
         request: () => geminiAIService.analyzeResume(resumeData: resumeData),
       );
       return ATSAnalysisModel.fromJson(geminiResult);
-    } catch (_) {
+    } catch (e) {
+      geminiError = e;
       // Fall through to Groq provider.
     }
 
@@ -57,8 +63,15 @@ class ATSRemoteDataSourceImpl implements ATSRemoteDataSource {
         request: () => groqAIService.analyzeResume(resumeData: resumeData),
       );
       return ATSAnalysisModel.fromJson(groqResult);
-    } catch (_) {
-      // Final fallback to local heuristic scoring.
+    } catch (e) {
+      groqError = e;
+    }
+
+    if (!allowLocalFallback) {
+      final details = 'Gemini failed: $geminiError | Groq failed: $groqError';
+      throw ServerException(
+        'ATS API analysis failed on all providers. $details',
+      );
     }
 
     final fallbackResult = await localAIService.analyzeResume(

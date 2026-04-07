@@ -43,6 +43,65 @@ class ATSAnalysisModel extends ATSAnalysis {
       return DateTime.now();
     }
 
+    List<KeywordMatch> parseMatchedKeywords(dynamic raw) {
+      if (raw is! List) return const <KeywordMatch>[];
+
+      final result = <KeywordMatch>[];
+      for (final item in raw) {
+        if (item is Map) {
+          result.add(KeywordMatchModel.fromJson(item.cast<String, dynamic>()));
+        } else if (item is String && item.trim().isNotEmpty) {
+          result.add(
+            KeywordMatchModel(keyword: item.trim(), count: 1, weight: 'medium'),
+          );
+        }
+      }
+      return result;
+    }
+
+    List<MissingKeyword> parseMissingKeywords(dynamic raw) {
+      if (raw is! List) return const <MissingKeyword>[];
+
+      final result = <MissingKeyword>[];
+      for (final item in raw) {
+        if (item is Map) {
+          result.add(
+            MissingKeywordModel.fromJson(item.cast<String, dynamic>()),
+          );
+        } else if (item is String && item.trim().isNotEmpty) {
+          result.add(
+            MissingKeywordModel(
+              keyword: item.trim(),
+              importance: 'medium',
+              category: 'General',
+            ),
+          );
+        }
+      }
+      return result;
+    }
+
+    List<Suggestion> parseSuggestions(dynamic raw) {
+      if (raw is! List) return const <Suggestion>[];
+
+      final result = <Suggestion>[];
+      for (final item in raw) {
+        if (item is Map) {
+          result.add(SuggestionModel.fromJson(item.cast<String, dynamic>()));
+        } else if (item is String && item.trim().isNotEmpty) {
+          result.add(
+            SuggestionModel(
+              title: 'Suggestion',
+              description: item.trim(),
+              priority: 'medium',
+              category: 'General',
+            ),
+          );
+        }
+      }
+      return result;
+    }
+
     return ATSAnalysisModel(
       id:
           (json['id'] as String?) ??
@@ -50,27 +109,9 @@ class ATSAnalysisModel extends ATSAnalysis {
       resumeId: (json['resumeId'] as String?) ?? '',
       overallScore: intFromDynamic(json['overallScore']),
       scoreBreakdown: parseScoreBreakdown(json['scoreBreakdown']),
-      matchedKeywords: (json['matchedKeywords'] as List? ?? const [])
-          .whereType<Map<dynamic, dynamic>>()
-          .map(
-            (e) =>
-                KeywordMatchModel.fromJson((e).cast<String, dynamic>()),
-          )
-          .toList(),
-      missingKeywords: (json['missingKeywords'] as List? ?? const [])
-          .whereType<Map<dynamic, dynamic>>()
-          .map(
-            (e) => MissingKeywordModel.fromJson(
-              (e).cast<String, dynamic>(),
-            ),
-          )
-          .toList(),
-      suggestions: (json['suggestions'] as List? ?? const [])
-          .whereType<Map<dynamic, dynamic>>()
-          .map(
-            (e) => SuggestionModel.fromJson((e).cast<String, dynamic>()),
-          )
-          .toList(),
+      matchedKeywords: parseMatchedKeywords(json['matchedKeywords']),
+      missingKeywords: parseMissingKeywords(json['missingKeywords']),
+      suggestions: parseSuggestions(json['suggestions']),
       analyzedAt: parseDate(json['analyzedAt']),
     );
   }
