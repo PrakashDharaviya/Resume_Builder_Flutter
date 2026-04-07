@@ -100,12 +100,6 @@ class UserDashboardState extends State<UserDashboard> {
                 },
               ),
               IconButton(
-                icon: const Icon(Icons.person_outline_rounded),
-                tooltip: 'Profile',
-                onPressed: () =>
-                    Navigator.pushNamed(context, AppRoutes.profile),
-              ),
-              IconButton(
                 icon: const Icon(Icons.style_rounded),
                 tooltip: 'Templates',
                 onPressed: () {
@@ -117,6 +111,12 @@ class UserDashboardState extends State<UserDashboard> {
                     context.read<ResumeBloc>().add(const LoadAllResumesEvent());
                   });
                 },
+              ),
+              IconButton(
+                icon: const Icon(Icons.person_outline_rounded),
+                tooltip: 'Profile',
+                onPressed: () =>
+                    Navigator.pushNamed(context, AppRoutes.profile),
               ),
             ],
           ),
