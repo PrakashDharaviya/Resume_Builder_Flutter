@@ -73,6 +73,8 @@ class ProfilePageState extends State<ProfilePage> {
         }
       }
 
+      await NotificationService.setTopicSubscription(value);
+
       await FirebaseFirestore.instance.collection('users').doc(_cachedUid).set({
         'notificationsEnabled': value,
         'fcmToken': ?fcmToken,
@@ -852,23 +854,7 @@ class ProfilePageState extends State<ProfilePage> {
                         trailing: const Icon(Icons.chevron_right),
                         onTap: () => openNotifications(context),
                       ),
-                      const Divider(height: 1),
-                      ListTile(
-                        leading: const Icon(Icons.language_outlined),
-                        title: const Text(AppStrings.language),
-                        subtitle: ValueListenableBuilder<String>(
-                          valueListenable: languageNotifier,
-                          builder: (_, lang, _) => Text(
-                            lang,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: AppColors.primary,
-                            ),
-                          ),
-                        ),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: () => openLanguage(context),
-                      ),
+
                     ],
                   ),
                 ),

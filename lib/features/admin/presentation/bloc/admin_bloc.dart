@@ -3,6 +3,7 @@ import 'package:resumebuilder/features/admin/domain/entities/app_notification.da
 import 'package:resumebuilder/features/admin/domain/repositories/admin_repository.dart';
 import 'package:resumebuilder/features/admin/presentation/bloc/admin_event.dart';
 import 'package:resumebuilder/features/admin/presentation/bloc/admin_state.dart';
+import 'package:resumebuilder/core/services/notification_service.dart';
 import 'package:resumebuilder/features/auth/domain/entities/user.dart';
 
 class AdminBloc extends Bloc<AdminEvent, AdminState> {
@@ -90,6 +91,15 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     Emitter<AdminState> emit,
   ) async {
     await repository.addTemplate(event.template);
+    
+    // Trigger push notification to all subscribed users
+    try {
+      await NotificationService.sendTemplateNotification(event.template.name);
+    } catch (e) {
+      // Ignore notification failures so it doesn't break template addition
+      print('Failed to send push notification: $e');
+    }
+
     final result = await repository.getAllTemplates();
     result.fold((failure) => emit(AdminError(message: failure.message)), (
       templates,

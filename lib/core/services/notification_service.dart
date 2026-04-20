@@ -2,6 +2,9 @@ import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:googleapis_auth/auth_io.dart';
+import 'package:http/http.dart' as http;
+import 'package:resumebuilder/core/constants/firebase_secrets.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -96,5 +99,61 @@ class NotificationService {
 
   static Future<String?> getToken() async {
     return await _firebaseMessaging.getToken();
+  }
+
+  static Future<void> setTopicSubscription(bool subscribe) async {
+    if (subscribe) {
+      await _firebaseMessaging.subscribeToTopic('new_templates');
+    } else {
+      await _firebaseMessaging.unsubscribeFromTopic('new_templates');
+    }
+  }
+
+  static Future<String> _getAccessToken() async {
+    final credentials = ServiceAccountCredentials.fromJson(FirebaseSecrets.serviceAccountJson);
+    final client = await clientViaServiceAccount(
+      credentials,
+      ['https://www.googleapis.com/auth/firebase.messaging'],
+    );
+    final accessToken = client.credentials.accessToken.data;
+    client.close();
+    return accessToken;
+  }
+
+  static Future<void> sendTemplateNotification(String templateName) async {
+    try {
+      final token = await _getAccessToken();
+      const projectId = 'resumeiq-91b72'; // Extracted from JSON
+
+      final request = {
+        'message': {
+          'topic': 'new_templates',
+          'notification': {
+            'title': 'New Template Available! 🎉',
+            'body': 'Check out our newly added $templateName template and update your resume today!',
+          },
+          'data': {
+            'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+          }
+        }
+      };
+
+      final response = await http.post(
+        Uri.parse('https://fcm.googleapis.com/v1/projects/$projectId/messages:send'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(request),
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint('Successfully sent template notification');
+      } else {
+        debugPrint('Failed to send template notification: ${response.body}');
+      }
+    } catch (e) {
+      debugPrint('Error sending FCM notification: $e');
+    }
   }
 }

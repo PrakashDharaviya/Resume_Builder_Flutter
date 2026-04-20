@@ -322,6 +322,7 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
   }
 
   void showTemplateForm(BuildContext context, {ResumeTemplate? template}) {
+    final adminBloc = context.read<AdminBloc>();
     final isEdit = template != null;
     final nameController = TextEditingController(text: template?.name ?? '');
     bool isPremium = template?.isPremium ?? false;
@@ -572,7 +573,7 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
                                         if (!ctx.mounted) return;
 
                                         if (isEdit) {
-                                          ctx.read<AdminBloc>().add(
+                                          adminBloc.add(
                                             UpdateTemplate(
                                               template: template.copyWith(
                                                 name: nameController.text
@@ -591,7 +592,7 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
                                             ),
                                           );
                                         } else {
-                                          ctx.read<AdminBloc>().add(
+                                          adminBloc.add(
                                             AddTemplate(
                                               template: ResumeTemplate(
                                                 id: '',
