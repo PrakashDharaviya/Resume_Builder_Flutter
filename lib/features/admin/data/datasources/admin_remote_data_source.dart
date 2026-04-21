@@ -127,6 +127,9 @@ class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
         assetType: (d['assetType'] as String?) ?? 'image',
         assetName: (d['assetName'] as String?) ?? '',
         assetDataBase64: (d['assetDataBase64'] as String?) ?? '',
+        tags: (d['tags'] as List<dynamic>?)?.cast<String>() ?? const [],
+        category: (d['category'] as String?) ?? '',
+        targetProfession: (d['targetProfession'] as String?) ?? '',
         createdAt: (d['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       );
     }).toList();
@@ -148,6 +151,9 @@ class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
       'assetType': template.assetType,
       'assetName': template.assetName,
       'assetDataBase64': template.assetDataBase64,
+      'tags': template.tags,
+      'category': template.category,
+      'targetProfession': template.targetProfession,
       'createdAt': Timestamp.fromDate(now),
     };
     await _templatesCol.doc(id).set(data);
@@ -166,6 +172,9 @@ class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
       'assetType': template.assetType,
       'assetName': template.assetName,
       'assetDataBase64': template.assetDataBase64,
+      'tags': template.tags,
+      'category': template.category,
+      'targetProfession': template.targetProfession,
     });
     return template;
   }

@@ -8,12 +8,14 @@ import 'package:image/image.dart' as img;
 import 'package:resumebuilder/admin/presentation/widgets/admin_drawer.dart';
 import 'package:resumebuilder/core/constants/app_colors.dart';
 import 'package:resumebuilder/core/constants/app_routes.dart';
+import 'package:resumebuilder/core/services/template_search_service.dart';
 import 'package:resumebuilder/core/utils/app_preferences.dart';
 import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
 import 'package:resumebuilder/features/admin/presentation/bloc/admin_bloc.dart';
 import 'package:resumebuilder/features/admin/presentation/bloc/admin_event.dart';
 import 'package:resumebuilder/features/admin/presentation/bloc/admin_state.dart';
 import 'package:resumebuilder/features/admin/presentation/widgets/template_tile.dart';
+import 'package:resumebuilder/injection_container.dart' as di;
 
 class ManageTemplatesPage extends StatefulWidget {
   const ManageTemplatesPage({super.key});
@@ -333,6 +335,10 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
     final String currentAssetName = template?.assetName ?? '';
     String currentAssetBase64 = template?.assetDataBase64 ?? '';
     _TemplateAssetPick? selectedAsset;
+    List<String> generatedTags = List<String>.from(template?.tags ?? []);
+    String generatedCategory = template?.category ?? '';
+    String generatedProfession = template?.targetProfession ?? '';
+    bool isGeneratingTags = false;
 
     showModalBottomSheet<void>(
       context: context,
@@ -540,6 +546,156 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
+
+                          // AI Tags Section
+                          const SizedBox(height: 12),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? const Color(0xFF111827)
+                                  : const Color(0xFFF3F4F6),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: const Color(0xFF10B981).withValues(alpha: 0.2),
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.auto_awesome_rounded,
+                                      size: 16,
+                                      color: isDark
+                                          ? const Color(0xFF34D399)
+                                          : const Color(0xFF10B981),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      'AI Search Tags',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                        color: isDark
+                                            ? const Color(0xFF34D399)
+                                            : const Color(0xFF10B981),
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    if (isGeneratingTags)
+                                      const SizedBox(
+                                        width: 16,
+                                        height: 16,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Color(0xFF10B981),
+                                        ),
+                                      )
+                                    else
+                                      TextButton.icon(
+                                        onPressed: () async {
+                                          if (nameController.text.trim().isEmpty) {
+                                            ScaffoldMessenger.of(ctx).showSnackBar(
+                                              const SnackBar(
+                                                content: Text('Enter template name first'),
+                                              ),
+                                            );
+                                            return;
+                                          }
+                                          setModalState(() => isGeneratingTags = true);
+                                          try {
+                                            final searchService = di.sl<TemplateSearchService>();
+                                            final result = await searchService.generateTags(
+                                              templateName: nameController.text.trim(),
+                                              templateType: selectedType,
+                                            );
+                                            if (result != null) {
+                                              setModalState(() {
+                                                generatedTags = result.tags;
+                                                generatedCategory = result.category;
+                                                generatedProfession = result.targetProfession;
+                                              });
+                                            }
+                                          } catch (_) {
+                                            if (ctx.mounted) {
+                                              ScaffoldMessenger.of(ctx).showSnackBar(
+                                                const SnackBar(
+                                                  content: Text('Failed to generate tags. Check internet.'),
+                                                ),
+                                              );
+                                            }
+                                          } finally {
+                                            setModalState(() => isGeneratingTags = false);
+                                          }
+                                        },
+                                        icon: const Icon(Icons.auto_fix_high_rounded, size: 14),
+                                        label: Text(
+                                          generatedTags.isEmpty ? 'Generate' : 'Regenerate',
+                                          style: const TextStyle(fontSize: 12),
+                                        ),
+                                        style: TextButton.styleFrom(
+                                          foregroundColor: const Color(0xFF10B981),
+                                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                                          minimumSize: const Size(0, 30),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                                if (generatedTags.isNotEmpty) ...[
+                                  const SizedBox(height: 8),
+                                  Wrap(
+                                    spacing: 4,
+                                    runSpacing: 4,
+                                    children: generatedTags.map((tag) {
+                                      return Chip(
+                                        label: Text(
+                                          tag,
+                                          style: const TextStyle(fontSize: 11),
+                                        ),
+                                        deleteIcon: const Icon(Icons.close, size: 14),
+                                        onDeleted: () {
+                                          setModalState(() => generatedTags.remove(tag));
+                                        },
+                                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                        visualDensity: VisualDensity.compact,
+                                        backgroundColor: isDark
+                                            ? const Color(0xFF1F2937)
+                                            : const Color(0xFFECFDF5),
+                                        side: BorderSide(
+                                          color: const Color(0xFF10B981).withValues(alpha: 0.3),
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    'Category: ${ResumeTemplate.categoryLabel(generatedCategory)} • Target: $generatedProfession',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: isDark
+                                          ? const Color(0xFF9CA3AF)
+                                          : const Color(0xFF6B7280),
+                                    ),
+                                  ),
+                                ] else
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 4),
+                                    child: Text(
+                                      'Tags will be auto-generated using AI when you tap Generate or Save.',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: isDark
+                                            ? const Color(0xFF6B7280)
+                                            : const Color(0xFF9CA3AF),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
                           const SizedBox(height: 20),
                           SizedBox(
                             width: double.infinity,
@@ -554,6 +710,24 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
 
                                       try {
                                         setState(() => _savingTemplate = true);
+
+                                        // Auto-generate tags if empty
+                                        if (generatedTags.isEmpty) {
+                                          try {
+                                            final searchService = di.sl<TemplateSearchService>();
+                                            final result = await searchService.generateTags(
+                                              templateName: nameController.text.trim(),
+                                              templateType: selectedType,
+                                            );
+                                            if (result != null) {
+                                              generatedTags = result.tags;
+                                              generatedCategory = result.category;
+                                              generatedProfession = result.targetProfession;
+                                            }
+                                          } catch (_) {
+                                            // Continue without tags if AI fails
+                                          }
+                                        }
 
                                         final previewImage = currentAssetUrl;
                                         var assetType = currentAssetType;
@@ -588,6 +762,9 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
                                                     assetDataBase64.isNotEmpty
                                                     ? assetDataBase64
                                                     : null,
+                                                tags: generatedTags,
+                                                category: generatedCategory,
+                                                targetProfession: generatedProfession,
                                               ),
                                             ),
                                           );
@@ -607,6 +784,9 @@ class ManageTemplatesPageState extends State<ManageTemplatesPage> {
                                                 assetName: assetName,
                                                 assetDataBase64:
                                                     assetDataBase64,
+                                                tags: generatedTags,
+                                                category: generatedCategory,
+                                                targetProfession: generatedProfession,
                                                 createdAt: DateTime.now(),
                                               ),
                                             ),

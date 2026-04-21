@@ -11,6 +11,9 @@ class ResumeTemplate extends Equatable {
   final String assetType; // image or pdf
   final String assetName;
   final String assetDataBase64; // Base64-encoded file data
+  final List<String> tags; // e.g. ['BCA', 'MCA', 'IT', 'fresher']
+  final String category; // e.g. 'engineering', 'commerce', 'arts', 'medical'
+  final String targetProfession; // e.g. 'Software Developer', 'Accountant'
   final DateTime createdAt;
 
   const ResumeTemplate({
@@ -24,6 +27,9 @@ class ResumeTemplate extends Equatable {
     this.assetType = 'image',
     this.assetName = '',
     this.assetDataBase64 = '',
+    this.tags = const [],
+    this.category = '',
+    this.targetProfession = '',
     required this.createdAt,
   });
 
@@ -34,6 +40,46 @@ class ResumeTemplate extends Equatable {
     'creative',
     'classic',
   ];
+
+  static const List<String> categoryOptions = [
+    'engineering',
+    'commerce',
+    'arts',
+    'medical',
+    'management',
+    'science',
+    'law',
+    'design',
+    'education',
+    'general',
+  ];
+
+  static String categoryLabel(String category) {
+    switch (category) {
+      case 'engineering':
+        return 'Engineering & IT';
+      case 'commerce':
+        return 'Commerce & Finance';
+      case 'arts':
+        return 'Arts & Humanities';
+      case 'medical':
+        return 'Medical & Health';
+      case 'management':
+        return 'Management & MBA';
+      case 'science':
+        return 'Science & Research';
+      case 'law':
+        return 'Law & Legal';
+      case 'design':
+        return 'Design & Creative';
+      case 'education':
+        return 'Education & Teaching';
+      case 'general':
+        return 'General Purpose';
+      default:
+        return 'General Purpose';
+    }
+  }
 
   static String templateTypeLabel(String type) {
     switch (type) {
@@ -63,6 +109,9 @@ class ResumeTemplate extends Equatable {
     String? assetType,
     String? assetName,
     String? assetDataBase64,
+    List<String>? tags,
+    String? category,
+    String? targetProfession,
     DateTime? createdAt,
   }) {
     return ResumeTemplate(
@@ -76,6 +125,9 @@ class ResumeTemplate extends Equatable {
       assetType: assetType ?? this.assetType,
       assetName: assetName ?? this.assetName,
       assetDataBase64: assetDataBase64 ?? this.assetDataBase64,
+      tags: tags ?? this.tags,
+      category: category ?? this.category,
+      targetProfession: targetProfession ?? this.targetProfession,
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -92,6 +144,9 @@ class ResumeTemplate extends Equatable {
     assetType,
     assetName,
     assetDataBase64,
+    tags,
+    category,
+    targetProfession,
     createdAt,
   ];
 }

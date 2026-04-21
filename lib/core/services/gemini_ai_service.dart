@@ -257,6 +257,73 @@ Return ONLY the JSON object now:
     }
   }
 
+  // ── Template Search & Tagging API ──────────────────────────────────────
+
+  /// Auto-generates tags, category, and target profession for a template
+  /// based on its name and type. Used by admin when saving a template.
+  Future<Map<String, dynamic>> generateTemplateTags({
+    required String templateName,
+    required String templateType,
+  }) async {
+    final prompt = '''
+You are a resume template classification expert.
+
+Given the following resume template details, generate relevant search metadata so users can find this template by searching for their degree or profession.
+
+Template Name: $templateName
+Template Style: $templateType
+
+Return a JSON object with EXACTLY this structure — no markdown, no explanation, ONLY valid JSON:
+
+{
+  "tags": ["<list of 8-12 relevant search tags like degree names, fields, job roles — e.g. BCA, MCA, BCom, MBA, IT, Software Developer, fresher, experienced, Computer Science, Data Analyst>"],
+  "category": "<one of: engineering, commerce, arts, medical, management, science, law, design, education, general>",
+  "targetProfession": "<primary target profession — e.g. Software Developer, Accountant, Graphic Designer, Teacher>"
+}
+
+Rules:
+- Tags must include common Indian degree abbreviations (BCA, MCA, BBA, BCom, BTech, MTech, MBA, BSc, MSc, BA, MA, etc.) that would suit this template style.
+- Tags should also include relevant job roles and fields.
+- Keep tags lowercase except for degree abbreviations.
+- Return ONLY the JSON object, no surrounding text.
+''';
+
+    final responseText = await _callGemini(prompt);
+    return _parseResponse(responseText);
+  }
+
+  /// Provides AI-powered search recommendations when a user searches by
+  /// degree or profession. Returns best template type, skills, and summary.
+  Future<Map<String, dynamic>> searchRecommendation({
+    required String query,
+  }) async {
+    final prompt = '''
+You are a career counselor and resume expert.
+
+A user is searching for resume templates related to: "$query"
+
+Return a JSON object with EXACTLY this structure — no markdown, no explanation, ONLY valid JSON:
+
+{
+  "recommendedTemplateType": "<one of: professional, modern, minimal, creative, classic>",
+  "recommendedCategory": "<one of: engineering, commerce, arts, medical, management, science, law, design, education, general>",
+  "relevantTags": ["<list of 5-8 tags that match this search — degree names, fields, roles>"],
+  "suggestedSkills": ["<list of 8-10 key skills a person with this degree/profession should have on their resume>"],
+  "suggestedSummary": "<a 2-3 sentence professional summary template that someone with this degree/profession could use>",
+  "fieldDescription": "<a brief 1-sentence description of this field/degree for UI display>"
+}
+
+Rules:
+- recommendedTemplateType should be the best template style for this profession/degree.
+- suggestedSkills should be specific and relevant (e.g. for BCA: Flutter, Java, Python, SQL, HTML/CSS, Data Structures, Git, Problem Solving).
+- suggestedSummary should be a reusable template with placeholders like [X years] where appropriate.
+- Return ONLY the JSON object, no surrounding text.
+''';
+
+    final responseText = await _callGemini(prompt);
+    return _parseResponse(responseText);
+  }
+
   // Keep backward-compatible static helpers from the old AIService.
 
   /// Get score level string based on value.

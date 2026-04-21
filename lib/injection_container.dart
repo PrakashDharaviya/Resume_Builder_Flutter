@@ -8,6 +8,7 @@ import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:resumebuilder/core/network/network_info.dart';
 import 'package:resumebuilder/core/services/ai_service.dart';
+import 'package:resumebuilder/core/services/template_search_service.dart';
 import 'package:resumebuilder/core/services/firebase_service.dart';
 import 'package:resumebuilder/core/services/gemini_ai_service.dart';
 import 'package:resumebuilder/core/services/groq_ai_service.dart';
@@ -171,6 +172,9 @@ Future<void> init() async {
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl());
   sl.registerLazySingleton(() => FirebaseService());
   sl.registerLazySingleton(() => AIService());
+  sl.registerLazySingleton(
+    () => TemplateSearchService(geminiAIService: sl()),
+  );
   sl.registerLazySingleton(
     () => GeminiAIService(apiKey: _requireEnv('GEMINI_API_KEY')),
   );

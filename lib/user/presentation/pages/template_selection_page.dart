@@ -28,6 +28,13 @@ class TemplateSelectionPage extends StatelessWidget {
         centerTitle: true,
         elevation: 0,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.search_rounded),
+            tooltip: 'Search by Degree/Profession',
+            onPressed: () {
+              Navigator.pushNamed(context, AppRoutes.templateSearch);
+            },
+          ),
           ValueListenableBuilder<ThemeMode>(
             valueListenable: themeNotifier,
             builder: (context, themeMode, _) {

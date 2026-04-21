@@ -34,6 +34,7 @@ import 'package:resumebuilder/user/presentation/pages/ats_result_page.dart';
 import 'package:resumebuilder/user/presentation/pages/resume_editor_page.dart';
 import 'package:resumebuilder/user/presentation/pages/resume_preview_page.dart';
 import 'package:resumebuilder/user/presentation/pages/template_selection_page.dart';
+import 'package:resumebuilder/user/presentation/pages/template_search_page.dart';
 import 'package:resumebuilder/user/presentation/pages/user_dashboard.dart';
 import 'package:resumebuilder/user/presentation/pages/user_profile_page.dart';
 
@@ -131,6 +132,9 @@ class AppRouter {
 
       case AppRoutes.templateSelection:
         return MaterialPageRoute(builder: (_) => const TemplateSelectionPage());
+
+      case AppRoutes.templateSearch:
+        return MaterialPageRoute(builder: (_) => const TemplateSearchPage());
 
       case AppRoutes.resumePreview:
         final resume = settings.arguments as Resume?;

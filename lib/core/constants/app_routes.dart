@@ -16,6 +16,7 @@ class AppRoutes {
   static const String resumeEditor = '/resume-editor';
   static const String resumePreview = '/resume-preview';
   static const String templateSelection = '/template-selection';
+  static const String templateSearch = '/template-search';
 
   // ATS Routes
   static const String atsAnalysis = '/ats-analysis';

@@ -100,6 +100,19 @@ class UserDashboardState extends State<UserDashboard> {
                 },
               ),
               IconButton(
+                icon: const Icon(Icons.search_rounded),
+                tooltip: 'Search by Degree/Profession',
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    AppRoutes.templateSearch,
+                  ).then((_) {
+                    if (!context.mounted) return;
+                    context.read<ResumeBloc>().add(const LoadAllResumesEvent());
+                  });
+                },
+              ),
+              IconButton(
                 icon: const Icon(Icons.style_rounded),
                 tooltip: 'Templates',
                 onPressed: () {
@@ -180,94 +193,7 @@ class UserDashboardState extends State<UserDashboard> {
                               );
                             },
                           ),
-                          const SizedBox(height: 12),
-                          FutureBuilder<List<ResumeTemplate>>(
-                            future: MockDatabaseService.instance.getTemplates(),
-                            builder: (context, templateSnap) {
-                              final activeTemplates =
-                                  (templateSnap.data ??
-                                          const <ResumeTemplate>[])
-                                      .where((t) => t.isActive)
-                                      .toList();
-                              final premiumCount = activeTemplates
-                                  .where((t) => t.isPremium)
-                                  .length;
 
-                              return Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(14),
-                                  color: isDark
-                                      ? const Color(0xFF1F2937)
-                                      : const Color(0xFFF9FAFB),
-                                  border: Border.all(
-                                    color: const Color(
-                                      0xFF10B981,
-                                    ).withValues(alpha: 0.2),
-                                  ),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                        color: const Color(
-                                          0xFF10B981,
-                                        ).withValues(alpha: 0.12),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: const Icon(
-                                        Icons.style_rounded,
-                                        color: Color(0xFF10B981),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            '${activeTemplates.length} active templates available',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w700,
-                                              color: isDark
-                                                  ? Colors.white
-                                                  : const Color(0xFF111827),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 2),
-                                          Text(
-                                            '$premiumCount premium template${premiumCount == 1 ? '' : 's'}',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: isDark
-                                                  ? const Color(0xFF9CA3AF)
-                                                  : const Color(0xFF6B7280),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pushNamed(
-                                          context,
-                                          AppRoutes.templateSelection,
-                                        ).then((_) {
-                                          if (!context.mounted) return;
-                                          context.read<ResumeBloc>().add(
-                                            const LoadAllResumesEvent(),
-                                          );
-                                        });
-                                      },
-                                      child: const Text('Browse'),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
                           if (announcement != null) ...[
                             const SizedBox(height: 12),
                             Container(
