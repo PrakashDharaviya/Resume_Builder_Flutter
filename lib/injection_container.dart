@@ -173,7 +173,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => FirebaseService());
   sl.registerLazySingleton(() => AIService());
   sl.registerLazySingleton(
-    () => TemplateSearchService(geminiAIService: sl()),
+    () => TemplateSearchService(groqAIService: sl()),
   );
   sl.registerLazySingleton(
     () => GeminiAIService(apiKey: _requireEnv('GEMINI_API_KEY')),

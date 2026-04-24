@@ -1,14 +1,14 @@
 import 'package:flutter/foundation.dart';
-import 'package:resumebuilder/core/services/gemini_ai_service.dart';
+import 'package:resumebuilder/core/services/groq_ai_service.dart';
 import 'package:resumebuilder/core/services/mock_database_service.dart';
 import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
 
-/// Combined search service that uses Firestore tags + Gemini AI
+/// Combined search service that uses Firestore tags + Groq AI
 /// to find and recommend templates based on degree/profession.
 class TemplateSearchService {
-  final GeminiAIService geminiAIService;
+  final GroqAIService groqAIService;
 
-  TemplateSearchService({required this.geminiAIService});
+  TemplateSearchService({required this.groqAIService});
 
   /// Searches templates by matching query against tags, category,
   /// targetProfession, and template name. Returns filtered + sorted results.
@@ -86,7 +86,7 @@ class TemplateSearchService {
     if (query.trim().isEmpty) return null;
 
     try {
-      final result = await geminiAIService.searchRecommendation(query: query);
+      final result = await groqAIService.searchRecommendation(query: query);
       return SearchRecommendation.fromJson(result);
     } catch (e) {
       debugPrint('AI recommendation failed: $e');
@@ -101,7 +101,7 @@ class TemplateSearchService {
     required String templateType,
   }) async {
     try {
-      final result = await geminiAIService.generateTemplateTags(
+      final result = await groqAIService.generateTemplateTags(
         templateName: templateName,
         templateType: templateType,
       );

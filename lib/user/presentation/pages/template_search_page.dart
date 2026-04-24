@@ -9,6 +9,7 @@ import 'package:resumebuilder/core/utils/app_preferences.dart';
 import 'package:resumebuilder/features/admin/domain/entities/resume_template.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:resumebuilder/features/auth/presentation/bloc/auth_state.dart';
+import 'package:resumebuilder/features/resume/domain/entities/resume.dart';
 import 'package:resumebuilder/injection_container.dart' as di;
 import 'package:resumebuilder/user/presentation/widgets/template_card.dart';
 
@@ -281,7 +282,7 @@ class _TemplateSearchPageState extends State<TemplateSearchPage> {
         if (_isLoadingAI)
           _buildAILoadingCard(isDark)
         else if (_aiRecommendation != null)
-          _buildAIRecommendationCard(isDark),
+          _buildAIRecommendationCard(context, isDark),
 
         // Search Results Header
         if (_hasSearched) ...[
@@ -527,7 +528,7 @@ class _TemplateSearchPageState extends State<TemplateSearchPage> {
     );
   }
 
-  Widget _buildAIRecommendationCard(bool isDark) {
+  Widget _buildAIRecommendationCard(BuildContext context, bool isDark) {
     final rec = _aiRecommendation!;
 
     return Container(
@@ -723,6 +724,74 @@ class _TemplateSearchPageState extends State<TemplateSearchPage> {
               ),
             ),
           ],
+
+          const SizedBox(height: 20),
+
+          // Build with AI Suggestions Button
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                final authState = context.read<AuthBloc>().state;
+                final userId = authState is AuthAuthenticated ? authState.user.uid : 'guest';
+
+                String firstName = '';
+                String lastName = '';
+                String email = '';
+
+                if (authState is AuthAuthenticated) {
+                  final nameParts = authState.user.displayName.trim().split(' ');
+                  firstName = nameParts.isNotEmpty ? nameParts.first : '';
+                  if (nameParts.length > 1) {
+                    lastName = nameParts.sublist(1).join(' ');
+                  }
+                  email = authState.user.email;
+                }
+
+                final newResume = Resume(
+                  id: 'resume_${DateTime.now().millisecondsSinceEpoch}',
+                  userId: userId,
+                  title: '${_searchController.text.trim()} Resume',
+                  personalInfo: PersonalInfo(
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: email,
+                    summary: rec.suggestedSummary,
+                  ),
+                  skills: rec.suggestedSkills.map((s) => Skill(
+                    id: 'skill_${DateTime.now().microsecondsSinceEpoch}_${s.hashCode}',
+                    name: s,
+                    proficiency: 'Intermediate',
+                  )).toList(),
+                  createdAt: DateTime.now(),
+                  updatedAt: DateTime.now(),
+                  templateType: rec.recommendedTemplateType,
+                );
+
+                Navigator.pushReplacementNamed(
+                  context,
+                  AppRoutes.resumeEditor,
+                  arguments: {
+                    'resume': newResume,
+                    'templateType': rec.recommendedTemplateType,
+                  },
+                );
+              },
+              icon: const Icon(Icons.auto_awesome_rounded),
+              label: const Text(
+                'Start Resume with these AI Suggestions',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF10B981),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
