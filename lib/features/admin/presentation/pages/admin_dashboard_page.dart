@@ -33,6 +33,12 @@ class AdminDashboardPageState extends State<AdminDashboardPage>
     animController.forward();
   }
 
+  /// Replay the fade-in animation whenever new dashboard data arrives
+  void _replayAnimation() {
+    animController.reset();
+    animController.forward();
+  }
+
   @override
   void dispose() {
     animController.dispose();
@@ -90,10 +96,18 @@ class AdminDashboardPageState extends State<AdminDashboardPage>
         ],
       ),
       drawer: const AdminDrawer(currentRoute: AppRoutes.adminDashboard),
-      body: BlocBuilder<AdminBloc, AdminState>(
+      body: BlocConsumer<AdminBloc, AdminState>(
+        listenWhen: (previous, current) => current is AdminDashboardLoaded,
+        listener: (context, state) {
+          // Replay fade animation when dashboard data loads (including on back navigation)
+          if (state is AdminDashboardLoaded) {
+            _replayAnimation();
+          }
+        },
         buildWhen: (_, current) =>
             current is AdminDashboardLoaded ||
             current is AdminLoading ||
+            current is AdminInitial ||
             current is AdminError,
         builder: (context, state) {
           if (state is AdminLoading) {
@@ -362,7 +376,8 @@ class AdminDashboardPageState extends State<AdminDashboardPage>
             );
           }
 
-          return const SizedBox.shrink();
+          // AdminInitial or any other unhandled state — show loader
+          return const Center(child: CircularProgressIndicator());
         },
       ),
     );

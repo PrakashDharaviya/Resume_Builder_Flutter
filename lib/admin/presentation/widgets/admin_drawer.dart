@@ -107,9 +107,19 @@ class AdminDrawer extends StatelessWidget {
       leading: Icon(icon),
       title: Text(label),
       onTap: () {
-        Navigator.pop(context);
+        final navigator = Navigator.of(context);
+        navigator.pop(); // close drawer
         if (!selected) {
-          Navigator.pushReplacementNamed(context, route);
+          if (route == AppRoutes.adminDashboard) {
+            // Going back to dashboard: just pop the current sub-page
+            navigator.pop();
+          } else if (currentRoute == AppRoutes.adminDashboard) {
+            // From dashboard to sub-page: push on top (keep dashboard in stack)
+            navigator.pushNamed(route);
+          } else {
+            // From sub-page to another sub-page: replace current
+            navigator.pushReplacementNamed(route);
+          }
         }
       },
     );
